@@ -1,0 +1,16 @@
+.cache/
+.DS_Store
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+deskpet/DeskPet
+deskpet/DeskPet.dSYM/
+
+# lesson-memo byproducts (attempt drafts + sidecars)
+attempt*.png
+attempt*.meta.txt
+attempt*_meta.txt
+
+# for now
+!.cursor/

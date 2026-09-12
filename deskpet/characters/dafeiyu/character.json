@@ -1,0 +1,12 @@
+{
+  "id": "dafeiyu",
+  "name": "大肥鱼",
+  "idle": "idle.png",
+  "hover": "hover.png",
+  "peek": "peek.png",
+  "peek_hover": "peek-hover.png",
+  "peek_disdain": "peek-disdain.png",
+  "disdain": "disdain.png",
+  "size": 240,
+  "peek_scale": 1.0
+}
