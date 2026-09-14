@@ -5,8 +5,14 @@
   "hover": "hover.png",
   "peek": "peek.png",
   "peek_hover": "peek-hover.png",
-  "peek_disdain": "peek-disdain.png",
-  "disdain": "disdain.png",
+  "peek_away": "peek-disdain.png",
+  "inbox": "inbox.png",
+  "peek_inbox": "peek-inbox.png",
+  "repeat_hover": "repeat-hover.png",
+  "peek_repeat_hover": "peek-repeat-hover.png",
+  "reveal": "reveal.png",
+  "peek_reveal": "peek-reveal.png",
+  "away": "disdain.png",
   "size": 240,
   "peek_scale": 1.0
 }

@@ -4,6 +4,7 @@ description: >-
   在用户明确要求为 AEFS（AI Engineering from Scratch）某一课生成中文备忘卡 /
   章节卡片 / lesson memo / PNG 卡片时使用。触发意图须含「出卡 / 备忘卡 / PNG」类动词；
   仅讨论 AEFS、只读 phases/... 课文、不要图时不要使用。
+  模型课须画架构图：留白画在章节卡，内容丰满另出 archi- 旁卡。
 ---
 
 # AEFS 课文备忘卡
@@ -11,7 +12,8 @@ description: >-
 **定位：** 整个学习项目指向 **AI 工程**（训练 / 推理 / LLM / 生成式模型 / 数据与评测管线），不是纯数学习题册。备忘卡萃取的知识点必须与 AI 内容**高关联**。
 
 默认一课 → **一张 PNG**。英雄点占画面；不交付 markdown。  
-仅当课文主体是**大量并列子项**时，再加一张 `xx-` 旁卡（见「枚举课」）。
+仅当课文主体是**大量并列子项**时，再加一张 `xx-` 旁卡（见「枚举课」）。  
+章节重点是某个具名模型时，必须画出架构（见「模型架构」）：内容留白较大 → 画在章节卡；内容本身很丰满 → 另加 `archi-` 旁卡。
 
 评测：[evaluator.md](evaluator.md)（**≥ 85**；**初稿 + 至多 1 次重画**）。
 
@@ -69,6 +71,12 @@ xx_slug         = xx-<topic-slug>            # 主题短名，非 lessonDir；�
 xx_canonical    = notes/cards/<phaseDir>/<xx_slug>.png
 xx_byproducts   = notes/cards/<phaseDir>/<xx_slug>/
 GenerateImage.filename = <xx_slug>.png       # 仅 basename
+
+# 模型架构旁卡（仅触发「模型架构」且内容丰满、需拆卡时）
+archi_slug         = archi-<model-slug>      # 模型短名，非 lessonDir；如 archi-resnet、archi-transformer
+archi_canonical    = notes/cards/<phaseDir>/<archi_slug>.png
+archi_byproducts   = notes/cards/<phaseDir>/<archi_slug>/
+GenerateImage.filename = <archi_slug>.png    # 仅 basename
 ```
 
 ## 工作流
@@ -78,9 +86,10 @@ GenerateImage.filename = <xx_slug>.png       # 仅 basename
 - [ ] 2. 按「拉取顺序」拉 en.md + 扫课内 code/（镜像优先）
 - [ ] 3. 扫 Further Reading（核对用，不强制上卡）
 - [ ] 4. 判定是否「枚举课」→ 章节英雄点；若是则另拟旁卡网格清单
+- [ ] 4b. 判定是否「模型课」→ 架构图画在章节卡还是 `archi-` 旁卡（二选一）
 - [ ] 5. 读 [methods.md](methods.md)（适配，勿硬套）
 - [ ] 6. 生成–评测循环（每张卡：初稿 + 至多 1 次重画）
-- [ ] 7. 更新 notes/progress.md（枚举课写两行）
+- [ ] 7. 更新 notes/progress.md（枚举课 / 架构旁卡各加一行）
 ```
 
 交付物仅 PNG。
@@ -99,7 +108,7 @@ GenerateImage.filename = <xx_slug>.png       # 仅 basename
 | 参数 | 规则 |
 |------|------|
 | `description` | 必填。按 [template-card.md](template-card.md) + 英雄点写清版式/文案/风格；RETRY 时把 ≤5 条修正指令放在最前 |
-| `filename` | 章节卡仅 `<lessonDir>.png`；旁卡仅 `<xx_slug>.png`（**勿带目录**） |
+| `filename` | 章节卡仅 `<lessonDir>.png`；枚举旁卡仅 `<xx_slug>.png`；架构旁卡仅 `<archi_slug>.png`（**勿带目录**） |
 | `aspect_ratio` | 默认 `"3:4"`；需纵向用 `"9:16"`；本 skill 只用这两档 |
 | `reference_image_paths` | 仅 RETRY：上一次 attempt PNG 的**绝对路径** |
 
@@ -116,6 +125,7 @@ GenerateImage.filename = <xx_slug>.png       # 仅 basename
    cp 覆盖 canonical：notes/cards/<phaseDir>/<lessonDir>.png
 7. 写 sidecar（同副产物目录）：
    notes/cards/<phaseDir>/<lessonDir>/attempt<N>.meta.txt
+旁卡（xx- / archi-）把上式 <lessonDir> 换成对应 slug。
 ```
 
 ### 生成–评测
@@ -136,6 +146,10 @@ loop:
 ### 英雄点
 
 动笔前点名 **1–2** 个必须记住的点（偶可为紧绑双子）；写入评分卡 `heroes_declared`。
+
+**「英雄点 / HERO」是策划与评分用语，不是画面文案。**  
+GenerateImage 的 `description` 与图上：**禁止**出现 `HERO`、`Hero`、`HERO 1`、`英雄点`、`主英雄`、`H1/H2`（评分维）等元标签。  
+版式用「上半主视觉 / 下半主视觉」或**读者可读的中文区块标题**（如「文本→三元组」「AEVS 四步」）；内部规划可说 hero，但提示里不要把该词交给画布。
 
 - 候选优先**课文正文**（主题 / Learning Objectives / 双高 H2 / Key Terms / 课内代码 punchline）
 - H2、FR 都是主题补充，**不强制**上卡、不照抄标题
@@ -170,6 +184,24 @@ loop:
 
 每张卡独立走「生成–评测」（各最多 2 次）。`progress.md` 两行：`phases/.../<lessonDir>` 与 `phases/.../xx-<topic-slug>`。回传两张都报路径 + score。
 
+### 模型架构（章节卡 or `archi-` 旁卡）
+
+**触发「模型课」：** 课文重点是某一个（或紧绑一对）具名模型/架构，且存在可画的模块数据流。例：Transformer、ResNet、U-Net、BERT、GPT、YOLO。  
+邻课例子里捎带模型名、只讲训练/评测流程、或无可画模块图 → **不画架构**。  
+多模型并列普查（约 ≥ 6 个变体）→ 走「枚举课」，不要为每个变体各出一张 `archi-`。
+
+**必须把架构图画出来。** 画在哪（二选一，禁止章节卡与旁卡各画一遍）：
+
+1. **课程内容留白较大** → 在原有章节卡上直接绘制。放完标题 + 1–2 英雄点后仍有大块空位，架构能当主视觉或次主视觉。
+2. **课程内容本身很丰满** → 添加一张 `archi-<model-slug>` 旁卡绘制架构图。英雄点已是决策/坑/代码，再塞架构会挤成墙。章节卡脚注可写「架构见旁卡 archi-…」，勿把框图再抄一遍。
+
+判定看**本章卡计划密度**，不以课文页数唬人：架构若已是 1–2 英雄点之一且画得下 → 留白路径；架构是第三件必须记住的事 → 丰满、拆卡。
+
+**架构图画什么：** 课文点名的模块方块 + 数据流箭头 + 关键连接（残差/注意力/编解码等）；有给张量维则标关键维。不要发明课文没讲的层，不要写成论文目录墙。  
+`archi-` 旁卡英雄点就是这张框图；底条最多 1 句总规则。独立走「生成–评测」（最多 2 次）。`progress.md` 加一行 `phases/.../archi-<model-slug>`。回传路径 + score。
+
+枚举课与模型旁卡可同时触发（各加一行）；仍禁止同一架构画两遍。
+
 ### 生产代码 punchline（学习者偏好）
 
 学习者同步在练 **Python / PyTorch / LangChain / LangGraph**。课文或课内 `code/` 若出现**关联度极高**的生产惯用法，**应上卡**（可读短片段，非整文件）：
@@ -193,7 +225,7 @@ Motto / 今日能做啥 · 概念便签 · 数字钩 / Build↔Use / **生产代
 ### 产出
 
 - 方法 [methods.md](methods.md) · 版式 [template-card.md](template-card.md) · 风格 [examples.md](examples.md)
-- 最终路径：`notes/cards/<phaseDir>/<lessonDir>.png`；枚举课另加 `notes/cards/<phaseDir>/xx-<topic-slug>.png`
+- 最终路径：`notes/cards/<phaseDir>/<lessonDir>.png`；枚举课另加 `notes/cards/<phaseDir>/xx-<topic-slug>.png`；模型课内容丰满另加 `notes/cards/<phaseDir>/archi-<model-slug>.png`
 - 出图只走上方流水线
 
 ### progress.md
@@ -210,10 +242,11 @@ ACCEPT 与 EXHAUST 都必须更新；中途崩溃不写 done
 ## 视觉
 
 要：层次清、手绘公众号感、手机可读、生产 punchline 该上就上。  
-不要：长文墙、答案、自测、英文分区墙、FR/QA 堆、等权分区、图标沙拉。
+模型架构：模块可辨、箭头可读，不要用装饰小图标冒充框图。  
+不要：长文墙、答案、自测、英文分区墙、FR/QA 堆、等权分区、图标沙拉、**图上印 HERO/英雄点等元标签**。
 
 ## 回传
 
-- ACCEPT：canonical 路径 + motto + score（枚举课两张都报）
+- ACCEPT：canonical 路径 + motto + score（枚举课 / 架构旁卡有几张报几张）
 - RETRY：继续，不写长文
 - EXHAUST：canonical 路径 + 最佳 score + 失败项

@@ -6,6 +6,8 @@ __pycache__/
 .pytest_cache/
 deskpet/DeskPet
 deskpet/DeskPet.dSYM/
+deskpet/inbox/*.png
+deskpet/inbox/public-url.txt
 
 # lesson-memo byproducts (attempt drafts + sidecars)
 attempt*.png

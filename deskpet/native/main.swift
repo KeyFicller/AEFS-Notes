@@ -6,14 +6,29 @@ struct Config: Codable {
     var cardsDir: String
     var cardMaxWidth: Int
     var zoom: Double
-    var disdainAfterMinutes: Double
+    var awayAfterMinutes: Double
+    var inboxPort: Int
+    var inboxTunnel: Bool
+    var inboxHostname: String
+    var repeatHoverAfter: Int
+    var repeatHoverWindowMinutes: Double
+    var hoverExitSeconds: Double
+    var studyMode: StudyMode
 
     enum CodingKeys: String, CodingKey {
         case character
         case cardsDir = "cards_dir"
         case cardMaxWidth = "card_max_width"
         case zoom
+        case awayAfterMinutes = "away_after_minutes"
         case disdainAfterMinutes = "disdain_after_minutes"
+        case inboxPort = "inbox_port"
+        case inboxTunnel = "inbox_tunnel"
+        case inboxHostname = "inbox_hostname"
+        case repeatHoverAfter = "repeat_hover_after"
+        case repeatHoverWindowMinutes = "repeat_hover_window_minutes"
+        case hoverExitSeconds = "hover_exit_seconds"
+        case studyMode = "study_mode"
     }
 
     init(from decoder: Decoder) throws {
@@ -22,7 +37,19 @@ struct Config: Codable {
         cardsDir = try box.decodeIfPresent(String.self, forKey: .cardsDir) ?? "../notes/cards"
         cardMaxWidth = try box.decodeIfPresent(Int.self, forKey: .cardMaxWidth) ?? 460
         zoom = try box.decodeIfPresent(Double.self, forKey: .zoom) ?? 1.0
-        disdainAfterMinutes = try box.decodeIfPresent(Double.self, forKey: .disdainAfterMinutes) ?? 10
+        awayAfterMinutes = try box.decodeIfPresent(Double.self, forKey: .awayAfterMinutes)
+            ?? (try box.decodeIfPresent(Double.self, forKey: .disdainAfterMinutes) ?? 10)
+        inboxPort = try box.decodeIfPresent(Int.self, forKey: .inboxPort) ?? 8765
+        inboxTunnel = try box.decodeIfPresent(Bool.self, forKey: .inboxTunnel) ?? true
+        inboxHostname = try box.decodeIfPresent(String.self, forKey: .inboxHostname) ?? ""
+        repeatHoverAfter = try box.decodeIfPresent(Int.self, forKey: .repeatHoverAfter) ?? 5
+        repeatHoverWindowMinutes = try box.decodeIfPresent(Double.self, forKey: .repeatHoverWindowMinutes) ?? 1
+        hoverExitSeconds = try box.decodeIfPresent(Double.self, forKey: .hoverExitSeconds) ?? 1
+        if let raw = try box.decodeIfPresent(String.self, forKey: .studyMode) {
+            studyMode = StudyMode(rawValue: raw) ?? .annotate
+        } else {
+            studyMode = .annotate
+        }
     }
 
     func encode(to encoder: Encoder) throws {
@@ -31,8 +58,20 @@ struct Config: Codable {
         try box.encode(cardsDir, forKey: .cardsDir)
         try box.encode(cardMaxWidth, forKey: .cardMaxWidth)
         try box.encode(zoom, forKey: .zoom)
-        try box.encode(disdainAfterMinutes, forKey: .disdainAfterMinutes)
+        try box.encode(awayAfterMinutes, forKey: .awayAfterMinutes)
+        try box.encode(inboxPort, forKey: .inboxPort)
+        try box.encode(inboxTunnel, forKey: .inboxTunnel)
+        try box.encode(inboxHostname, forKey: .inboxHostname)
+        try box.encode(repeatHoverAfter, forKey: .repeatHoverAfter)
+        try box.encode(repeatHoverWindowMinutes, forKey: .repeatHoverWindowMinutes)
+        try box.encode(hoverExitSeconds, forKey: .hoverExitSeconds)
+        try box.encode(studyMode.rawValue, forKey: .studyMode)
     }
+}
+
+enum StudyMode: String {
+    case annotate
+    case reveal
 }
 
 struct CharacterSpec: Decodable {
@@ -42,17 +81,53 @@ struct CharacterSpec: Decodable {
     let hover: String
     let peek: String?
     let peekHover: String?
-    let peekDisdain: String?
-    let disdain: String?
+    let peekAway: String?
+    let inbox: String?
+    let peekInbox: String?
+    let repeatHover: String?
+    let peekRepeatHover: String?
+    let reveal: String?
+    let peekReveal: String?
+    let away: String?
     let size: Int?
     let scale: String?
     let peekScale: Double?
 
     enum CodingKeys: String, CodingKey {
-        case id, name, idle, hover, peek, disdain, size, scale
+        case id, name, idle, hover, peek, inbox, away, size, scale
         case peekHover = "peek_hover"
-        case peekDisdain = "peek_disdain"
+        case peekAway = "peek_away"
+        case peekInbox = "peek_inbox"
+        case repeatHover = "repeat_hover"
+        case peekRepeatHover = "peek_repeat_hover"
+        case reveal
+        case peekReveal = "peek_reveal"
         case peekScale = "peek_scale"
+        case awayLegacy = "disdain"
+        case peekAwayLegacy = "peek_disdain"
+    }
+
+    init(from decoder: Decoder) throws {
+        let box = try decoder.container(keyedBy: CodingKeys.self)
+        id = try box.decodeIfPresent(String.self, forKey: .id)
+        name = try box.decodeIfPresent(String.self, forKey: .name)
+        idle = try box.decode(String.self, forKey: .idle)
+        hover = try box.decode(String.self, forKey: .hover)
+        peek = try box.decodeIfPresent(String.self, forKey: .peek)
+        peekHover = try box.decodeIfPresent(String.self, forKey: .peekHover)
+        peekAway = try box.decodeIfPresent(String.self, forKey: .peekAway)
+            ?? box.decodeIfPresent(String.self, forKey: .peekAwayLegacy)
+        inbox = try box.decodeIfPresent(String.self, forKey: .inbox)
+        peekInbox = try box.decodeIfPresent(String.self, forKey: .peekInbox)
+        repeatHover = try box.decodeIfPresent(String.self, forKey: .repeatHover)
+        peekRepeatHover = try box.decodeIfPresent(String.self, forKey: .peekRepeatHover)
+        reveal = try box.decodeIfPresent(String.self, forKey: .reveal)
+        peekReveal = try box.decodeIfPresent(String.self, forKey: .peekReveal)
+        away = try box.decodeIfPresent(String.self, forKey: .away)
+            ?? box.decodeIfPresent(String.self, forKey: .awayLegacy)
+        size = try box.decodeIfPresent(Int.self, forKey: .size)
+        scale = try box.decodeIfPresent(String.self, forKey: .scale)
+        peekScale = try box.decodeIfPresent(Double.self, forKey: .peekScale)
     }
 }
 
@@ -63,8 +138,14 @@ struct CharacterPack {
     let hover: NSImage
     let peek: NSImage
     let peekHover: NSImage
-    let peekDisdain: NSImage
-    let disdain: NSImage
+    let peekAway: NSImage
+    let inbox: NSImage
+    let peekInbox: NSImage
+    let repeatHover: NSImage
+    let peekRepeatHover: NSImage
+    let reveal: NSImage
+    let peekReveal: NSImage
+    let away: NSImage
     let size: CGFloat
     let nearest: Bool
     let peekScale: CGFloat
@@ -439,22 +520,476 @@ func isSharedEdge(_ edge: DockedEdge, of screen: NSScreen, along window: NSRect)
     return false
 }
 
+struct ScribbleStyle {
+    var color: NSColor
+    var width: CGFloat
+
+    static let initial = ScribbleStyle(
+        color: NSColor.systemYellow.withAlphaComponent(0.45),
+        width: 16
+    )
+}
+
+final class Chip: NSView {
+    enum Kind {
+        case color(NSColor)
+        case width(CGFloat)
+        case shapeCircle
+        case shapeRect
+    }
+
+    let kind: Kind
+    var selected = false { didSet { needsDisplay = true } }
+    var onPick: (() -> Void)?
+
+    init(kind: Kind) {
+        self.kind = kind
+        super.init(frame: .zero)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func draw(_ dirtyRect: NSRect) {
+        switch kind {
+        case .color(let color):
+            color.setFill()
+            NSBezierPath(ovalIn: bounds.insetBy(dx: 4, dy: 4)).fill()
+        case .width(let width):
+            NSColor.white.setFill()
+            let diameter = min(max(width * 0.65, 5), bounds.width - 10)
+            let rect = NSRect(
+                x: (bounds.width - diameter) / 2,
+                y: (bounds.height - diameter) / 2,
+                width: diameter,
+                height: diameter
+            )
+            NSBezierPath(ovalIn: rect).fill()
+        case .shapeCircle:
+            NSColor.white.setFill()
+            NSBezierPath(ovalIn: bounds.insetBy(dx: 6, dy: 6)).fill()
+        case .shapeRect:
+            NSColor.white.setFill()
+            NSBezierPath(rect: bounds.insetBy(dx: 7, dy: 7)).fill()
+        }
+        if selected {
+            NSColor.white.setStroke()
+            let ring = NSBezierPath(ovalIn: bounds.insetBy(dx: 1.5, dy: 1.5))
+            ring.lineWidth = 2
+            ring.stroke()
+        }
+    }
+
+    override func mouseDown(with event: NSEvent) { onPick?() }
+}
+
+final class PenToolbar: NSView {
+    static let barHeight: CGFloat = 44
+
+    var onStyleChange: ((ScribbleStyle) -> Void)?
+    var onClear: (() -> Void)?
+
+    private var colorIndex = 0
+    private var widthIndex = 1
+    private var colorChips: [Chip] = []
+    private var widthChips: [Chip] = []
+    private let clearButton = NSButton(title: "清除", target: nil, action: nil)
+
+    private static let canvasColors: [NSColor] = [
+        NSColor.systemYellow.withAlphaComponent(0.45),
+        NSColor.systemRed.withAlphaComponent(0.5),
+        NSColor.systemBlue.withAlphaComponent(0.5),
+        NSColor.systemGreen.withAlphaComponent(0.5),
+        NSColor.black.withAlphaComponent(0.6),
+    ]
+    private static let chipColors: [NSColor] = [
+        .systemYellow, .systemRed, .systemBlue, .systemGreen, .black,
+    ]
+    private static let widths: [CGFloat] = [8, 16, 24]
+
+    var style: ScribbleStyle {
+        ScribbleStyle(color: Self.canvasColors[colorIndex], width: Self.widths[widthIndex])
+    }
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        wantsLayer = true
+        layer?.backgroundColor = NSColor(white: 0.12, alpha: 0.88).cgColor
+        for (index, color) in Self.chipColors.enumerated() {
+            let chip = Chip(kind: .color(color))
+            chip.onPick = { [weak self] in self?.pickColor(index) }
+            colorChips.append(chip)
+            addSubview(chip)
+        }
+        for (index, width) in Self.widths.enumerated() {
+            let chip = Chip(kind: .width(width))
+            chip.onPick = { [weak self] in self?.pickWidth(index) }
+            widthChips.append(chip)
+            addSubview(chip)
+        }
+        clearButton.target = self
+        clearButton.action = #selector(clearTapped)
+        clearButton.bezelStyle = .rounded
+        clearButton.font = .systemFont(ofSize: 11)
+        addSubview(clearButton)
+        refreshSelection()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func layout() {
+        super.layout()
+        var x: CGFloat = 10
+        let y: CGFloat = 10
+        let size: CGFloat = 24
+        for chip in colorChips {
+            chip.frame = NSRect(x: x, y: y, width: size, height: size)
+            x += size + 6
+        }
+        x += 12
+        for chip in widthChips {
+            chip.frame = NSRect(x: x, y: y, width: size, height: size)
+            x += size + 6
+        }
+        let clearWidth: CGFloat = 52
+        clearButton.frame = NSRect(
+            x: max(x + 8, bounds.width - clearWidth - 8),
+            y: 8,
+            width: clearWidth,
+            height: 28
+        )
+    }
+
+    private func pickColor(_ index: Int) {
+        colorIndex = index
+        refreshSelection()
+        onStyleChange?(style)
+    }
+
+    private func pickWidth(_ index: Int) {
+        widthIndex = index
+        refreshSelection()
+        onStyleChange?(style)
+    }
+
+    private func refreshSelection() {
+        for (index, chip) in colorChips.enumerated() { chip.selected = index == colorIndex }
+        for (index, chip) in widthChips.enumerated() { chip.selected = index == widthIndex }
+    }
+
+    @objc private func clearTapped() { onClear?() }
+}
+
+enum EraserShape {
+    case circle
+    case rectangle
+}
+
+struct EraserStyle {
+    var shape: EraserShape
+    var width: CGFloat
+
+    static let initial = EraserStyle(shape: .circle, width: 64)
+}
+
+final class RevealToolbar: NSView {
+    static let barHeight: CGFloat = 44
+
+    var onStyleChange: ((EraserStyle) -> Void)?
+    var onReset: (() -> Void)?
+
+    private var shape: EraserShape = .circle
+    private var widthIndex = 1
+    private var shapeChips: [Chip] = []
+    private var widthChips: [Chip] = []
+    private let resetButton = NSButton(title: "重置", target: nil, action: nil)
+    private static let widths: [CGFloat] = [36, 64, 96]
+
+    var style: EraserStyle {
+        EraserStyle(shape: shape, width: Self.widths[widthIndex])
+    }
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        wantsLayer = true
+        layer?.backgroundColor = NSColor(white: 0.12, alpha: 0.88).cgColor
+        let circle = Chip(kind: .shapeCircle)
+        circle.onPick = { [weak self] in self?.pickShape(.circle) }
+        let rect = Chip(kind: .shapeRect)
+        rect.onPick = { [weak self] in self?.pickShape(.rectangle) }
+        shapeChips = [circle, rect]
+        shapeChips.forEach(addSubview)
+        for (index, chipSize) in [CGFloat(8), 14, 20].enumerated() {
+            let chip = Chip(kind: .width(chipSize))
+            chip.onPick = { [weak self] in self?.pickWidth(index) }
+            widthChips.append(chip)
+            addSubview(chip)
+        }
+        resetButton.target = self
+        resetButton.action = #selector(resetTapped)
+        resetButton.bezelStyle = .rounded
+        resetButton.font = .systemFont(ofSize: 11)
+        addSubview(resetButton)
+        refreshSelection()
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func layout() {
+        super.layout()
+        var x: CGFloat = 10
+        let y: CGFloat = 10
+        let size: CGFloat = 24
+        for chip in shapeChips {
+            chip.frame = NSRect(x: x, y: y, width: size, height: size)
+            x += size + 6
+        }
+        x += 12
+        for chip in widthChips {
+            chip.frame = NSRect(x: x, y: y, width: size, height: size)
+            x += size + 6
+        }
+        let resetWidth: CGFloat = 52
+        resetButton.frame = NSRect(
+            x: max(x + 8, bounds.width - resetWidth - 8),
+            y: 8,
+            width: resetWidth,
+            height: 28
+        )
+    }
+
+    private func pickShape(_ shape: EraserShape) {
+        self.shape = shape
+        refreshSelection()
+        onStyleChange?(style)
+    }
+
+    private func pickWidth(_ index: Int) {
+        widthIndex = index
+        refreshSelection()
+        onStyleChange?(style)
+    }
+
+    private func refreshSelection() {
+        shapeChips[0].selected = shape == .circle
+        shapeChips[1].selected = shape == .rectangle
+        for (index, chip) in widthChips.enumerated() { chip.selected = index == widthIndex }
+    }
+
+    @objc private func resetTapped() { onReset?() }
+}
+
+final class ScribbleOverlay: NSView {
+    var style = ScribbleStyle.initial
+    private var strokes: [Stroke] = []
+    private var live: Stroke?
+
+    private struct Stroke {
+        var points: [NSPoint]
+        var color: NSColor
+        var width: CGFloat
+    }
+
+    override var isOpaque: Bool { false }
+
+    func begin(at point: NSPoint) {
+        live = Stroke(points: [point], color: style.color, width: style.width)
+        needsDisplay = true
+    }
+
+    func extend(to point: NSPoint) {
+        guard var stroke = live, let last = stroke.points.last else { return }
+        if hypot(point.x - last.x, point.y - last.y) < 1.5 { return }
+        stroke.points.append(point)
+        live = stroke
+        needsDisplay = true
+    }
+
+    func end() {
+        if let live { strokes.append(live) }
+        live = nil
+        needsDisplay = true
+    }
+
+    func clear() {
+        strokes.removeAll()
+        live = nil
+        needsDisplay = true
+    }
+
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
+    override func draw(_ dirtyRect: NSRect) {
+        for stroke in strokes { draw(stroke) }
+        if let live { draw(live) }
+    }
+
+    private func draw(_ stroke: Stroke) {
+        stroke.color.setStroke()
+        path(stroke.points, width: stroke.width).stroke()
+    }
+
+    private func path(_ points: [NSPoint], width: CGFloat) -> NSBezierPath {
+        let path = NSBezierPath()
+        path.lineWidth = width
+        path.lineCapStyle = .round
+        path.lineJoinStyle = .round
+        guard let first = points.first else { return path }
+        path.move(to: first)
+        if points.count == 1 {
+            path.line(to: NSPoint(x: first.x + 0.1, y: first.y))
+            return path
+        }
+        for point in points.dropFirst() {
+            path.line(to: point)
+        }
+        return path
+    }
+}
+
+final class RevealOverlay: NSView {
+    var style = EraserStyle.initial
+    private var strokes: [Stroke] = []
+    private var live: Stroke?
+
+    private struct Stroke {
+        var points: [NSPoint]
+        var width: CGFloat
+        var shape: EraserShape
+    }
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        wantsLayer = true
+        layer?.isOpaque = false
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
+
+    override var isOpaque: Bool { false }
+
+    func begin(at point: NSPoint) {
+        live = Stroke(points: [point], width: style.width, shape: style.shape)
+        needsDisplay = true
+    }
+
+    func extend(to point: NSPoint) {
+        guard var stroke = live, let last = stroke.points.last else { return }
+        if hypot(point.x - last.x, point.y - last.y) < 1.5 { return }
+        stroke.points.append(point)
+        live = stroke
+        needsDisplay = true
+    }
+
+    func end() {
+        if let live { strokes.append(live) }
+        live = nil
+        needsDisplay = true
+    }
+
+    func reset() {
+        strokes.removeAll()
+        live = nil
+        needsDisplay = true
+    }
+
+    override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
+    override func draw(_ dirtyRect: NSRect) {
+        let titleBand = bounds.height * 0.18
+        let fog = NSRect(x: 0, y: 0, width: bounds.width, height: max(0, bounds.height - titleBand))
+        NSColor(white: 0.78, alpha: 0.94).setFill()
+        fog.fill()
+        guard let ctx = NSGraphicsContext.current else { return }
+        ctx.saveGraphicsState()
+        ctx.compositingOperation = .destinationOut
+        NSColor.black.setStroke()
+        for stroke in strokes { erase(stroke) }
+        if let live { erase(live) }
+        ctx.restoreGraphicsState()
+    }
+
+    private func erase(_ stroke: Stroke) {
+        let path = NSBezierPath()
+        path.lineWidth = stroke.width
+        if stroke.shape == .circle {
+            path.lineCapStyle = .round
+            path.lineJoinStyle = .round
+        } else {
+            path.lineCapStyle = .square
+            path.lineJoinStyle = .miter
+        }
+        guard let first = stroke.points.first else { return }
+        path.move(to: first)
+        if stroke.points.count == 1 {
+            path.line(to: NSPoint(x: first.x + 0.1, y: first.y))
+        } else {
+            for point in stroke.points.dropFirst() {
+                path.line(to: point)
+            }
+        }
+        path.stroke()
+    }
+}
+
 final class HoverView: NSView {
     var onInside: ((Bool) -> Void)?
     var onSettings: (() -> Void)?
+    var onCopyInbox: (() -> Void)?
     var onDragMoved: (() -> Void)?
     var onDragEnded: (() -> Void)?
+    var onMarking: ((Bool) -> Void)?
+    var studyMode: StudyMode? {
+        didSet { applyStudyChrome() }
+    }
     var imageView = NSImageView()
+    private let scribble = ScribbleOverlay()
+    private let reveal = RevealOverlay()
+    private let toolbar = PenToolbar()
+    private let revealBar = RevealToolbar()
     private var nearest = false
     private var dragGrab: NSPoint?
     private var dragMonitor: Any?
     private var dragGlobalMonitor: Any?
+    private var marking = false
+    private var markOutside = false
+    private var showsStudyBar: Bool { studyMode != nil }
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         imageView.imageScaling = .scaleProportionallyUpOrDown
         imageView.wantsLayer = true
         addSubview(imageView)
+        scribble.wantsLayer = false
+        addSubview(scribble)
+        addSubview(reveal)
+        toolbar.isHidden = true
+        revealBar.isHidden = true
+        scribble.isHidden = true
+        reveal.isHidden = true
+        toolbar.onStyleChange = { [weak self] style in
+            self?.scribble.style = style
+        }
+        toolbar.onClear = { [weak self] in self?.clearStudy() }
+        scribble.style = toolbar.style
+        revealBar.onStyleChange = { [weak self] style in
+            self?.reveal.style = style
+        }
+        revealBar.onReset = { [weak self] in self?.reveal.reset() }
+        reveal.style = revealBar.style
+        addSubview(toolbar)
+        addSubview(revealBar)
+    }
+
+    func applyStudyChrome() {
+        toolbar.isHidden = studyMode != .annotate
+        revealBar.isHidden = studyMode != .reveal
+        scribble.isHidden = studyMode != .annotate
+        reveal.isHidden = studyMode != .reveal
+        needsLayout = true
     }
 
     func setNearestScaling(_ enabled: Bool) {
@@ -472,8 +1007,28 @@ final class HoverView: NSView {
 
     override func layout() {
         super.layout()
-        imageView.frame = bounds
+        let bar = showsStudyBar ? PenToolbar.barHeight : 0
+        let imageFrame = NSRect(
+            x: 0,
+            y: bar,
+            width: bounds.width,
+            height: max(0, bounds.height - bar)
+        )
+        imageView.frame = imageFrame
+        scribble.frame = imageFrame
+        reveal.frame = imageFrame
+        toolbar.frame = NSRect(x: 0, y: 0, width: bounds.width, height: bar)
+        revealBar.frame = NSRect(x: 0, y: 0, width: bounds.width, height: bar)
         applyScaling()
+    }
+
+    func clearStudy() {
+        scribble.clear()
+        reveal.reset()
+    }
+
+    static func extraHeight(for _: StudyMode) -> CGFloat {
+        PenToolbar.barHeight
     }
 
     override func updateTrackingAreas() {
@@ -493,21 +1048,58 @@ final class HoverView: NSView {
     override func mouseExited(with event: NSEvent) { onInside?(false) }
 
     override func mouseDown(with event: NSEvent) {
+        let local = convert(event.locationInWindow, from: nil)
+        if showsStudyBar, local.y < PenToolbar.barHeight {
+            beginWindowDrag()
+            return
+        }
+        if studyMode != nil, !event.modifierFlags.contains(.option) {
+            beginMark()
+            return
+        }
+        beginWindowDrag()
+    }
+
+    override func mouseUp(with event: NSEvent) {
+        if marking {
+            finishMark()
+        } else {
+            finishDrag()
+        }
+    }
+
+    private func beginWindowDrag() {
         guard let window else { return }
         let loc = NSEvent.mouseLocation
         dragGrab = NSPoint(x: loc.x - window.frame.minX, y: loc.y - window.frame.minY)
-        stopDragMonitors()
-        dragMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDragged, .leftMouseUp]) { [weak self] ev in
-            self?.handleDrag(ev)
-            return ev.type == .leftMouseUp ? ev : nil
-        }
-        dragGlobalMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDragged, .leftMouseUp]) { [weak self] ev in
+        startMonitors { [weak self] ev in
             self?.handleDrag(ev)
         }
     }
 
-    override func mouseUp(with event: NSEvent) {
-        finishDrag()
+    private func beginMark() {
+        marking = true
+        markOutside = false
+        onMarking?(true)
+        if let point = pointInOverlay() {
+            startStroke(at: point)
+        } else {
+            markOutside = true
+        }
+        startMonitors { [weak self] ev in
+            self?.handleMark(ev)
+        }
+    }
+
+    private func startMonitors(handler: @escaping (NSEvent) -> Void) {
+        stopDragMonitors()
+        dragMonitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDragged, .leftMouseUp]) { ev in
+            handler(ev)
+            return ev.type == .leftMouseUp ? ev : nil
+        }
+        dragGlobalMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDragged, .leftMouseUp]) { ev in
+            handler(ev)
+        }
     }
 
     private func handleDrag(_ event: NSEvent) {
@@ -530,6 +1122,66 @@ final class HoverView: NSView {
         }
     }
 
+    private func handleMark(_ event: NSEvent) {
+        if event.type == .leftMouseDragged {
+            if let point = pointInOverlay() {
+                if markOutside {
+                    markOutside = false
+                    startStroke(at: point)
+                } else {
+                    extendStroke(to: point)
+                }
+            } else if !markOutside {
+                markOutside = true
+                endStroke()
+            }
+        } else if event.type == .leftMouseUp {
+            finishMark()
+        }
+    }
+
+    private func startStroke(at point: NSPoint) {
+        if studyMode == .reveal {
+            reveal.begin(at: point)
+        } else {
+            scribble.begin(at: point)
+        }
+    }
+
+    private func extendStroke(to point: NSPoint) {
+        if studyMode == .reveal {
+            reveal.extend(to: point)
+        } else {
+            scribble.extend(to: point)
+        }
+    }
+
+    private func endStroke() {
+        if studyMode == .reveal {
+            reveal.end()
+        } else {
+            scribble.end()
+        }
+    }
+
+    private func finishMark() {
+        guard marking else { return }
+        endStroke()
+        marking = false
+        markOutside = false
+        stopDragMonitors()
+        onMarking?(false)
+    }
+
+    private func pointInOverlay() -> NSPoint? {
+        guard let window else { return nil }
+        let overlay: NSView = studyMode == .reveal ? reveal : scribble
+        let win = window.convertPoint(fromScreen: NSEvent.mouseLocation)
+        let point = overlay.convert(win, from: nil)
+        guard overlay.bounds.contains(point) else { return nil }
+        return point
+    }
+
     private func finishDrag() {
         guard dragMonitor != nil || dragGlobalMonitor != nil || dragGrab != nil else { return }
         stopDragMonitors()
@@ -550,9 +1202,23 @@ final class HoverView: NSView {
 
     override func rightMouseDown(with event: NSEvent) {
         let menu = NSMenu()
+        if studyMode == .annotate {
+            let clear = NSMenuItem(title: "清除标注", action: #selector(clearStudyMenu), keyEquivalent: "")
+            clear.target = self
+            menu.addItem(clear)
+            menu.addItem(.separator())
+        } else if studyMode == .reveal {
+            let reset = NSMenuItem(title: "重置遮罩", action: #selector(clearStudyMenu), keyEquivalent: "")
+            reset.target = self
+            menu.addItem(reset)
+            menu.addItem(.separator())
+        }
         let settings = NSMenuItem(title: "设置…", action: #selector(openSettings), keyEquivalent: ",")
         settings.target = self
         menu.addItem(settings)
+        let copyInbox = NSMenuItem(title: "复制收件箱地址", action: #selector(copyInboxURL), keyEquivalent: "")
+        copyInbox.target = self
+        menu.addItem(copyInbox)
         menu.addItem(.separator())
         menu.addItem(
             NSMenuItem(
@@ -565,19 +1231,25 @@ final class HoverView: NSView {
     }
 
     @objc private func openSettings() { onSettings?() }
+    @objc private func copyInboxURL() { onCopyInbox?() }
+    @objc private func clearStudyMenu() { clearStudy() }
 
     override func hitTest(_ point: NSPoint) -> NSView? {
+        if showsStudyBar, point.y < PenToolbar.barHeight {
+            return super.hitTest(point)
+        }
         guard let hit = super.hitTest(point), let image = imageView.image else {
             return super.hitTest(point)
         }
-        let size = bounds.size
-        guard size.width > 0, size.height > 0 else { return hit }
+        let frame = imageView.frame
+        guard frame.width > 0, frame.height > 0, frame.contains(point) else { return hit }
+        let local = NSPoint(x: point.x - frame.minX, y: point.y - frame.minY)
         var rect = CGRect(origin: .zero, size: image.size)
         guard let cg = image.cgImage(forProposedRect: &rect, context: nil, hints: nil) else {
             return hit
         }
-        let px = min(max(Int(point.x / size.width * CGFloat(cg.width)), 0), cg.width - 1)
-        let py = min(max(Int((1 - point.y / size.height) * CGFloat(cg.height)), 0), cg.height - 1)
+        let px = min(max(Int(local.x / frame.width * CGFloat(cg.width)), 0), cg.width - 1)
+        let py = min(max(Int((1 - local.y / frame.height) * CGFloat(cg.height)), 0), cg.height - 1)
         guard let provider = cg.dataProvider, let data = provider.data else { return hit }
         let ptr = CFDataGetBytePtr(data)
         let info = cg.alphaInfo
@@ -610,15 +1282,23 @@ final class SettingsController: NSObject {
     private let zoomLabel: NSTextField
     private let minutesField: NSTextField
     var onPreviewZoom: ((Double) -> Void)?
-    var onApply: ((Double, Double) -> Void)?
+    var onApply: ((Double, Double, Int, Double, Double, StudyMode) -> Void)?
+    private let repeatCountField: NSTextField
+    private let repeatWindowField: NSTextField
+    private let hoverExitField: NSTextField
+    private let studyPopup: NSPopUpButton
 
-    init(zoom: Double, minutes: Double) {
+    init(zoom: Double, minutes: Double, repeatAfter: Int, repeatWindow: Double, hoverExit: Double, studyMode: StudyMode) {
         zoomSlider = NSSlider(value: zoom, minValue: 0.5, maxValue: 2.5, target: nil, action: nil)
         zoomSlider.isContinuous = true
         zoomLabel = NSTextField(labelWithString: "")
         minutesField = NSTextField(string: String(format: "%g", minutes))
+        repeatCountField = NSTextField(string: "\(repeatAfter)")
+        repeatWindowField = NSTextField(string: String(format: "%g", repeatWindow))
+        hoverExitField = NSTextField(string: String(format: "%g", hoverExit))
+        studyPopup = NSPopUpButton(frame: .zero, pullsDown: false)
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 360, height: 210),
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 380),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -627,40 +1307,60 @@ final class SettingsController: NSObject {
         window.title = "DeskPet 设置"
         window.level = .floating
         window.isReleasedWhenClosed = false
+        studyPopup.addItems(withTitles: ["标注（划重点）", "揭开（擦开遮罩）"])
+        applyStudyMode(studyMode)
 
-        let content = NSView(frame: NSRect(x: 0, y: 0, width: 360, height: 210))
+        let content = NSView(frame: NSRect(x: 0, y: 0, width: 360, height: 380))
         func label(_ text: String, y: CGFloat) -> NSTextField {
             let field = NSTextField(labelWithString: text)
             field.frame = NSRect(x: 20, y: y, width: 320, height: 18)
             return field
         }
-        content.addSubview(label("缩放", y: 168))
-        zoomSlider.frame = NSRect(x: 20, y: 140, width: 240, height: 24)
+        content.addSubview(label("缩放", y: 340))
+        zoomSlider.frame = NSRect(x: 20, y: 312, width: 240, height: 24)
         zoomSlider.target = self
         zoomSlider.action = #selector(zoomChanged)
-        zoomLabel.frame = NSRect(x: 270, y: 142, width: 70, height: 20)
+        zoomLabel.frame = NSRect(x: 270, y: 314, width: 70, height: 20)
         content.addSubview(zoomSlider)
         content.addSubview(zoomLabel)
-        content.addSubview(label("多久露出鄙视眼神（分钟，0 为关闭）", y: 108))
-        minutesField.frame = NSRect(x: 20, y: 80, width: 120, height: 24)
+        content.addSubview(label("长时间无互动后切换表情（分钟，0 为关闭）", y: 280))
+        minutesField.frame = NSRect(x: 20, y: 252, width: 120, height: 24)
         minutesField.placeholderString = "10"
         content.addSubview(minutesField)
+        content.addSubview(label("短期内多次悬停（次数 / 统计窗口分钟，0 关闭）", y: 218))
+        repeatCountField.frame = NSRect(x: 20, y: 190, width: 70, height: 24)
+        repeatCountField.placeholderString = "5"
+        repeatWindowField.frame = NSRect(x: 100, y: 190, width: 70, height: 24)
+        repeatWindowField.placeholderString = "1"
+        content.addSubview(repeatCountField)
+        content.addSubview(repeatWindowField)
+        content.addSubview(label("移开后多久才退出悬停（秒）", y: 156))
+        hoverExitField.frame = NSRect(x: 20, y: 128, width: 120, height: 24)
+        hoverExitField.placeholderString = "1"
+        content.addSubview(hoverExitField)
+        content.addSubview(label("学习方式", y: 94))
+        studyPopup.frame = NSRect(x: 20, y: 66, width: 240, height: 26)
+        content.addSubview(studyPopup)
         let hint = NSTextField(labelWithString: "拖到屏幕边缘会贴边探头")
         hint.textColor = .secondaryLabelColor
-        hint.frame = NSRect(x: 20, y: 48, width: 320, height: 18)
+        hint.frame = NSRect(x: 20, y: 40, width: 320, height: 18)
         content.addSubview(hint)
         let save = NSButton(title: "保存", target: self, action: #selector(saveTapped))
         save.bezelStyle = .rounded
-        save.frame = NSRect(x: 250, y: 16, width: 90, height: 28)
+        save.frame = NSRect(x: 250, y: 10, width: 90, height: 28)
         content.addSubview(save)
         window.contentView = content
         window.delegate = self
         refreshZoomLabel()
     }
 
-    func show(zoom: Double, minutes: Double, on screen: NSScreen?) {
+    func show(zoom: Double, minutes: Double, repeatAfter: Int, repeatWindow: Double, hoverExit: Double, studyMode: StudyMode, on screen: NSScreen?) {
         zoomSlider.doubleValue = zoom
         minutesField.stringValue = String(format: "%g", minutes)
+        repeatCountField.stringValue = "\(repeatAfter)"
+        repeatWindowField.stringValue = String(format: "%g", repeatWindow)
+        hoverExitField.stringValue = String(format: "%g", hoverExit)
+        applyStudyMode(studyMode)
         refreshZoomLabel()
         if let visible = screen?.visibleFrame ?? NSScreen.main?.visibleFrame {
             let size = window.frame.size
@@ -686,12 +1386,39 @@ final class SettingsController: NSObject {
     }
 
     private func persist() {
-        onApply?(zoomSlider.doubleValue, parsedMinutes())
+        onApply?(
+            zoomSlider.doubleValue,
+            parsedMinutes(),
+            parsedRepeatAfter(),
+            parsedRepeatWindow(),
+            parsedHoverExit(),
+            parsedStudyMode()
+        )
     }
 
     private func parsedMinutes() -> Double {
         let value = Double(minutesField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 10
         return max(0, value)
+    }
+
+    private func parsedRepeatAfter() -> Int {
+        max(0, Int(repeatCountField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 5)
+    }
+
+    private func parsedRepeatWindow() -> Double {
+        max(0, Double(repeatWindowField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 1)
+    }
+
+    private func parsedHoverExit() -> Double {
+        max(0, Double(hoverExitField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 1)
+    }
+
+    private func parsedStudyMode() -> StudyMode {
+        studyPopup.indexOfSelectedItem == 1 ? .reveal : .annotate
+    }
+
+    private func applyStudyMode(_ mode: StudyMode) {
+        studyPopup.selectItem(at: mode == .reveal ? 1 : 0)
     }
 
     private func refreshZoomLabel() {
@@ -713,20 +1440,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var pack: CharacterPack!
     private var peekLeft: NSImage!
     private var peekHoverLeft: NSImage!
-    private var peekDisdainLeft: NSImage!
+    private var peekAwayLeft: NSImage!
+    private var peekInboxLeft: NSImage!
+    private var peekRepeatHoverLeft: NSImage!
+    private var peekRevealLeft: NSImage!
+    private var inboxQueue: InboxQueue!
+    private var repeatHoverClock = RepeatHoverClock()
+    private var inboxServer: InboxServer?
+    private var sessionInbox: URL?
     private var cards: [URL] = []
     private var lastCard: URL?
     private var petInside = false
     private var cardInside = false
+    private var cardMarking = false
+    private var hoverSessionInside = false
+    private var hoverSessionLeaveWork: DispatchWorkItem?
+    private let hoverSessionGap: TimeInterval = 0.18
     private var hideWork: DispatchWorkItem?
     private var showing = false
-    private var disdainClock = DisdainClock()
+    private var awayClock = AwayClock()
     private var docked: DockedEdge = .none
     private var dragging = false
     private var tick: Timer?
     private var config: Config!
     private var configURL: URL!
     private var settings: SettingsController?
+    private var cardImageSize = NSSize.zero
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let root = deskpetRoot()
@@ -736,22 +1475,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let spec = loadJSON(CharacterSpec.self, from: packDir.appendingPathComponent("character.json"))
         let idle = requireImage(packDir.appendingPathComponent(spec.idle))
         let hover = requireImage(packDir.appendingPathComponent(spec.hover))
+        let peek = spec.peek.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle
+        let peekHover = spec.peekHover.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? hover
         pack = CharacterPack(
             id: spec.id ?? config.character,
             name: spec.name ?? config.character,
             idle: idle,
             hover: hover,
-            peek: spec.peek.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
-            peekHover: spec.peekHover.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? hover,
-            peekDisdain: spec.peekDisdain.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
-            disdain: spec.disdain.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
+            peek: peek,
+            peekHover: peekHover,
+            peekAway: spec.peekAway.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
+            inbox: spec.inbox.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
+            peekInbox: spec.peekInbox.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? peek,
+            repeatHover: spec.repeatHover.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
+            peekRepeatHover: spec.peekRepeatHover.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? peek,
+            reveal: spec.reveal.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? hover,
+            peekReveal: spec.peekReveal.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? peekHover,
+            away: spec.away.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
             size: CGFloat(spec.size ?? 200),
             nearest: spec.scale == "nearest",
             peekScale: CGFloat(spec.peekScale ?? 0.5)
         )
         peekLeft = flippedHorizontally(pack.peek)
         peekHoverLeft = flippedHorizontally(pack.peekHover)
-        peekDisdainLeft = flippedHorizontally(pack.peekDisdain)
+        peekAwayLeft = flippedHorizontally(pack.peekAway)
+        peekInboxLeft = flippedHorizontally(pack.peekInbox)
+        peekRepeatHoverLeft = flippedHorizontally(pack.peekRepeatHover)
+        peekRevealLeft = flippedHorizontally(pack.peekReveal)
+        inboxQueue = InboxQueue(directory: root.appendingPathComponent("inbox", isDirectory: true))
+        inboxQueue.loadFromDisk()
+        startInboxServer()
         let cardsRoot = URL(fileURLWithPath: config.cardsDir, isDirectory: true, relativeTo: root)
             .absoluteURL
             .standardizedFileURL
@@ -767,14 +1520,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.syncHover()
         }
         petView.onSettings = { [weak self] in self?.openSettings() }
+        petView.onCopyInbox = { [weak self] in self?.copyInboxURL() }
         petView.onDragMoved = { [weak self] in self?.updateDockWhileDragging() }
         petView.onDragEnded = { [weak self] in self?.endDrag() }
 
         cardView = HoverView(frame: .zero)
+        cardView.studyMode = config.studyMode
         cardView.onInside = { [weak self] inside in
             self?.cardInside = inside
             self?.syncHover()
         }
+        cardView.onMarking = { [weak self] marking in
+            self?.cardMarking = marking
+            self?.syncHover()
+        }
+        cardView.onSettings = { [weak self] in self?.openSettings() }
+        cardView.onCopyInbox = { [weak self] in self?.copyInboxURL() }
 
         petPanel = makePanel()
         petPanel.contentView = petView
@@ -792,7 +1553,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         petPanel.orderFrontRegardless()
         tick = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
-            self?.checkDisdain()
+            self?.checkClocks()
         }
         NotificationCenter.default.addObserver(
             forName: NSApplication.didChangeScreenParametersNotification,
@@ -830,22 +1591,75 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return panel
     }
 
+    private func isRepeatHoverNow() -> Bool {
+        repeatHoverClock.isActive(
+            afterHovers: config.repeatHoverAfter,
+            windowMinutes: config.repeatHoverWindowMinutes
+        )
+    }
+
     private func poseImage() -> NSImage {
         let sidePeek = docked == .left || docked == .right
-        if sidePeek { return peekImage() }
-        if showing { return pack.hover }
-        if disdainClock.isDisdain { return pack.disdain }
+        let hasMail = !inboxQueue.isEmpty
+        let repeating = isRepeatHoverNow()
+        if sidePeek { return peekImage(hasMail: hasMail, repeating: repeating) }
+        if showing {
+            if config.studyMode == .reveal { return pack.reveal }
+            if repeating { return pack.repeatHover }
+            return pack.hover
+        }
+        if hasMail { return pack.inbox }
+        if repeating { return pack.repeatHover }
+        if awayClock.isAway { return pack.away }
         return pack.idle
     }
 
-    private func peekImage() -> NSImage {
+    private func peekImage(hasMail: Bool, repeating: Bool) -> NSImage {
         if showing {
+            if config.studyMode == .reveal {
+                return docked == .left ? peekRevealLeft : pack.peekReveal
+            }
+            if repeating {
+                return docked == .left ? peekRepeatHoverLeft : pack.peekRepeatHover
+            }
             return docked == .left ? peekHoverLeft : pack.peekHover
         }
-        if disdainClock.isDisdain {
-            return docked == .left ? peekDisdainLeft : pack.peekDisdain
+        if hasMail {
+            return docked == .left ? peekInboxLeft : pack.peekInbox
+        }
+        if repeating {
+            return docked == .left ? peekRepeatHoverLeft : pack.peekRepeatHover
+        }
+        if awayClock.isAway {
+            return docked == .left ? peekAwayLeft : pack.peekAway
         }
         return docked == .left ? peekLeft : pack.peek
+    }
+
+    private func startInboxServer() {
+        let port = config.inboxPort
+        guard port > 0 else { return }
+        let server = InboxServer()
+        server.enqueue = { [weak self] data in
+            guard let self else { return .invalidImage }
+            var result = InboxEnqueueResult.invalidImage
+            DispatchQueue.main.sync {
+                result = self.inboxQueue.enqueue(data)
+                if case .accepted = result {
+                    self.applyPose()
+                }
+            }
+            return result
+        }
+        server.count = { [weak self] in
+            guard let self else { return 0 }
+            if Thread.isMainThread { return self.inboxQueue.count }
+            var n = 0
+            DispatchQueue.main.sync { n = self.inboxQueue.count }
+            return n
+        }
+        server.start(port: port)
+        inboxServer = server
     }
 
     private func displaySize(for image: NSImage, peeking: Bool) -> NSSize {
@@ -947,52 +1761,89 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func resetInteract() {
-        let wasDisdain = disdainClock.isDisdain
-        disdainClock.markInteracted()
-        if wasDisdain, !showing { applyPose() }
+        let wasAway = awayClock.isAway
+        awayClock.markInteracted()
+        if wasAway, !showing { applyPose() }
     }
 
-    private func checkDisdain() {
-        let wasDisdain = disdainClock.isDisdain
-        disdainClock.tick(
-            afterMinutes: config.disdainAfterMinutes,
+    private func checkClocks() {
+        let wasAway = awayClock.isAway
+        let wasRepeating = isRepeatHoverNow()
+        awayClock.tick(
+            afterMinutes: config.awayAfterMinutes,
             paused: petInside || showing
         )
-        if disdainClock.isDisdain, !wasDisdain {
+        repeatHoverClock.tick(windowMinutes: config.repeatHoverWindowMinutes)
+        if awayClock.isAway != wasAway || isRepeatHoverNow() != wasRepeating {
             applyPose()
         }
     }
 
     private func syncHover() {
         hideWork?.cancel()
-        if petInside || cardInside {
-            disdainClock.hoverChanged(inside: true)
+        hoverSessionLeaveWork?.cancel()
+        let inside = petInside || cardInside || cardMarking
+        if inside {
+            awayClock.hoverChanged(inside: true)
+            let repeatingBefore = isRepeatHoverNow()
+            if !hoverSessionInside {
+                hoverSessionInside = true
+                repeatHoverClock.hoverBegan()
+            }
             if !showing {
                 showing = true
                 applyPose()
                 showCard()
+            } else if isRepeatHoverNow() != repeatingBefore {
+                applyPose()
             }
             return
         }
-        disdainClock.hoverChanged(inside: false)
+        let leaveSession = DispatchWorkItem { [weak self] in
+            self?.hoverSessionInside = false
+        }
+        hoverSessionLeaveWork = leaveSession
+        DispatchQueue.main.asyncAfter(deadline: .now() + hoverSessionGap, execute: leaveSession)
         let work = DispatchWorkItem { [weak self] in
-            guard let self, !self.petInside, !self.cardInside else { return }
+            guard let self, !self.petInside, !self.cardInside, !self.cardMarking else { return }
+            self.awayClock.hoverChanged(inside: false)
             self.showing = false
+            self.hoverSessionInside = false
+            self.cardView.clearStudy()
             self.cardPanel.orderOut(nil)
+            if let url = self.sessionInbox {
+                self.inboxQueue.dequeue(url)
+                self.sessionInbox = nil
+            }
             self.applyPose()
         }
         hideWork = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18, execute: work)
+        DispatchQueue.main.asyncAfter(
+            deadline: .now() + max(0, config.hoverExitSeconds),
+            execute: work
+        )
     }
 
     private func showCard() {
-        guard let cardURL = nextCard(), let image = NSImage(contentsOf: cardURL) else { return }
+        guard let image = inboxCard() ?? localCard() else { return }
         let screen = petVisibleFrame()
-        let maxHeight = (screen?.height ?? 800) * 0.72
-        let size = fitted(image, maxWidth: CGFloat(config.cardMaxWidth), maxHeight: maxHeight)
+        let inbox = sessionInbox != nil
+        let maxHeight = (screen?.height ?? 800) * (inbox ? 0.82 : 0.72)
+        let maxWidth: CGFloat
+        if inbox, let screen {
+            let reserved = petPanel.frame.width + 48
+            maxWidth = max(CGFloat(config.cardMaxWidth), min(screen.width - reserved, screen.width * 0.78))
+        } else {
+            maxWidth = CGFloat(config.cardMaxWidth)
+        }
+        let size = fitted(image, maxWidth: maxWidth, maxHeight: maxHeight)
+        cardImageSize = size
+        let extra = HoverView.extraHeight(for: config.studyMode)
+        let panelSize = NSSize(width: size.width, height: size.height + extra)
+        cardView.clearStudy()
         cardView.imageView.image = image
-        cardPanel.setContentSize(size)
-        cardView.frame = NSRect(origin: .zero, size: size)
+        cardPanel.setContentSize(panelSize)
+        cardView.frame = NSRect(origin: .zero, size: panelSize)
         positionCard()
         cardPanel.orderFrontRegardless()
     }
@@ -1011,6 +1862,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         cardPanel.setFrameOrigin(origin)
     }
 
+    private func inboxCard() -> NSImage? {
+        while let url = inboxQueue.head {
+            if let image = NSImage(contentsOf: url) {
+                sessionInbox = url
+                return image
+            }
+            fputs("DeskPet: skip unreadable inbox file \(url.lastPathComponent)\n", stderr)
+            inboxQueue.dequeue(url)
+        }
+        sessionInbox = nil
+        return nil
+    }
+
+    private func localCard() -> NSImage? {
+        sessionInbox = nil
+        guard let cardURL = nextCard() else { return nil }
+        return NSImage(contentsOf: cardURL)
+    }
+
     private func nextCard() -> URL? {
         let pool = cards.filter { $0 != lastCard }
         let pick = (pool.isEmpty ? cards : pool).randomElement()
@@ -1018,25 +1888,74 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return pick
     }
 
+    private func copyInboxURL() {
+        let root = deskpetRoot()
+        let urlFile = root.appendingPathComponent("inbox").appendingPathComponent("public-url.txt")
+        let text: String
+        if let stored = try? String(contentsOf: urlFile, encoding: .utf8) {
+            let trimmed = stored.trimmingCharacters(in: .whitespacesAndNewlines)
+            text = trimmed.isEmpty ? "" : trimmed
+        } else {
+            text = ""
+        }
+        if text.isEmpty {
+            fputs("DeskPet: public inbox URL not ready yet\n", stderr)
+            return
+        }
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
+    }
+
     private func openSettings() {
         if settings == nil {
-            let panel = SettingsController(zoom: config.zoom, minutes: config.disdainAfterMinutes)
+            let panel = SettingsController(
+                zoom: config.zoom,
+                minutes: config.awayAfterMinutes,
+                repeatAfter: config.repeatHoverAfter,
+                repeatWindow: config.repeatHoverWindowMinutes,
+                hoverExit: config.hoverExitSeconds,
+                studyMode: config.studyMode
+            )
             panel.onPreviewZoom = { [weak self] zoom in
                 self?.config.zoom = zoom
                 self?.applyPose()
             }
-            panel.onApply = { [weak self] zoom, minutes in
+            panel.onApply = { [weak self] zoom, minutes, repeatAfter, repeatWindow, hoverExit, studyMode in
                 guard let self else { return }
                 self.config.zoom = zoom
-                self.config.disdainAfterMinutes = minutes
+                self.config.awayAfterMinutes = minutes
+                self.config.repeatHoverAfter = repeatAfter
+                self.config.repeatHoverWindowMinutes = repeatWindow
+                self.config.hoverExitSeconds = hoverExit
+                self.config.studyMode = studyMode
                 saveJSON(self.config, to: self.configURL)
+                self.applyStudyLayout()
                 self.resetInteract()
                 self.applyPose()
                 self.snapIfNeeded()
             }
             settings = panel
         }
-        settings?.show(zoom: config.zoom, minutes: config.disdainAfterMinutes, on: petScreen())
+        settings?.show(
+            zoom: config.zoom,
+            minutes: config.awayAfterMinutes,
+            repeatAfter: config.repeatHoverAfter,
+            repeatWindow: config.repeatHoverWindowMinutes,
+            hoverExit: config.hoverExitSeconds,
+            studyMode: config.studyMode,
+            on: petScreen()
+        )
+    }
+
+    private func applyStudyLayout() {
+        cardView.studyMode = config.studyMode
+        cardView.clearStudy()
+        guard showing, cardImageSize.width > 0 else { return }
+        let extra = HoverView.extraHeight(for: config.studyMode)
+        let panelSize = NSSize(width: cardImageSize.width, height: cardImageSize.height + extra)
+        cardPanel.setContentSize(panelSize)
+        cardView.frame = NSRect(origin: .zero, size: panelSize)
+        positionCard()
     }
 }
 

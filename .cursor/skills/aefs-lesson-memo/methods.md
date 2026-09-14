@@ -16,6 +16,7 @@ Motto → Problem → Concept → Build → Use → Ship，再把高价值点落
 
 - 数学：验算/恒等式可当英雄点，但须能接到模型/训练/推理/评测之一
 - 工程：失败模式/生产惯用法可当英雄点
+- 模型：重点是具名架构时，框图是英雄点候选；留白画在章节卡，内容丰满则拆 `archi-` 旁卡（见 SKILL「模型架构」）
 - 与学习者栈（Python / PyTorch / LangChain / LangGraph）双高重合的生产 punchline → **应上卡**（短可读，非整文件）
 
 ## 裁剪测试
