@@ -525,7 +525,7 @@ struct ScribbleStyle {
     var width: CGFloat
 
     static let initial = ScribbleStyle(
-        color: NSColor.systemYellow.withAlphaComponent(0.45),
+        color: NSColor.systemYellow.withAlphaComponent(0.5),
         width: 16
     )
 }
@@ -583,32 +583,123 @@ final class Chip: NSView {
     override func mouseDown(with event: NSEvent) { onPick?() }
 }
 
+private func barButton(_ title: String, symbol: String) -> NSButton {
+    let button = NSButton(title: "", target: nil, action: nil)
+    button.toolTip = title
+    button.isBordered = false
+    button.bezelStyle = .regularSquare
+    button.imagePosition = .imageOnly
+    button.imageScaling = .scaleProportionallyUpOrDown
+    button.contentTintColor = NSColor(white: 1, alpha: 0.92)
+    if let image = NSImage(systemSymbolName: symbol, accessibilityDescription: title) {
+        button.image = image.withSymbolConfiguration(.init(pointSize: 16, weight: .semibold))
+    }
+    return button
+}
+
+final class OpacitySlider: NSView {
+    var minValue: CGFloat = 0.12
+    var maxValue: CGFloat = 1
+    var value: CGFloat = 0.5 {
+        didSet {
+            let clamped = min(max(value, minValue), maxValue)
+            if clamped != value {
+                value = clamped
+                return
+            }
+            needsDisplay = true
+        }
+    }
+    var tint: NSColor = .white { didSet { needsDisplay = true } }
+    var onChange: ((CGFloat) -> Void)?
+
+    override func draw(_ dirtyRect: NSRect) {
+        let track = NSRect(x: 7, y: (bounds.height - 8) / 2, width: max(0, bounds.width - 14), height: 8)
+        let trackPath = NSBezierPath(roundedRect: track, xRadius: 4, yRadius: 4)
+        NSGraphicsContext.saveGraphicsState()
+        trackPath.addClip()
+        NSColor(white: 0.28, alpha: 1).setFill()
+        trackPath.fill()
+        let cell: CGFloat = 4
+        var row: CGFloat = track.minY
+        var flip = false
+        while row < track.maxY {
+            var col = track.minX
+            var on = flip
+            while col < track.maxX {
+                if on {
+                    NSColor(white: 0.55, alpha: 1).setFill()
+                    NSBezierPath(rect: NSRect(x: col, y: row, width: cell, height: cell)).fill()
+                }
+                on.toggle()
+                col += cell
+            }
+            flip.toggle()
+            row += cell
+        }
+        let fade = tint.usingColorSpace(.deviceRGB) ?? tint
+        let gradient = NSGradient(colors: [
+            fade.withAlphaComponent(0.08),
+            fade.withAlphaComponent(1),
+        ])
+        gradient?.draw(in: track, angle: 0)
+        NSGraphicsContext.restoreGraphicsState()
+
+        let t = (value - minValue) / max(maxValue - minValue, 0.001)
+        let knobX = track.minX + t * track.width
+        let knob = NSRect(x: knobX - 7, y: bounds.midY - 7, width: 14, height: 14)
+        NSColor.white.setFill()
+        NSBezierPath(ovalIn: knob).fill()
+        NSColor(white: 0.15, alpha: 0.85).setStroke()
+        let ring = NSBezierPath(ovalIn: knob.insetBy(dx: 0.5, dy: 0.5))
+        ring.lineWidth = 1
+        ring.stroke()
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        apply(event)
+        while let next = window?.nextEvent(matching: [.leftMouseDragged, .leftMouseUp]) {
+            apply(next)
+            if next.type == .leftMouseUp { break }
+        }
+    }
+
+    private func apply(_ event: NSEvent) {
+        let x = convert(event.locationInWindow, from: nil).x
+        let track = NSRect(x: 7, y: 0, width: max(1, bounds.width - 14), height: 1)
+        let t = min(max((x - track.minX) / track.width, 0), 1)
+        value = minValue + t * (maxValue - minValue)
+        onChange?(value)
+    }
+}
+
 final class PenToolbar: NSView {
     static let barHeight: CGFloat = 44
 
     var onStyleChange: ((ScribbleStyle) -> Void)?
+    var onUndo: (() -> Void)?
+    var onRedo: (() -> Void)?
     var onClear: (() -> Void)?
 
     private var colorIndex = 0
     private var widthIndex = 1
     private var colorChips: [Chip] = []
     private var widthChips: [Chip] = []
+    private let opacitySlider = OpacitySlider()
+    private let undoButton = barButton("撤销", symbol: "arrow.uturn.backward")
+    private let redoButton = barButton("重做", symbol: "arrow.uturn.forward")
     private let clearButton = NSButton(title: "清除", target: nil, action: nil)
 
-    private static let canvasColors: [NSColor] = [
-        NSColor.systemYellow.withAlphaComponent(0.45),
-        NSColor.systemRed.withAlphaComponent(0.5),
-        NSColor.systemBlue.withAlphaComponent(0.5),
-        NSColor.systemGreen.withAlphaComponent(0.5),
-        NSColor.black.withAlphaComponent(0.6),
-    ]
     private static let chipColors: [NSColor] = [
         .systemYellow, .systemRed, .systemBlue, .systemGreen, .black,
     ]
     private static let widths: [CGFloat] = [8, 16, 24]
 
     var style: ScribbleStyle {
-        ScribbleStyle(color: Self.canvasColors[colorIndex], width: Self.widths[widthIndex])
+        ScribbleStyle(
+            color: Self.chipColors[colorIndex].withAlphaComponent(opacitySlider.value),
+            width: Self.widths[widthIndex]
+        )
     }
 
     override init(frame frameRect: NSRect) {
@@ -627,12 +718,22 @@ final class PenToolbar: NSView {
             widthChips.append(chip)
             addSubview(chip)
         }
+        opacitySlider.tint = Self.chipColors[colorIndex]
+        opacitySlider.onChange = { [weak self] _ in self?.opacityChanged() }
+        addSubview(opacitySlider)
+        undoButton.target = self
+        undoButton.action = #selector(undoTapped)
+        redoButton.target = self
+        redoButton.action = #selector(redoTapped)
+        addSubview(undoButton)
+        addSubview(redoButton)
         clearButton.target = self
         clearButton.action = #selector(clearTapped)
         clearButton.bezelStyle = .rounded
         clearButton.font = .systemFont(ofSize: 11)
         addSubview(clearButton)
         refreshSelection()
+        setHistoryEnabled(undo: false, redo: false)
     }
 
     @available(*, unavailable)
@@ -652,17 +753,23 @@ final class PenToolbar: NSView {
             chip.frame = NSRect(x: x, y: y, width: size, height: size)
             x += size + 6
         }
+        x += 12
+        let historyWidth: CGFloat = 28
         let clearWidth: CGFloat = 52
-        clearButton.frame = NSRect(
-            x: max(x + 8, bounds.width - clearWidth - 8),
-            y: 8,
-            width: clearWidth,
-            height: 28
-        )
+        let trailing = historyWidth + 6 + historyWidth + 6 + clearWidth + 8
+        let sliderWidth = max(48, bounds.width - x - trailing - 8)
+        opacitySlider.frame = NSRect(x: x, y: y, width: sliderWidth, height: size)
+        var buttonX = bounds.width - trailing
+        undoButton.frame = NSRect(x: buttonX, y: 8, width: historyWidth, height: 28)
+        buttonX += historyWidth + 6
+        redoButton.frame = NSRect(x: buttonX, y: 8, width: historyWidth, height: 28)
+        buttonX += historyWidth + 6
+        clearButton.frame = NSRect(x: buttonX, y: 8, width: clearWidth, height: 28)
     }
 
     private func pickColor(_ index: Int) {
         colorIndex = index
+        opacitySlider.tint = Self.chipColors[index]
         refreshSelection()
         onStyleChange?(style)
     }
@@ -673,11 +780,22 @@ final class PenToolbar: NSView {
         onStyleChange?(style)
     }
 
+    @objc private func opacityChanged() {
+        onStyleChange?(style)
+    }
+
     private func refreshSelection() {
         for (index, chip) in colorChips.enumerated() { chip.selected = index == colorIndex }
         for (index, chip) in widthChips.enumerated() { chip.selected = index == widthIndex }
     }
 
+    func setHistoryEnabled(undo: Bool, redo: Bool) {
+        undoButton.isEnabled = undo
+        redoButton.isEnabled = redo
+    }
+
+    @objc private func undoTapped() { onUndo?() }
+    @objc private func redoTapped() { onRedo?() }
     @objc private func clearTapped() { onClear?() }
 }
 
@@ -697,12 +815,16 @@ final class RevealToolbar: NSView {
     static let barHeight: CGFloat = 44
 
     var onStyleChange: ((EraserStyle) -> Void)?
+    var onUndo: (() -> Void)?
+    var onRedo: (() -> Void)?
     var onReset: (() -> Void)?
 
     private var shape: EraserShape = .circle
     private var widthIndex = 1
     private var shapeChips: [Chip] = []
     private var widthChips: [Chip] = []
+    private let undoButton = barButton("撤销", symbol: "arrow.uturn.backward")
+    private let redoButton = barButton("重做", symbol: "arrow.uturn.forward")
     private let resetButton = NSButton(title: "重置", target: nil, action: nil)
     private static let widths: [CGFloat] = [36, 64, 96]
 
@@ -726,12 +848,19 @@ final class RevealToolbar: NSView {
             widthChips.append(chip)
             addSubview(chip)
         }
+        undoButton.target = self
+        undoButton.action = #selector(undoTapped)
+        redoButton.target = self
+        redoButton.action = #selector(redoTapped)
+        addSubview(undoButton)
+        addSubview(redoButton)
         resetButton.target = self
         resetButton.action = #selector(resetTapped)
         resetButton.bezelStyle = .rounded
         resetButton.font = .systemFont(ofSize: 11)
         addSubview(resetButton)
         refreshSelection()
+        setHistoryEnabled(undo: false, redo: false)
     }
 
     @available(*, unavailable)
@@ -751,13 +880,15 @@ final class RevealToolbar: NSView {
             chip.frame = NSRect(x: x, y: y, width: size, height: size)
             x += size + 6
         }
+        let historyWidth: CGFloat = 28
         let resetWidth: CGFloat = 52
-        resetButton.frame = NSRect(
-            x: max(x + 8, bounds.width - resetWidth - 8),
-            y: 8,
-            width: resetWidth,
-            height: 28
-        )
+        var buttonX = bounds.width - (historyWidth + 6 + historyWidth + 6 + resetWidth + 8)
+        buttonX = max(x + 8, buttonX)
+        undoButton.frame = NSRect(x: buttonX, y: 8, width: historyWidth, height: 28)
+        buttonX += historyWidth + 6
+        redoButton.frame = NSRect(x: buttonX, y: 8, width: historyWidth, height: 28)
+        buttonX += historyWidth + 6
+        resetButton.frame = NSRect(x: buttonX, y: 8, width: resetWidth, height: 28)
     }
 
     private func pickShape(_ shape: EraserShape) {
@@ -778,12 +909,21 @@ final class RevealToolbar: NSView {
         for (index, chip) in widthChips.enumerated() { chip.selected = index == widthIndex }
     }
 
+    func setHistoryEnabled(undo: Bool, redo: Bool) {
+        undoButton.isEnabled = undo
+        redoButton.isEnabled = redo
+    }
+
+    @objc private func undoTapped() { onUndo?() }
+    @objc private func redoTapped() { onRedo?() }
     @objc private func resetTapped() { onReset?() }
 }
 
 final class ScribbleOverlay: NSView {
     var style = ScribbleStyle.initial
+    var onHistoryChange: (() -> Void)?
     private var strokes: [Stroke] = []
+    private var redoStrokes: [Stroke] = []
     private var live: Stroke?
 
     private struct Stroke {
@@ -792,11 +932,15 @@ final class ScribbleOverlay: NSView {
         var width: CGFloat
     }
 
+    var canUndo: Bool { live == nil && !strokes.isEmpty }
+    var canRedo: Bool { live == nil && !redoStrokes.isEmpty }
+
     override var isOpaque: Bool { false }
 
     func begin(at point: NSPoint) {
         live = Stroke(points: [point], color: style.color, width: style.width)
         needsDisplay = true
+        onHistoryChange?()
     }
 
     func extend(to point: NSPoint) {
@@ -808,15 +952,35 @@ final class ScribbleOverlay: NSView {
     }
 
     func end() {
-        if let live { strokes.append(live) }
+        if let live {
+            strokes.append(live)
+            redoStrokes.removeAll()
+        }
         live = nil
         needsDisplay = true
+        onHistoryChange?()
+    }
+
+    func undo() {
+        guard canUndo, let last = strokes.popLast() else { return }
+        redoStrokes.append(last)
+        needsDisplay = true
+        onHistoryChange?()
+    }
+
+    func redo() {
+        guard canRedo, let last = redoStrokes.popLast() else { return }
+        strokes.append(last)
+        needsDisplay = true
+        onHistoryChange?()
     }
 
     func clear() {
         strokes.removeAll()
+        redoStrokes.removeAll()
         live = nil
         needsDisplay = true
+        onHistoryChange?()
     }
 
     override func hitTest(_ point: NSPoint) -> NSView? { nil }
@@ -851,7 +1015,9 @@ final class ScribbleOverlay: NSView {
 
 final class RevealOverlay: NSView {
     var style = EraserStyle.initial
+    var onHistoryChange: (() -> Void)?
     private var strokes: [Stroke] = []
+    private var redoStrokes: [Stroke] = []
     private var live: Stroke?
 
     private struct Stroke {
@@ -871,9 +1037,13 @@ final class RevealOverlay: NSView {
 
     override var isOpaque: Bool { false }
 
+    var canUndo: Bool { live == nil && !strokes.isEmpty }
+    var canRedo: Bool { live == nil && !redoStrokes.isEmpty }
+
     func begin(at point: NSPoint) {
         live = Stroke(points: [point], width: style.width, shape: style.shape)
         needsDisplay = true
+        onHistoryChange?()
     }
 
     func extend(to point: NSPoint) {
@@ -885,15 +1055,35 @@ final class RevealOverlay: NSView {
     }
 
     func end() {
-        if let live { strokes.append(live) }
+        if let live {
+            strokes.append(live)
+            redoStrokes.removeAll()
+        }
         live = nil
         needsDisplay = true
+        onHistoryChange?()
+    }
+
+    func undo() {
+        guard canUndo, let last = strokes.popLast() else { return }
+        redoStrokes.append(last)
+        needsDisplay = true
+        onHistoryChange?()
+    }
+
+    func redo() {
+        guard canRedo, let last = redoStrokes.popLast() else { return }
+        strokes.append(last)
+        needsDisplay = true
+        onHistoryChange?()
     }
 
     func reset() {
         strokes.removeAll()
+        redoStrokes.removeAll()
         live = nil
         needsDisplay = true
+        onHistoryChange?()
     }
 
     override func hitTest(_ point: NSPoint) -> NSView? { nil }
@@ -973,13 +1163,19 @@ final class HoverView: NSView {
         toolbar.onStyleChange = { [weak self] style in
             self?.scribble.style = style
         }
+        toolbar.onUndo = { [weak self] in self?.undoStudy() }
+        toolbar.onRedo = { [weak self] in self?.redoStudy() }
         toolbar.onClear = { [weak self] in self?.clearStudy() }
         scribble.style = toolbar.style
+        scribble.onHistoryChange = { [weak self] in self?.syncHistory() }
         revealBar.onStyleChange = { [weak self] style in
             self?.reveal.style = style
         }
+        revealBar.onUndo = { [weak self] in self?.undoStudy() }
+        revealBar.onRedo = { [weak self] in self?.redoStudy() }
         revealBar.onReset = { [weak self] in self?.reveal.reset() }
         reveal.style = revealBar.style
+        reveal.onHistoryChange = { [weak self] in self?.syncHistory() }
         addSubview(toolbar)
         addSubview(revealBar)
     }
@@ -989,6 +1185,7 @@ final class HoverView: NSView {
         revealBar.isHidden = studyMode != .reveal
         scribble.isHidden = studyMode != .annotate
         reveal.isHidden = studyMode != .reveal
+        syncHistory()
         needsLayout = true
     }
 
@@ -1025,6 +1222,22 @@ final class HoverView: NSView {
     func clearStudy() {
         scribble.clear()
         reveal.reset()
+    }
+
+    func undoStudy() {
+        if studyMode == .reveal { reveal.undo() } else { scribble.undo() }
+    }
+
+    func redoStudy() {
+        if studyMode == .reveal { reveal.redo() } else { scribble.redo() }
+    }
+
+    private func syncHistory() {
+        if studyMode == .reveal {
+            revealBar.setHistoryEnabled(undo: reveal.canUndo, redo: reveal.canRedo)
+        } else {
+            toolbar.setHistoryEnabled(undo: scribble.canUndo, redo: scribble.canRedo)
+        }
     }
 
     static func extraHeight(for _: StudyMode) -> CGFloat {
@@ -1202,6 +1415,18 @@ final class HoverView: NSView {
 
     override func rightMouseDown(with event: NSEvent) {
         let menu = NSMenu()
+        if studyMode != nil {
+            let undo = NSMenuItem(title: "撤销", action: #selector(undoStudyMenu), keyEquivalent: "z")
+            undo.target = self
+            undo.isEnabled = studyMode == .reveal ? reveal.canUndo : scribble.canUndo
+            menu.addItem(undo)
+            let redo = NSMenuItem(title: "重做", action: #selector(redoStudyMenu), keyEquivalent: "z")
+            redo.keyEquivalentModifierMask = [.command, .shift]
+            redo.target = self
+            redo.isEnabled = studyMode == .reveal ? reveal.canRedo : scribble.canRedo
+            menu.addItem(redo)
+            menu.addItem(.separator())
+        }
         if studyMode == .annotate {
             let clear = NSMenuItem(title: "清除标注", action: #selector(clearStudyMenu), keyEquivalent: "")
             clear.target = self
@@ -1232,6 +1457,8 @@ final class HoverView: NSView {
 
     @objc private func openSettings() { onSettings?() }
     @objc private func copyInboxURL() { onCopyInbox?() }
+    @objc private func undoStudyMenu() { undoStudy() }
+    @objc private func redoStudyMenu() { redoStudy() }
     @objc private func clearStudyMenu() { clearStudy() }
 
     override func hitTest(_ point: NSPoint) -> NSView? {

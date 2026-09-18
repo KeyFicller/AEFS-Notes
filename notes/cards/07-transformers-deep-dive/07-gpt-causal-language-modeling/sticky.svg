@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="200" viewBox="0 0 280 200">
+  <defs>
+    <filter id="s" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="2" dy="3" stdDeviation="2" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect x="16" y="20" width="248" height="160" rx="8" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2" filter="url(#s)" transform="rotate(-2 140 100)"/>
+  <text x="140" y="70" text-anchor="middle" font-family="PingFang SC,sans-serif" font-size="20" font-weight="700" fill="#92400E" transform="rotate(-2 140 100)">一行 tril</text>
+  <text x="140" y="102" text-anchor="middle" font-family="PingFang SC,sans-serif" font-size="18" font-weight="700" fill="#B91C1C" transform="rotate(-2 140 100)">改写整个 LLM 时代</text>
+  <text x="140" y="138" text-anchor="middle" font-family="PingFang SC,sans-serif" font-size="14" fill="#78350F" transform="rotate(-2 140 100)">每位只看自己+过去</text>
+  <text x="140" y="162" text-anchor="middle" font-family="PingFang SC,sans-serif" font-size="14" fill="#78350F" transform="rotate(-2 140 100)">一次前向 = N 预测</text>
+</svg>

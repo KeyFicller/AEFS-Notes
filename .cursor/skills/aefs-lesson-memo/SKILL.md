@@ -97,7 +97,8 @@ GenerateImage.filename = <archi_slug>.png    # 仅 basename
 ### 出图流水线（唯一，禁止另寻工具）
 
 **只许**用 Cursor 内置 `GenerateImage`（`cursor` → `GenerateImage`）。  
-禁止：Python/PIL、浏览器截图、外部 API、其他 MCP 画图、用 markdown/HTML 冒充卡片。
+禁止：Python/PIL、浏览器截图、外部 API、其他 MCP 画图、用 markdown/HTML 冒充卡片。  
+**禁止把参考图 / SVG / 程序绘制的图块 ImageMagick·composite 硬贴到卡片上**（会风格突变）。几何要准时：用文字把格子/箭头/数值写进 `description`，或把参考图仅作 `reference_image_paths` 让 GenerateImage **整卡重画**；最终像素必须整卡统一手绘风。
 
 调用前：
 

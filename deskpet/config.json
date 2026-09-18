@@ -1,8 +1,8 @@
 {
+  "away_after_minutes" : 0.2,
   "card_max_width" : 460,
   "cards_dir" : "..\/notes\/cards",
   "character" : "dafeiyu",
-  "away_after_minutes" : 0.2,
   "hover_exit_seconds" : 1,
   "inbox_hostname" : "squeak-emerald-jogging.ngrok-free.dev",
   "inbox_port" : 8765,
