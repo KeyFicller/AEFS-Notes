@@ -3,7 +3,7 @@ import Foundation
 
 struct Config: Codable {
     var character: String
-    var cardsDir: String
+    var cardsDir: [String]
     var cardMaxWidth: Int
     var zoom: Double
     var awayAfterMinutes: Double
@@ -34,7 +34,7 @@ struct Config: Codable {
     init(from decoder: Decoder) throws {
         let box = try decoder.container(keyedBy: CodingKeys.self)
         character = try box.decode(String.self, forKey: .character)
-        cardsDir = try box.decodeIfPresent(String.self, forKey: .cardsDir) ?? "../notes/cards"
+        cardsDir = decodeCardsDir(box)
         cardMaxWidth = try box.decodeIfPresent(Int.self, forKey: .cardMaxWidth) ?? 460
         zoom = try box.decodeIfPresent(Double.self, forKey: .zoom) ?? 1.0
         awayAfterMinutes = try box.decodeIfPresent(Double.self, forKey: .awayAfterMinutes)
@@ -193,6 +193,74 @@ func saveJSON<T: Encodable>(_ value: T, to url: URL) {
     } catch {
         fputs("DeskPet: failed to write \(url.lastPathComponent): \(error)\n", stderr)
     }
+}
+
+func decodeCardsDir(_ box: KeyedDecodingContainer<Config.CodingKeys>) -> [String] {
+    let fallback = ["../notes/cards"]
+    guard box.contains(.cardsDir) else { return fallback }
+    if let list = try? box.decode([String].self, forKey: .cardsDir) {
+        return list.isEmpty ? fallback : list
+    }
+    if let one = try? box.decode(String.self, forKey: .cardsDir), !one.isEmpty {
+        return [one]
+    }
+    return fallback
+}
+
+func matchesCardExclude(_ card: URL, pattern: String, relativeTo root: URL) -> Bool {
+    let dirs = card.deletingLastPathComponent().pathComponents
+    if dirs.contains(where: { $0 == pattern || $0.hasPrefix(pattern + "-") }) {
+        return true
+    }
+    guard pattern.contains("/") || pattern.contains("\\") || pattern.hasPrefix(".") else {
+        return false
+    }
+    let dir = URL(fileURLWithPath: pattern, isDirectory: true, relativeTo: root)
+        .absoluteURL
+        .standardizedFileURL
+    let prefix = dir.path.hasSuffix("/") ? dir.path : dir.path + "/"
+    return card.path == dir.path || card.path.hasPrefix(prefix)
+}
+
+func listCanonicalCards(fromPatterns patterns: [String], relativeTo root: URL) -> [URL] {
+    var includes: [URL] = []
+    var excludes: [String] = []
+    for raw in patterns {
+        let trimmed = raw.trimmingCharacters(in: .whitespaces)
+        if trimmed.hasPrefix("!") {
+            let value = String(trimmed.dropFirst()).trimmingCharacters(in: .whitespaces)
+            if !value.isEmpty { excludes.append(value) }
+        } else if !trimmed.isEmpty {
+            includes.append(
+                URL(fileURLWithPath: trimmed, isDirectory: true, relativeTo: root)
+                    .absoluteURL
+                    .standardizedFileURL
+            )
+        }
+    }
+    if includes.isEmpty {
+        includes = [
+            URL(fileURLWithPath: "../notes/cards", isDirectory: true, relativeTo: root)
+                .absoluteURL
+                .standardizedFileURL
+        ]
+    }
+    var seen = Set<String>()
+    var cards: [URL] = []
+    for include in includes {
+        for card in listCanonicalCards(root: include) {
+            let url = card.standardizedFileURL
+            if seen.insert(url.path).inserted {
+                cards.append(url)
+            }
+        }
+    }
+    if !excludes.isEmpty {
+        cards = cards.filter { card in
+            !excludes.contains { matchesCardExclude(card, pattern: $0, relativeTo: root) }
+        }
+    }
+    return cards.sorted { $0.path < $1.path }
 }
 
 func listCanonicalCards(root: URL) -> [URL] {
@@ -454,9 +522,15 @@ func flippedHorizontally(_ image: NSImage) -> NSImage {
     return NSImage(cgImage: out, size: image.size)
 }
 
-func fitted(_ image: NSImage, maxWidth: CGFloat, maxHeight: CGFloat) -> NSSize {
+func fitted(_ image: NSImage, maxShortSide: CGFloat, maxWidth: CGFloat, maxHeight: CGFloat) -> NSSize {
     let size = image.size
-    let scale = min(maxWidth / max(size.width, 1), maxHeight / max(size.height, 1), 1)
+    let short = min(size.width, size.height)
+    let scale = min(
+        maxShortSide / max(short, 1),
+        maxWidth / max(size.width, 1),
+        maxHeight / max(size.height, 1),
+        1
+    )
     return NSSize(width: size.width * scale, height: size.height * scale)
 }
 
@@ -1509,23 +1583,25 @@ final class SettingsController: NSObject {
     private let zoomLabel: NSTextField
     private let minutesField: NSTextField
     var onPreviewZoom: ((Double) -> Void)?
-    var onApply: ((Double, Double, Int, Double, Double, StudyMode) -> Void)?
+    var onApply: ((Double, Int, Double, Int, Double, Double, StudyMode) -> Void)?
+    private let cardMaxField: NSTextField
     private let repeatCountField: NSTextField
     private let repeatWindowField: NSTextField
     private let hoverExitField: NSTextField
     private let studyPopup: NSPopUpButton
 
-    init(zoom: Double, minutes: Double, repeatAfter: Int, repeatWindow: Double, hoverExit: Double, studyMode: StudyMode) {
+    init(zoom: Double, cardMax: Int, minutes: Double, repeatAfter: Int, repeatWindow: Double, hoverExit: Double, studyMode: StudyMode) {
         zoomSlider = NSSlider(value: zoom, minValue: 0.5, maxValue: 2.5, target: nil, action: nil)
         zoomSlider.isContinuous = true
         zoomLabel = NSTextField(labelWithString: "")
+        cardMaxField = NSTextField(string: "\(cardMax)")
         minutesField = NSTextField(string: String(format: "%g", minutes))
         repeatCountField = NSTextField(string: "\(repeatAfter)")
         repeatWindowField = NSTextField(string: String(format: "%g", repeatWindow))
         hoverExitField = NSTextField(string: String(format: "%g", hoverExit))
         studyPopup = NSPopUpButton(frame: .zero, pullsDown: false)
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 360, height: 380),
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 430),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -1537,52 +1613,57 @@ final class SettingsController: NSObject {
         studyPopup.addItems(withTitles: ["标注（划重点）", "揭开（擦开遮罩）"])
         applyStudyMode(studyMode)
 
-        let content = NSView(frame: NSRect(x: 0, y: 0, width: 360, height: 380))
+        let content = NSView(frame: NSRect(x: 0, y: 0, width: 360, height: 430))
         func label(_ text: String, y: CGFloat) -> NSTextField {
             let field = NSTextField(labelWithString: text)
             field.frame = NSRect(x: 20, y: y, width: 320, height: 18)
             return field
         }
-        content.addSubview(label("缩放", y: 340))
-        zoomSlider.frame = NSRect(x: 20, y: 312, width: 240, height: 24)
+        content.addSubview(label("缩放", y: 390))
+        zoomSlider.frame = NSRect(x: 20, y: 362, width: 240, height: 24)
         zoomSlider.target = self
         zoomSlider.action = #selector(zoomChanged)
-        zoomLabel.frame = NSRect(x: 270, y: 314, width: 70, height: 20)
+        zoomLabel.frame = NSRect(x: 270, y: 364, width: 70, height: 20)
         content.addSubview(zoomSlider)
         content.addSubview(zoomLabel)
-        content.addSubview(label("长时间无互动后切换表情（分钟，0 为关闭）", y: 280))
-        minutesField.frame = NSRect(x: 20, y: 252, width: 120, height: 24)
+        content.addSubview(label("卡片短边上限（像素）", y: 328))
+        cardMaxField.frame = NSRect(x: 20, y: 300, width: 120, height: 24)
+        cardMaxField.placeholderString = "600"
+        content.addSubview(cardMaxField)
+        content.addSubview(label("长时间无互动后切换表情（分钟，0 为关闭）", y: 266))
+        minutesField.frame = NSRect(x: 20, y: 238, width: 120, height: 24)
         minutesField.placeholderString = "10"
         content.addSubview(minutesField)
-        content.addSubview(label("短期内多次悬停（次数 / 统计窗口分钟，0 关闭）", y: 218))
-        repeatCountField.frame = NSRect(x: 20, y: 190, width: 70, height: 24)
+        content.addSubview(label("短期内多次悬停（次数 / 统计窗口分钟，0 关闭）", y: 204))
+        repeatCountField.frame = NSRect(x: 20, y: 176, width: 70, height: 24)
         repeatCountField.placeholderString = "5"
-        repeatWindowField.frame = NSRect(x: 100, y: 190, width: 70, height: 24)
+        repeatWindowField.frame = NSRect(x: 100, y: 176, width: 70, height: 24)
         repeatWindowField.placeholderString = "1"
         content.addSubview(repeatCountField)
         content.addSubview(repeatWindowField)
-        content.addSubview(label("移开后多久才退出悬停（秒）", y: 156))
-        hoverExitField.frame = NSRect(x: 20, y: 128, width: 120, height: 24)
+        content.addSubview(label("移开后多久才退出悬停（秒）", y: 142))
+        hoverExitField.frame = NSRect(x: 20, y: 114, width: 120, height: 24)
         hoverExitField.placeholderString = "1"
         content.addSubview(hoverExitField)
-        content.addSubview(label("学习方式", y: 94))
-        studyPopup.frame = NSRect(x: 20, y: 66, width: 240, height: 26)
+        content.addSubview(label("学习方式", y: 80))
+        studyPopup.frame = NSRect(x: 20, y: 52, width: 240, height: 26)
         content.addSubview(studyPopup)
         let hint = NSTextField(labelWithString: "拖到屏幕边缘会贴边探头")
         hint.textColor = .secondaryLabelColor
-        hint.frame = NSRect(x: 20, y: 40, width: 320, height: 18)
+        hint.frame = NSRect(x: 20, y: 28, width: 320, height: 18)
         content.addSubview(hint)
         let save = NSButton(title: "保存", target: self, action: #selector(saveTapped))
         save.bezelStyle = .rounded
-        save.frame = NSRect(x: 250, y: 10, width: 90, height: 28)
+        save.frame = NSRect(x: 250, y: 8, width: 90, height: 28)
         content.addSubview(save)
         window.contentView = content
         window.delegate = self
         refreshZoomLabel()
     }
 
-    func show(zoom: Double, minutes: Double, repeatAfter: Int, repeatWindow: Double, hoverExit: Double, studyMode: StudyMode, on screen: NSScreen?) {
+    func show(zoom: Double, cardMax: Int, minutes: Double, repeatAfter: Int, repeatWindow: Double, hoverExit: Double, studyMode: StudyMode, on screen: NSScreen?) {
         zoomSlider.doubleValue = zoom
+        cardMaxField.stringValue = "\(cardMax)"
         minutesField.stringValue = String(format: "%g", minutes)
         repeatCountField.stringValue = "\(repeatAfter)"
         repeatWindowField.stringValue = String(format: "%g", repeatWindow)
@@ -1615,12 +1696,17 @@ final class SettingsController: NSObject {
     private func persist() {
         onApply?(
             zoomSlider.doubleValue,
+            parsedCardMax(),
             parsedMinutes(),
             parsedRepeatAfter(),
             parsedRepeatWindow(),
             parsedHoverExit(),
             parsedStudyMode()
         )
+    }
+
+    private func parsedCardMax() -> Int {
+        max(1, Int(cardMaxField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 600)
     }
 
     private func parsedMinutes() -> Double {
@@ -1732,12 +1818,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         inboxQueue = InboxQueue(directory: root.appendingPathComponent("inbox", isDirectory: true))
         inboxQueue.loadFromDisk()
         startInboxServer()
-        let cardsRoot = URL(fileURLWithPath: config.cardsDir, isDirectory: true, relativeTo: root)
-            .absoluteURL
-            .standardizedFileURL
-        cards = listCanonicalCards(root: cardsRoot)
+        cards = listCanonicalCards(fromPatterns: config.cardsDir, relativeTo: root)
         if cards.isEmpty {
-            fputs("DeskPet: no cards under \(cardsRoot.path)\n", stderr)
+            fputs("DeskPet: no cards from cards_dir\n", stderr)
         }
 
         petView = HoverView(frame: .zero)
@@ -2053,19 +2136,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func showCard() {
         guard let image = inboxCard() ?? localCard() else { return }
+        layoutCard(image)
+    }
+
+    private func layoutCard(_ image: NSImage) {
         let screen = petVisibleFrame()
-        let inbox = sessionInbox != nil
-        let maxHeight = (screen?.height ?? 800) * (inbox ? 0.82 : 0.72)
-        let maxWidth: CGFloat
-        if inbox, let screen {
-            let reserved = petPanel.frame.width + 48
-            maxWidth = max(CGFloat(config.cardMaxWidth), min(screen.width - reserved, screen.width * 0.78))
-        } else {
-            maxWidth = CGFloat(config.cardMaxWidth)
-        }
-        let size = fitted(image, maxWidth: maxWidth, maxHeight: maxHeight)
-        cardImageSize = size
         let extra = HoverView.extraHeight(for: config.studyMode)
+        let reserved = petPanel.frame.width + 24
+        let maxShort = CGFloat(max(config.cardMaxWidth, 1))
+        let maxWidth = max((screen?.width ?? 1200) - reserved, 1)
+        let maxHeight = max((screen?.height ?? 800) - extra - 16, 1)
+        let size = fitted(image, maxShortSide: maxShort, maxWidth: maxWidth, maxHeight: maxHeight)
+        cardImageSize = size
         let panelSize = NSSize(width: size.width, height: size.height + extra)
         cardView.clearStudy()
         cardView.imageView.image = image
@@ -2137,6 +2219,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if settings == nil {
             let panel = SettingsController(
                 zoom: config.zoom,
+                cardMax: config.cardMaxWidth,
                 minutes: config.awayAfterMinutes,
                 repeatAfter: config.repeatHoverAfter,
                 repeatWindow: config.repeatHoverWindowMinutes,
@@ -2147,16 +2230,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.config.zoom = zoom
                 self?.applyPose()
             }
-            panel.onApply = { [weak self] zoom, minutes, repeatAfter, repeatWindow, hoverExit, studyMode in
+            panel.onApply = { [weak self] zoom, cardMax, minutes, repeatAfter, repeatWindow, hoverExit, studyMode in
                 guard let self else { return }
                 self.config.zoom = zoom
+                self.config.cardMaxWidth = cardMax
                 self.config.awayAfterMinutes = minutes
                 self.config.repeatHoverAfter = repeatAfter
                 self.config.repeatHoverWindowMinutes = repeatWindow
                 self.config.hoverExitSeconds = hoverExit
                 self.config.studyMode = studyMode
                 saveJSON(self.config, to: self.configURL)
-                self.applyStudyLayout()
+                if self.showing, let image = self.cardView.imageView.image {
+                    self.layoutCard(image)
+                } else {
+                    self.applyStudyLayout()
+                }
                 self.resetInteract()
                 self.applyPose()
                 self.snapIfNeeded()
@@ -2165,6 +2253,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         settings?.show(
             zoom: config.zoom,
+            cardMax: config.cardMaxWidth,
             minutes: config.awayAfterMinutes,
             repeatAfter: config.repeatHoverAfter,
             repeatWindow: config.repeatHoverWindowMinutes,

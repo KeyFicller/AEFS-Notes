@@ -1,7 +1,9 @@
 {
   "away_after_minutes" : 0.2,
-  "card_max_width" : 460,
-  "cards_dir" : "..\/notes\/cards",
+  "card_max_width" : 600,
+  "cards_dir" : [
+    "..\/notes\/cards"
+  ],
   "character" : "dafeiyu",
   "hover_exit_seconds" : 1,
   "inbox_hostname" : "squeak-emerald-jogging.ngrok-free.dev",
@@ -10,5 +12,5 @@
   "repeat_hover_after" : 5,
   "repeat_hover_window_minutes" : 0.1,
   "study_mode" : "annotate",
-  "zoom" : 0.7525318287037035
+  "zoom" : 0.750614872685185
 }

@@ -13,6 +13,7 @@ deskpet/inbox/public-url.txt
 attempt*.png
 attempt*.meta.txt
 attempt*_meta.txt
+*.meta.txt
 
 # for now
 !.cursor/
