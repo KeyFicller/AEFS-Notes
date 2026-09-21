@@ -14,6 +14,12 @@ struct Config: Codable {
     var repeatHoverWindowMinutes: Double
     var hoverExitSeconds: Double
     var studyMode: StudyMode
+    var explainModel: String
+    var explainApiBase: String
+    var explainPrompt: String
+    var explainBubbleWidth: Double
+    var explainBubbleHeight: Double
+    var explainFontSize: Double
 
     enum CodingKeys: String, CodingKey {
         case character
@@ -29,6 +35,12 @@ struct Config: Codable {
         case repeatHoverWindowMinutes = "repeat_hover_window_minutes"
         case hoverExitSeconds = "hover_exit_seconds"
         case studyMode = "study_mode"
+        case explainModel = "explain_model"
+        case explainApiBase = "explain_api_base"
+        case explainPrompt = "explain_prompt"
+        case explainBubbleWidth = "explain_bubble_width"
+        case explainBubbleHeight = "explain_bubble_height"
+        case explainFontSize = "explain_font_size"
     }
 
     init(from decoder: Decoder) throws {
@@ -50,6 +62,18 @@ struct Config: Codable {
         } else {
             studyMode = .annotate
         }
+        explainModel = try box.decodeIfPresent(String.self, forKey: .explainModel)
+            ?? ExplainConfig.defaults.model
+        explainApiBase = try box.decodeIfPresent(String.self, forKey: .explainApiBase)
+            ?? ExplainConfig.defaults.apiBase
+        explainPrompt = try box.decodeIfPresent(String.self, forKey: .explainPrompt)
+            ?? ExplainConfig.defaults.promptTemplate
+        explainBubbleWidth = try box.decodeIfPresent(Double.self, forKey: .explainBubbleWidth)
+            ?? Double(BubbleStyle.defaults.width)
+        explainBubbleHeight = try box.decodeIfPresent(Double.self, forKey: .explainBubbleHeight)
+            ?? Double(BubbleStyle.defaults.height)
+        explainFontSize = try box.decodeIfPresent(Double.self, forKey: .explainFontSize)
+            ?? Double(BubbleStyle.defaults.fontSize)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -66,6 +90,28 @@ struct Config: Codable {
         try box.encode(repeatHoverWindowMinutes, forKey: .repeatHoverWindowMinutes)
         try box.encode(hoverExitSeconds, forKey: .hoverExitSeconds)
         try box.encode(studyMode.rawValue, forKey: .studyMode)
+        try box.encode(explainModel, forKey: .explainModel)
+        try box.encode(explainApiBase, forKey: .explainApiBase)
+        try box.encode(explainPrompt, forKey: .explainPrompt)
+        try box.encode(explainBubbleWidth, forKey: .explainBubbleWidth)
+        try box.encode(explainBubbleHeight, forKey: .explainBubbleHeight)
+        try box.encode(explainFontSize, forKey: .explainFontSize)
+    }
+
+    var explain: ExplainConfig {
+        ExplainConfig(
+            apiBase: explainApiBase,
+            model: explainModel,
+            promptTemplate: explainPrompt
+        )
+    }
+
+    var bubbleStyle: BubbleStyle {
+        BubbleStyle(
+            width: max(CGFloat(explainBubbleWidth), 180),
+            height: max(CGFloat(explainBubbleHeight), 120),
+            fontSize: min(max(CGFloat(explainFontSize), 10), 28)
+        )
     }
 }
 
@@ -1203,9 +1249,21 @@ final class HoverView: NSView {
     var onInside: ((Bool) -> Void)?
     var onSettings: (() -> Void)?
     var onCopyInbox: (() -> Void)?
+    var onRequestAccessibility: (() -> Void)?
     var onDragMoved: (() -> Void)?
     var onDragEnded: (() -> Void)?
     var onMarking: ((Bool) -> Void)?
+    var onTextDrop: ((String) -> Void)?
+    var onTextDragHover: ((Bool) -> Void)?
+    var acceptsTextDrop = false {
+        didSet {
+            if acceptsTextDrop {
+                registerForDraggedTypes([.string])
+            } else {
+                unregisterDraggedTypes()
+            }
+        }
+    }
     var studyMode: StudyMode? {
         didSet { applyStudyChrome() }
     }
@@ -1252,6 +1310,48 @@ final class HoverView: NSView {
         reveal.onHistoryChange = { [weak self] in self?.syncHistory() }
         addSubview(toolbar)
         addSubview(revealBar)
+    }
+
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        guard acceptsTextDrop, dropText(from: sender) != nil else { return [] }
+        onTextDragHover?(true)
+        return .copy
+    }
+
+    override func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
+        guard acceptsTextDrop, dropText(from: sender) != nil else { return [] }
+        return .copy
+    }
+
+    override func draggingExited(_ sender: NSDraggingInfo?) {
+        onTextDragHover?(false)
+    }
+
+    override func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        acceptsTextDrop && dropText(from: sender) != nil
+    }
+
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        guard acceptsTextDrop, let text = dropText(from: sender) else { return false }
+        onTextDragHover?(true)
+        onTextDrop?(text)
+        return true
+    }
+
+    override func concludeDragOperation(_ sender: NSDraggingInfo?) {
+        // Keep suppress-card until the pointer leaves the pet.
+    }
+
+    private func dropText(from sender: NSDraggingInfo) -> String? {
+        let board = sender.draggingPasteboard
+        let raw: String?
+        if let values = board.readObjects(forClasses: [NSString.self], options: nil) as? [String] {
+            raw = values.first
+        } else {
+            raw = board.string(forType: .string)
+        }
+        let text = raw?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return text.isEmpty ? nil : text
     }
 
     func applyStudyChrome() {
@@ -1518,6 +1618,9 @@ final class HoverView: NSView {
         let copyInbox = NSMenuItem(title: "复制收件箱地址", action: #selector(copyInboxURL), keyEquivalent: "")
         copyInbox.target = self
         menu.addItem(copyInbox)
+        let ax = NSMenuItem(title: "授予辅助功能权限…", action: #selector(requestAccessibilityMenu), keyEquivalent: "")
+        ax.target = self
+        menu.addItem(ax)
         menu.addItem(.separator())
         menu.addItem(
             NSMenuItem(
@@ -1531,6 +1634,7 @@ final class HoverView: NSView {
 
     @objc private func openSettings() { onSettings?() }
     @objc private func copyInboxURL() { onCopyInbox?() }
+    @objc private func requestAccessibilityMenu() { onRequestAccessibility?() }
     @objc private func undoStudyMenu() { undoStudy() }
     @objc private func redoStudyMenu() { redoStudy() }
     @objc private func clearStudyMenu() { clearStudy() }
@@ -1583,14 +1687,30 @@ final class SettingsController: NSObject {
     private let zoomLabel: NSTextField
     private let minutesField: NSTextField
     var onPreviewZoom: ((Double) -> Void)?
-    var onApply: ((Double, Int, Double, Int, Double, Double, StudyMode) -> Void)?
+    var onApply: ((Double, Int, Double, Int, Double, Double, StudyMode, String, Double, Double, Double) -> Void)?
     private let cardMaxField: NSTextField
     private let repeatCountField: NSTextField
     private let repeatWindowField: NSTextField
     private let hoverExitField: NSTextField
     private let studyPopup: NSPopUpButton
+    private let promptField: NSTextField
+    private let bubbleWidthField: NSTextField
+    private let bubbleHeightField: NSTextField
+    private let fontSizeField: NSTextField
 
-    init(zoom: Double, cardMax: Int, minutes: Double, repeatAfter: Int, repeatWindow: Double, hoverExit: Double, studyMode: StudyMode) {
+    init(
+        zoom: Double,
+        cardMax: Int,
+        minutes: Double,
+        repeatAfter: Int,
+        repeatWindow: Double,
+        hoverExit: Double,
+        studyMode: StudyMode,
+        explainPrompt: String,
+        bubbleWidth: Double,
+        bubbleHeight: Double,
+        fontSize: Double
+    ) {
         zoomSlider = NSSlider(value: zoom, minValue: 0.5, maxValue: 2.5, target: nil, action: nil)
         zoomSlider.isContinuous = true
         zoomLabel = NSTextField(labelWithString: "")
@@ -1600,8 +1720,12 @@ final class SettingsController: NSObject {
         repeatWindowField = NSTextField(string: String(format: "%g", repeatWindow))
         hoverExitField = NSTextField(string: String(format: "%g", hoverExit))
         studyPopup = NSPopUpButton(frame: .zero, pullsDown: false)
+        promptField = NSTextField(string: explainPrompt)
+        bubbleWidthField = NSTextField(string: String(format: "%g", bubbleWidth))
+        bubbleHeightField = NSTextField(string: String(format: "%g", bubbleHeight))
+        fontSizeField = NSTextField(string: String(format: "%g", fontSize))
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 360, height: 430),
+            contentRect: NSRect(x: 0, y: 0, width: 380, height: 620),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -1613,55 +1737,82 @@ final class SettingsController: NSObject {
         studyPopup.addItems(withTitles: ["标注（划重点）", "揭开（擦开遮罩）"])
         applyStudyMode(studyMode)
 
-        let content = NSView(frame: NSRect(x: 0, y: 0, width: 360, height: 430))
+        let content = NSView(frame: NSRect(x: 0, y: 0, width: 380, height: 620))
         func label(_ text: String, y: CGFloat) -> NSTextField {
             let field = NSTextField(labelWithString: text)
-            field.frame = NSRect(x: 20, y: y, width: 320, height: 18)
+            field.frame = NSRect(x: 20, y: y, width: 340, height: 18)
             return field
         }
-        content.addSubview(label("缩放", y: 390))
-        zoomSlider.frame = NSRect(x: 20, y: 362, width: 240, height: 24)
+        content.addSubview(label("缩放", y: 580))
+        zoomSlider.frame = NSRect(x: 20, y: 552, width: 260, height: 24)
         zoomSlider.target = self
         zoomSlider.action = #selector(zoomChanged)
-        zoomLabel.frame = NSRect(x: 270, y: 364, width: 70, height: 20)
+        zoomLabel.frame = NSRect(x: 290, y: 554, width: 70, height: 20)
         content.addSubview(zoomSlider)
         content.addSubview(zoomLabel)
-        content.addSubview(label("卡片短边上限（像素）", y: 328))
-        cardMaxField.frame = NSRect(x: 20, y: 300, width: 120, height: 24)
+        content.addSubview(label("卡片短边上限（像素）", y: 518))
+        cardMaxField.frame = NSRect(x: 20, y: 490, width: 120, height: 24)
         cardMaxField.placeholderString = "600"
         content.addSubview(cardMaxField)
-        content.addSubview(label("长时间无互动后切换表情（分钟，0 为关闭）", y: 266))
-        minutesField.frame = NSRect(x: 20, y: 238, width: 120, height: 24)
+        content.addSubview(label("长时间无互动后切换表情（分钟，0 为关闭）", y: 456))
+        minutesField.frame = NSRect(x: 20, y: 428, width: 120, height: 24)
         minutesField.placeholderString = "10"
         content.addSubview(minutesField)
-        content.addSubview(label("短期内多次悬停（次数 / 统计窗口分钟，0 关闭）", y: 204))
-        repeatCountField.frame = NSRect(x: 20, y: 176, width: 70, height: 24)
+        content.addSubview(label("短期内多次悬停（次数 / 统计窗口分钟，0 关闭）", y: 394))
+        repeatCountField.frame = NSRect(x: 20, y: 366, width: 70, height: 24)
         repeatCountField.placeholderString = "5"
-        repeatWindowField.frame = NSRect(x: 100, y: 176, width: 70, height: 24)
+        repeatWindowField.frame = NSRect(x: 100, y: 366, width: 70, height: 24)
         repeatWindowField.placeholderString = "1"
         content.addSubview(repeatCountField)
         content.addSubview(repeatWindowField)
-        content.addSubview(label("移开后多久才退出悬停（秒）", y: 142))
-        hoverExitField.frame = NSRect(x: 20, y: 114, width: 120, height: 24)
+        content.addSubview(label("移开后多久才退出悬停（秒）", y: 332))
+        hoverExitField.frame = NSRect(x: 20, y: 304, width: 120, height: 24)
         hoverExitField.placeholderString = "1"
         content.addSubview(hoverExitField)
-        content.addSubview(label("学习方式", y: 80))
-        studyPopup.frame = NSRect(x: 20, y: 52, width: 240, height: 26)
+        content.addSubview(label("学习方式", y: 270))
+        studyPopup.frame = NSRect(x: 20, y: 242, width: 240, height: 26)
         content.addSubview(studyPopup)
-        let hint = NSTextField(labelWithString: "拖到屏幕边缘会贴边探头")
+        content.addSubview(label("解释提示词（{简写} 会被替换）", y: 208))
+        promptField.frame = NSRect(x: 20, y: 180, width: 340, height: 24)
+        promptField.placeholderString = "你是AI领域专家，通俗的为学生解释{简写}"
+        content.addSubview(promptField)
+        content.addSubview(label("解释气泡（宽 / 高 / 字号）", y: 146))
+        bubbleWidthField.frame = NSRect(x: 20, y: 118, width: 70, height: 24)
+        bubbleWidthField.placeholderString = "320"
+        bubbleHeightField.frame = NSRect(x: 100, y: 118, width: 70, height: 24)
+        bubbleHeightField.placeholderString = "220"
+        fontSizeField.frame = NSRect(x: 180, y: 118, width: 70, height: 24)
+        fontSizeField.placeholderString = "13"
+        content.addSubview(bubbleWidthField)
+        content.addSubview(bubbleHeightField)
+        content.addSubview(fontSizeField)
+        let hint = NSTextField(labelWithString: "拖到屏幕边缘会贴边探头；API Key 仍在 local.env")
         hint.textColor = .secondaryLabelColor
-        hint.frame = NSRect(x: 20, y: 28, width: 320, height: 18)
+        hint.frame = NSRect(x: 20, y: 84, width: 340, height: 18)
         content.addSubview(hint)
         let save = NSButton(title: "保存", target: self, action: #selector(saveTapped))
         save.bezelStyle = .rounded
-        save.frame = NSRect(x: 250, y: 8, width: 90, height: 28)
+        save.frame = NSRect(x: 270, y: 40, width: 90, height: 28)
         content.addSubview(save)
         window.contentView = content
         window.delegate = self
         refreshZoomLabel()
     }
 
-    func show(zoom: Double, cardMax: Int, minutes: Double, repeatAfter: Int, repeatWindow: Double, hoverExit: Double, studyMode: StudyMode, on screen: NSScreen?) {
+    func show(
+        zoom: Double,
+        cardMax: Int,
+        minutes: Double,
+        repeatAfter: Int,
+        repeatWindow: Double,
+        hoverExit: Double,
+        studyMode: StudyMode,
+        explainPrompt: String,
+        bubbleWidth: Double,
+        bubbleHeight: Double,
+        fontSize: Double,
+        on screen: NSScreen?
+    ) {
         zoomSlider.doubleValue = zoom
         cardMaxField.stringValue = "\(cardMax)"
         minutesField.stringValue = String(format: "%g", minutes)
@@ -1669,6 +1820,10 @@ final class SettingsController: NSObject {
         repeatWindowField.stringValue = String(format: "%g", repeatWindow)
         hoverExitField.stringValue = String(format: "%g", hoverExit)
         applyStudyMode(studyMode)
+        promptField.stringValue = explainPrompt
+        bubbleWidthField.stringValue = String(format: "%g", bubbleWidth)
+        bubbleHeightField.stringValue = String(format: "%g", bubbleHeight)
+        fontSizeField.stringValue = String(format: "%g", fontSize)
         refreshZoomLabel()
         if let visible = screen?.visibleFrame ?? NSScreen.main?.visibleFrame {
             let size = window.frame.size
@@ -1701,7 +1856,11 @@ final class SettingsController: NSObject {
             parsedRepeatAfter(),
             parsedRepeatWindow(),
             parsedHoverExit(),
-            parsedStudyMode()
+            parsedStudyMode(),
+            parsedPrompt(),
+            parsedBubbleWidth(),
+            parsedBubbleHeight(),
+            parsedFontSize()
         )
     }
 
@@ -1710,8 +1869,7 @@ final class SettingsController: NSObject {
     }
 
     private func parsedMinutes() -> Double {
-        let value = Double(minutesField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 10
-        return max(0, value)
+        max(0, Double(minutesField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 10)
     }
 
     private func parsedRepeatAfter() -> Int {
@@ -1728,6 +1886,23 @@ final class SettingsController: NSObject {
 
     private func parsedStudyMode() -> StudyMode {
         studyPopup.indexOfSelectedItem == 1 ? .reveal : .annotate
+    }
+
+    private func parsedPrompt() -> String {
+        let text = promptField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+        return text.isEmpty ? ExplainConfig.defaults.promptTemplate : text
+    }
+
+    private func parsedBubbleWidth() -> Double {
+        max(180, Double(bubbleWidthField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 320)
+    }
+
+    private func parsedBubbleHeight() -> Double {
+        max(120, Double(bubbleHeightField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 220)
+    }
+
+    private func parsedFontSize() -> Double {
+        min(28, max(10, Double(fontSizeField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 13))
     }
 
     private func applyStudyMode(_ mode: StudyMode) {
@@ -1748,8 +1923,10 @@ extension SettingsController: NSWindowDelegate {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var petPanel: ClearPanel!
     private var cardPanel: ClearPanel!
+    private var bubblePanel: ClearPanel!
     private var petView: HoverView!
     private var cardView: HoverView!
+    private var bubbleView: SpeechBubbleView!
     private var pack: CharacterPack!
     private var peekLeft: NSImage!
     private var peekHoverLeft: NSImage!
@@ -1779,6 +1956,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var configURL: URL!
     private var settings: SettingsController?
     private var cardImageSize = NSSize.zero
+    private let explainClient = ExplainClient()
+    private var explainTerm = ""
+    private var bubbleVisible = false
+    /// Text-drag / drop should explain only — never reveal the study card.
+    private var suppressCardReveal = false
+    private let selectionWatcher = SelectionWatcher()
+    private let selectionChip = SelectionChipPanel()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let root = deskpetRoot()
@@ -1825,14 +2009,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         petView = HoverView(frame: .zero)
         petView.setNearestScaling(pack.nearest)
+        petView.acceptsTextDrop = true
         petView.onInside = { [weak self] inside in
             self?.petInside = inside
             self?.syncHover()
         }
         petView.onSettings = { [weak self] in self?.openSettings() }
         petView.onCopyInbox = { [weak self] in self?.copyInboxURL() }
+        petView.onRequestAccessibility = { [weak self] in self?.requestAccessibility() }
         petView.onDragMoved = { [weak self] in self?.updateDockWhileDragging() }
         petView.onDragEnded = { [weak self] in self?.endDrag() }
+        petView.onTextDragHover = { [weak self] active in
+            self?.handleTextDragHover(active)
+        }
+        petView.onTextDrop = { [weak self] text in self?.explainDroppedText(text) }
 
         cardView = HoverView(frame: .zero)
         cardView.studyMode = config.studyMode
@@ -1846,12 +2036,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         cardView.onSettings = { [weak self] in self?.openSettings() }
         cardView.onCopyInbox = { [weak self] in self?.copyInboxURL() }
+        cardView.onRequestAccessibility = { [weak self] in self?.requestAccessibility() }
+
+        bubbleView = SpeechBubbleView(frame: .zero)
+        bubbleView.applyStyle(config.bubbleStyle)
+        bubbleView.onDismiss = { [weak self] in self?.hideBubble() }
 
         petPanel = makePanel()
         petPanel.contentView = petView
         cardPanel = makePanel()
         cardPanel.contentView = cardView
         cardPanel.orderOut(nil)
+        bubblePanel = makePanel()
+        bubblePanel.contentView = bubbleView
+        bubblePanel.hasShadow = true
+        bubblePanel.orderOut(nil)
 
         applyPose()
         if let screen = NSScreen.main?.visibleFrame {
@@ -1872,6 +2071,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         ) { [weak self] _ in
             self?.snapIfNeeded()
         }
+        startSelectionChip()
+    }
+
+    private func startSelectionChip() {
+        selectionChip.onTap = { [weak self] text in
+            self?.explainDroppedText(text)
+        }
+        selectionWatcher.shouldIgnorePoint = { [weak self] point in
+            self?.isPointOverDeskPet(point) ?? false
+        }
+        selectionWatcher.onSelection = { [weak self] text, point in
+            self?.selectionChip.show(text: text, near: point)
+        }
+        selectionWatcher.start()
+        if !AccessibilityAuth.isTrusted {
+            fputs("DeskPet: Accessibility not granted — selection chip disabled. Right-click pet → 授予辅助功能权限…\n", stderr)
+        }
+    }
+
+    private func isPointOverDeskPet(_ point: NSPoint) -> Bool {
+        for window in NSApp.windows where window.isVisible {
+            if window.frame.contains(point) { return true }
+        }
+        return false
+    }
+
+    private func requestAccessibility() {
+        if AccessibilityAuth.isTrusted {
+            fputs("DeskPet: Accessibility already granted\n", stderr)
+            return
+        }
+        _ = AccessibilityAuth.promptIfNeeded()
+        AccessibilityAuth.openSettings()
     }
 
     private func petScreen() -> NSScreen? {
@@ -2014,6 +2246,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if showing {
             positionCard()
         }
+        if bubbleVisible {
+            positionBubble()
+        }
     }
 
     private func dockedEdge(for frame: NSRect, on screen: NSScreen) -> DockedEdge {
@@ -2068,6 +2303,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if showing {
             positionCard()
         }
+        if bubbleVisible {
+            positionBubble()
+        }
     }
 
     private func resetInteract() {
@@ -2103,7 +2341,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if !showing {
                 showing = true
                 applyPose()
-                showCard()
+                if !suppressCardReveal {
+                    showCard()
+                }
             } else if isRepeatHoverNow() != repeatingBefore {
                 applyPose()
             }
@@ -2119,6 +2359,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.awayClock.hoverChanged(inside: false)
             self.showing = false
             self.hoverSessionInside = false
+            self.suppressCardReveal = false
             self.cardView.clearStudy()
             self.cardPanel.orderOut(nil)
             if let url = self.sessionInbox {
@@ -2169,6 +2410,89 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             origin.y = min(max(origin.y, screen.minY + 8), screen.maxY - size.height - 8)
         }
         cardPanel.setFrameOrigin(origin)
+    }
+
+    private func handleTextDragHover(_ active: Bool) {
+        if active {
+            suppressCardReveal = true
+            hideStudyCardOnly()
+            return
+        }
+        // Drag left without a drop: restore normal card hover if no bubble is up.
+        if !bubbleVisible {
+            suppressCardReveal = false
+            syncHover()
+        }
+    }
+
+    private func hideStudyCardOnly() {
+        cardView.clearStudy()
+        cardPanel.orderOut(nil)
+    }
+
+    private func explainDroppedText(_ text: String) {
+        let term = String(text.prefix(200))
+        explainTerm = term
+        suppressCardReveal = true
+        hideStudyCardOnly()
+        resetInteract()
+        showBubble(term: term, body: "正在解释…", loading: true)
+        explainClient.explain(term: term, config: config.explain) { [weak self] result in
+            guard let self else { return }
+            guard self.explainTerm == term else { return }
+            switch result {
+            case .success(let reply):
+                self.showBubble(term: term, body: reply, loading: false)
+            case .failure(let error):
+                let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                self.showBubble(term: term, body: message, loading: false)
+            }
+        }
+    }
+
+    private func showBubble(term: String, body: String, loading: Bool) {
+        let size = bubbleView.preferredSize
+        bubbleView.frame = NSRect(origin: .zero, size: size)
+        bubblePanel.setContentSize(size)
+        bubbleView.show(term: term, body: body, loading: loading)
+        bubbleVisible = true
+        positionBubble()
+        bubblePanel.orderFrontRegardless()
+    }
+
+    private func hideBubble() {
+        explainClient.cancel()
+        explainTerm = ""
+        bubbleVisible = false
+        bubblePanel.orderOut(nil)
+        // Explain flow sets suppressCardReveal; clear it so the next hover can show the card.
+        let restoreCard = suppressCardReveal && (petInside || cardInside || cardMarking)
+        suppressCardReveal = false
+        if restoreCard {
+            if showing {
+                showCard()
+            } else {
+                syncHover()
+            }
+        }
+    }
+
+    private func positionBubble() {
+        let size = bubblePanel.frame.size
+        guard size.width > 0 else { return }
+        let petFrame = petPanel.frame
+        var origin = NSPoint(
+            x: petFrame.midX - size.width / 2,
+            y: petFrame.maxY + 10
+        )
+        if let screen = petVisibleFrame() {
+            if origin.y + size.height > screen.maxY - 8 {
+                origin.y = petFrame.minY - size.height - 10
+            }
+            origin.x = min(max(origin.x, screen.minX + 8), screen.maxX - size.width - 8)
+            origin.y = min(max(origin.y, screen.minY + 8), screen.maxY - size.height - 8)
+        }
+        bubblePanel.setFrameOrigin(origin)
     }
 
     private func inboxCard() -> NSImage? {
@@ -2224,13 +2548,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 repeatAfter: config.repeatHoverAfter,
                 repeatWindow: config.repeatHoverWindowMinutes,
                 hoverExit: config.hoverExitSeconds,
-                studyMode: config.studyMode
+                studyMode: config.studyMode,
+                explainPrompt: config.explainPrompt,
+                bubbleWidth: config.explainBubbleWidth,
+                bubbleHeight: config.explainBubbleHeight,
+                fontSize: config.explainFontSize
             )
             panel.onPreviewZoom = { [weak self] zoom in
                 self?.config.zoom = zoom
                 self?.applyPose()
             }
-            panel.onApply = { [weak self] zoom, cardMax, minutes, repeatAfter, repeatWindow, hoverExit, studyMode in
+            panel.onApply = { [weak self] zoom, cardMax, minutes, repeatAfter, repeatWindow, hoverExit, studyMode, prompt, bubbleW, bubbleH, fontSize in
                 guard let self else { return }
                 self.config.zoom = zoom
                 self.config.cardMaxWidth = cardMax
@@ -2239,7 +2567,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self.config.repeatHoverWindowMinutes = repeatWindow
                 self.config.hoverExitSeconds = hoverExit
                 self.config.studyMode = studyMode
+                self.config.explainPrompt = prompt
+                self.config.explainBubbleWidth = bubbleW
+                self.config.explainBubbleHeight = bubbleH
+                self.config.explainFontSize = fontSize
                 saveJSON(self.config, to: self.configURL)
+                self.bubbleView.applyStyle(self.config.bubbleStyle)
                 if self.showing, let image = self.cardView.imageView.image {
                     self.layoutCard(image)
                 } else {
@@ -2259,6 +2592,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             repeatWindow: config.repeatHoverWindowMinutes,
             hoverExit: config.hoverExitSeconds,
             studyMode: config.studyMode,
+            explainPrompt: config.explainPrompt,
+            bubbleWidth: config.explainBubbleWidth,
+            bubbleHeight: config.explainBubbleHeight,
+            fontSize: config.explainFontSize,
             on: petScreen()
         )
     }

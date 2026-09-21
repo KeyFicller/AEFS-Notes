@@ -5,6 +5,12 @@
     "..\/notes\/cards"
   ],
   "character" : "dafeiyu",
+  "explain_api_base" : "https:\/\/api.deepseek.com",
+  "explain_bubble_height" : 400,
+  "explain_bubble_width" : 600,
+  "explain_font_size" : 20,
+  "explain_model" : "deepseek-flash",
+  "explain_prompt" : "你是AI领域专家，通俗的为学生解释{简写}，格式： 先一句话解释，然后举例，最后总结",
   "hover_exit_seconds" : 1,
   "inbox_hostname" : "squeak-emerald-jogging.ngrok-free.dev",
   "inbox_port" : 8765,

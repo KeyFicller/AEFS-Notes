@@ -8,6 +8,7 @@ deskpet/DeskPet
 deskpet/DeskPet.dSYM/
 deskpet/inbox/*.png
 deskpet/inbox/public-url.txt
+deskpet/local.env
 
 # lesson-memo byproducts (attempt drafts + sidecars)
 attempt*.png

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import socket
 import subprocess
@@ -15,7 +16,23 @@ ROOT = Path(__file__).resolve().parent
 NATIVE = ROOT / "native"
 BINARY = ROOT / "DeskPet"
 PUBLIC_URL = ROOT / "inbox" / "public-url.txt"
+LOCAL_ENV = ROOT / "local.env"
 NGROK_API = "http://127.0.0.1:4040/api/tunnels"
+
+
+def load_local_env() -> None:
+    """Load deskpet/local.env into os.environ if keys are not already set."""
+    if not LOCAL_ENV.is_file():
+        return
+    for raw in LOCAL_ENV.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip("\"'")
+        if key and key not in os.environ:
+            os.environ[key] = value
 
 
 def sources() -> list[Path]:
@@ -43,6 +60,8 @@ def compile_native() -> None:
         "AppKit",
         "-framework",
         "Network",
+        "-framework",
+        "ApplicationServices",
         *[str(p) for p in files],
     ]
     subprocess.check_call(cmd)
@@ -180,6 +199,7 @@ def start_inbox_tunnel(cfg: dict, port: int) -> subprocess.Popen | None:
 
 
 def main() -> None:
+    load_local_env()
     if needs_compile():
         compile_native()
     cfg = load_config()

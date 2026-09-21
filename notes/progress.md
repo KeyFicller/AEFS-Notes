@@ -417,3 +417,4 @@
 | 2026-09-21 | phases/15-autonomous-systems/20-openai-preparedness-deepmind-fsf | notes/cards/15-autonomous-systems/20-openai-preparedness-deepmind-fsf.png | done score=92 attempt=1 |
 | 2026-09-21 | phases/15-autonomous-systems/21-metr-external-evaluation | notes/cards/15-autonomous-systems/21-metr-external-evaluation.png | done score=94 attempt=1 |
 | 2026-09-21 | phases/15-autonomous-systems/22-cais-caisi-societal-risk | notes/cards/15-autonomous-systems/22-cais-caisi-societal-risk.png | done score=93 attempt=1 |
+| 2026-09-21 | phases/16-multi-agent-and-swarms/01-why-multi-agent | notes/cards/16-multi-agent-and-swarms/01-why-multi-agent.png | done score=93 attempt=1 |
