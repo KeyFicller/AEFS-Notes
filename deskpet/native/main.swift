@@ -1774,7 +1774,7 @@ final class SettingsController: NSObject {
         content.addSubview(studyPopup)
         content.addSubview(label("解释提示词（{简写} 会被替换）", y: 208))
         promptField.frame = NSRect(x: 20, y: 180, width: 340, height: 24)
-        promptField.placeholderString = "你是AI领域专家，通俗的为学生解释{简写}"
+        promptField.placeholderString = "三段式：一句话解释 / 举例 / 总结（段间空行）"
         content.addSubview(promptField)
         content.addSubview(label("解释气泡（宽 / 高 / 字号）", y: 146))
         bubbleWidthField.frame = NSRect(x: 20, y: 118, width: 70, height: 24)
@@ -2080,6 +2080,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         selectionWatcher.shouldIgnorePoint = { [weak self] point in
             self?.isPointOverDeskPet(point) ?? false
+        }
+        selectionWatcher.onClickBegan = { [weak self] in
+            self?.selectionChip.hide()
         }
         selectionWatcher.onSelection = { [weak self] text, point in
             self?.selectionChip.show(text: text, near: point)
@@ -2437,15 +2440,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         hideStudyCardOnly()
         resetInteract()
         showBubble(term: term, body: "正在解释…", loading: true)
-        explainClient.explain(term: term, config: config.explain) { [weak self] result in
+        explainClient.explain(term: term, config: config.explain) { [weak self] event in
             guard let self else { return }
             guard self.explainTerm == term else { return }
-            switch result {
+            switch event {
+            case .partial(let reply):
+                guard !reply.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+                self.updateBubble(term: term, body: reply, loading: false, streaming: true)
             case .success(let reply):
-                self.showBubble(term: term, body: reply, loading: false)
+                self.updateBubble(term: term, body: reply, loading: false, streaming: false)
             case .failure(let error):
                 let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-                self.showBubble(term: term, body: message, loading: false)
+                self.updateBubble(term: term, body: message, loading: false, streaming: false)
             }
         }
     }
@@ -2458,6 +2464,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         bubbleVisible = true
         positionBubble()
         bubblePanel.orderFrontRegardless()
+    }
+
+    /// Replace the body of an already-visible bubble without moving the panel.
+    private func updateBubble(term: String, body: String, loading: Bool, streaming: Bool) {
+        guard bubbleVisible else { return }
+        bubbleView.show(term: term, body: body, loading: loading, streaming: streaming)
     }
 
     private func hideBubble() {

@@ -144,6 +144,11 @@ final class SpeechBubbleView: NSView {
         textView.textContainerInset = NSSize(width: 2, height: 2)
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
+        textView.minSize = NSSize(width: 0, height: 0)
+        textView.maxSize = NSSize(
+            width: CGFloat.greatestFiniteMagnitude,
+            height: CGFloat.greatestFiniteMagnitude
+        )
         textView.textContainer?.widthTracksTextView = true
         textView.linkTextAttributes = [
             .foregroundColor: MemoType.link,
@@ -203,22 +208,60 @@ final class SpeechBubbleView: NSView {
             width: bounds.width - 24,
             height: max(0, bounds.height - bar - bottomPad)
         )
-        textView.frame = NSRect(origin: .zero, size: scroll.contentSize)
-        textView.textContainer?.containerSize = NSSize(
-            width: max(scroll.contentSize.width - 8, 40),
-            height: CGFloat.greatestFiniteMagnitude
-        )
+        resizeTextDocument()
         paper.needsDisplay = true
     }
 
-    func show(term: String, body: String, loading: Bool) {
+    func show(term: String, body: String, loading: Bool, streaming: Bool = false) {
+        let stick = !loading && isNearBottom()
+        let savedOrigin = scroll.contentView.bounds.origin
         let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
         titleLabel.stringValue = trimmed.isEmpty ? "解释" : "解释：\(trimmed)"
         let rendered = loading
             ? plainBody(body, loading: true)
-            : renderMarkdown(body)
+            : renderMarkdown(body, trimEdges: !streaming)
         textView.textStorage?.setAttributedString(rendered)
         needsLayout = true
+        layoutSubtreeIfNeeded()
+        if stick {
+            scrollToEnd()
+        } else if !loading {
+            scroll.contentView.scroll(to: savedOrigin)
+            scroll.reflectScrolledClipView(scroll.contentView)
+        }
+    }
+
+    /// Grow the text view with its content so the bubble can scroll past the visible area.
+    private func resizeTextDocument() {
+        let width = scroll.contentSize.width
+        textView.textContainer?.containerSize = NSSize(
+            width: max(width - 8, 40),
+            height: CGFloat.greatestFiniteMagnitude
+        )
+        guard let container = textView.textContainer else { return }
+        textView.layoutManager?.ensureLayout(for: container)
+        let used = textView.layoutManager?.usedRect(for: container).height ?? 0
+        let height = max(
+            scroll.contentSize.height,
+            ceil(used + textView.textContainerInset.height * 2)
+        )
+        let next = NSRect(x: 0, y: 0, width: width, height: height)
+        if textView.frame != next {
+            textView.frame = next
+        }
+    }
+
+    private func isNearBottom(slack: CGFloat = 36) -> Bool {
+        let visible = scroll.contentView.bounds
+        let docHeight = max(textView.frame.height, scroll.documentView?.bounds.height ?? 0)
+        if docHeight <= visible.height + 1 { return true }
+        return visible.maxY >= docHeight - slack
+    }
+
+    private func scrollToEnd() {
+        let length = (textView.string as NSString).length
+        guard length > 0 else { return }
+        textView.scrollRangeToVisible(NSRange(location: length, length: 0))
     }
 
     private func plainBody(_ text: String, loading: Bool) -> NSAttributedString {
@@ -238,10 +281,13 @@ final class SpeechBubbleView: NSView {
         return paragraph
     }
 
-    private func renderMarkdown(_ source: String) -> NSAttributedString {
-        let cleaned = Self.normalizeMarkdown(source)
+    private func renderMarkdown(_ source: String, trimEdges: Bool = true) -> NSAttributedString {
+        let cleaned = Self.normalizeMarkdown(source, trimEdges: trimEdges)
+        // `.full` stores paragraphs as PresentationIntent and drops `\n` when
+        // bridging to NSAttributedString — sections visually merge. Inline mode
+        // keeps blank lines from normalizeMarkdown while still parsing **bold**/`code`.
         let options = AttributedString.MarkdownParsingOptions(
-            interpretedSyntax: .full,
+            interpretedSyntax: .inlineOnlyPreservingWhitespace,
             failurePolicy: .returnPartiallyParsedIfPossible
         )
         guard let parsed = try? AttributedString(markdown: cleaned, options: options) else {
@@ -259,6 +305,7 @@ final class SpeechBubbleView: NSView {
         let italicFont = NSFontManager.shared.convert(italicBase, toHaveTrait: .italicFontMask)
         let monoFont = MemoType.mono(ofSize: style.codeFontSize)
         let paragraph = baseParagraphStyle()
+        let intentKey = NSAttributedString.Key("NSInlinePresentationIntent")
 
         // Base ink + paragraph on everything first.
         mutable.addAttributes([
@@ -266,15 +313,24 @@ final class SpeechBubbleView: NSView {
             .paragraphStyle: paragraph,
         ], range: full)
 
-        // Apply memo fonts per run without wiping markdown emphasis.
+        // Apply memo fonts per run. Emphasis arrives as InlinePresentationIntent, not NSFont.
         mutable.enumerateAttributes(in: full, options: []) { attrs, range, _ in
             let existing = attrs[.font] as? NSFont
             let traits = existing.map { NSFontManager.shared.traits(of: $0) } ?? []
-            let isMono = existing?.fontName.lowercased().contains("mono") == true
+            let intent: UInt
+            if let v = attrs[intentKey] as? UInt {
+                intent = v
+            } else if let v = attrs[intentKey] as? Int {
+                intent = UInt(v)
+            } else {
+                intent = 0
+            }
+            let isMono = (intent & 4) != 0
+                || existing?.fontName.lowercased().contains("mono") == true
                 || existing?.fontName.lowercased().contains("menlo") == true
                 || existing?.fontName.lowercased().contains("courier") == true
-            let isBold = traits.contains(.boldFontMask)
-            let isItalic = traits.contains(.italicFontMask)
+            let isBold = (intent & 2) != 0 || traits.contains(.boldFontMask)
+            let isItalic = (intent & 1) != 0 || traits.contains(.italicFontMask)
 
             let font: NSFont
             if isMono {
@@ -295,16 +351,54 @@ final class SpeechBubbleView: NSView {
         return mutable
     }
 
-    /// Soft cleanup so Apple's markdown parser is less likely to leave raw markers.
-    private static func normalizeMarkdown(_ source: String) -> String {
+    /// Soft cleanup + force three-section breaks so Markdown keeps paragraphs.
+    private static func normalizeMarkdown(_ source: String, trimEdges: Bool = true) -> String {
         var text = source
             .replacingOccurrences(of: "\r\n", with: "\n")
             .replacingOccurrences(of: "\r", with: "\n")
-        // Normalize full-width asterisks / backticks some models emit.
-        text = text
             .replacingOccurrences(of: "＊", with: "*")
             .replacingOccurrences(of: "｀", with: "`")
-        return text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Models often jam sections into one paragraph ("。举例：…。总结：").
+        // Insert a blank line before each section label so Markdown makes new paragraphs.
+        let labels = ["一句话解释：", "举例：", "总结："]
+        for label in labels {
+            let escaped = NSRegularExpression.escapedPattern(for: label)
+            // Any non-newline char (or spaces) immediately before the label → blank line.
+            if let regex = try? NSRegularExpression(
+                pattern: #"([^\n])[ \t]*"# + escaped,
+                options: []
+            ) {
+                let range = NSRange(text.startIndex..<text.endIndex, in: text)
+                text = regex.stringByReplacingMatches(
+                    in: text,
+                    options: [],
+                    range: range,
+                    withTemplate: "$1\n\n" + label
+                )
+            }
+            // Single newline before label → blank line.
+            if let regex = try? NSRegularExpression(
+                pattern: #"\n[ \t]*"# + escaped,
+                options: []
+            ) {
+                let range = NSRange(text.startIndex..<text.endIndex, in: text)
+                text = regex.stringByReplacingMatches(
+                    in: text,
+                    options: [],
+                    range: range,
+                    withTemplate: "\n\n" + label
+                )
+            }
+        }
+
+        while text.contains("\n\n\n") {
+            text = text.replacingOccurrences(of: "\n\n\n", with: "\n\n")
+        }
+        if trimEdges {
+            return text.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return text
     }
 
     @objc private func dismissTapped() {
