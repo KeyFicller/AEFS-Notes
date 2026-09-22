@@ -10,8 +10,6 @@ struct Config: Codable {
     var inboxPort: Int
     var inboxTunnel: Bool
     var inboxHostname: String
-    var repeatHoverAfter: Int
-    var repeatHoverWindowMinutes: Double
     var hoverExitSeconds: Double
     var studyMode: StudyMode
     var explainModel: String
@@ -31,8 +29,6 @@ struct Config: Codable {
         case inboxPort = "inbox_port"
         case inboxTunnel = "inbox_tunnel"
         case inboxHostname = "inbox_hostname"
-        case repeatHoverAfter = "repeat_hover_after"
-        case repeatHoverWindowMinutes = "repeat_hover_window_minutes"
         case hoverExitSeconds = "hover_exit_seconds"
         case studyMode = "study_mode"
         case explainModel = "explain_model"
@@ -54,8 +50,6 @@ struct Config: Codable {
         inboxPort = try box.decodeIfPresent(Int.self, forKey: .inboxPort) ?? 8765
         inboxTunnel = try box.decodeIfPresent(Bool.self, forKey: .inboxTunnel) ?? true
         inboxHostname = try box.decodeIfPresent(String.self, forKey: .inboxHostname) ?? ""
-        repeatHoverAfter = try box.decodeIfPresent(Int.self, forKey: .repeatHoverAfter) ?? 5
-        repeatHoverWindowMinutes = try box.decodeIfPresent(Double.self, forKey: .repeatHoverWindowMinutes) ?? 1
         hoverExitSeconds = try box.decodeIfPresent(Double.self, forKey: .hoverExitSeconds) ?? 1
         if let raw = try box.decodeIfPresent(String.self, forKey: .studyMode) {
             studyMode = StudyMode(rawValue: raw) ?? .annotate
@@ -86,8 +80,6 @@ struct Config: Codable {
         try box.encode(inboxPort, forKey: .inboxPort)
         try box.encode(inboxTunnel, forKey: .inboxTunnel)
         try box.encode(inboxHostname, forKey: .inboxHostname)
-        try box.encode(repeatHoverAfter, forKey: .repeatHoverAfter)
-        try box.encode(repeatHoverWindowMinutes, forKey: .repeatHoverWindowMinutes)
         try box.encode(hoverExitSeconds, forKey: .hoverExitSeconds)
         try box.encode(studyMode.rawValue, forKey: .studyMode)
         try box.encode(explainModel, forKey: .explainModel)
@@ -130,8 +122,6 @@ struct CharacterSpec: Decodable {
     let peekAway: String?
     let inbox: String?
     let peekInbox: String?
-    let repeatHover: String?
-    let peekRepeatHover: String?
     let reveal: String?
     let peekReveal: String?
     let away: String?
@@ -144,8 +134,6 @@ struct CharacterSpec: Decodable {
         case peekHover = "peek_hover"
         case peekAway = "peek_away"
         case peekInbox = "peek_inbox"
-        case repeatHover = "repeat_hover"
-        case peekRepeatHover = "peek_repeat_hover"
         case reveal
         case peekReveal = "peek_reveal"
         case peekScale = "peek_scale"
@@ -165,8 +153,6 @@ struct CharacterSpec: Decodable {
             ?? box.decodeIfPresent(String.self, forKey: .peekAwayLegacy)
         inbox = try box.decodeIfPresent(String.self, forKey: .inbox)
         peekInbox = try box.decodeIfPresent(String.self, forKey: .peekInbox)
-        repeatHover = try box.decodeIfPresent(String.self, forKey: .repeatHover)
-        peekRepeatHover = try box.decodeIfPresent(String.self, forKey: .peekRepeatHover)
         reveal = try box.decodeIfPresent(String.self, forKey: .reveal)
         peekReveal = try box.decodeIfPresent(String.self, forKey: .peekReveal)
         away = try box.decodeIfPresent(String.self, forKey: .away)
@@ -187,8 +173,6 @@ struct CharacterPack {
     let peekAway: NSImage
     let inbox: NSImage
     let peekInbox: NSImage
-    let repeatHover: NSImage
-    let peekRepeatHover: NSImage
     let reveal: NSImage
     let peekReveal: NSImage
     let away: NSImage
@@ -1687,10 +1671,8 @@ final class SettingsController: NSObject {
     private let zoomLabel: NSTextField
     private let minutesField: NSTextField
     var onPreviewZoom: ((Double) -> Void)?
-    var onApply: ((Double, Int, Double, Int, Double, Double, StudyMode, String, Double, Double, Double) -> Void)?
+    var onApply: ((Double, Int, Double, Double, StudyMode, String, Double, Double, Double) -> Void)?
     private let cardMaxField: NSTextField
-    private let repeatCountField: NSTextField
-    private let repeatWindowField: NSTextField
     private let hoverExitField: NSTextField
     private let studyPopup: NSPopUpButton
     private let promptField: NSTextField
@@ -1702,8 +1684,6 @@ final class SettingsController: NSObject {
         zoom: Double,
         cardMax: Int,
         minutes: Double,
-        repeatAfter: Int,
-        repeatWindow: Double,
         hoverExit: Double,
         studyMode: StudyMode,
         explainPrompt: String,
@@ -1716,8 +1696,6 @@ final class SettingsController: NSObject {
         zoomLabel = NSTextField(labelWithString: "")
         cardMaxField = NSTextField(string: "\(cardMax)")
         minutesField = NSTextField(string: String(format: "%g", minutes))
-        repeatCountField = NSTextField(string: "\(repeatAfter)")
-        repeatWindowField = NSTextField(string: String(format: "%g", repeatWindow))
         hoverExitField = NSTextField(string: String(format: "%g", hoverExit))
         studyPopup = NSPopUpButton(frame: .zero, pullsDown: false)
         promptField = NSTextField(string: explainPrompt)
@@ -1725,7 +1703,7 @@ final class SettingsController: NSObject {
         bubbleHeightField = NSTextField(string: String(format: "%g", bubbleHeight))
         fontSizeField = NSTextField(string: String(format: "%g", fontSize))
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 380, height: 620),
+            contentRect: NSRect(x: 0, y: 0, width: 380, height: 558),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -1737,34 +1715,27 @@ final class SettingsController: NSObject {
         studyPopup.addItems(withTitles: ["标注（划重点）", "揭开（擦开遮罩）"])
         applyStudyMode(studyMode)
 
-        let content = NSView(frame: NSRect(x: 0, y: 0, width: 380, height: 620))
+        let content = NSView(frame: NSRect(x: 0, y: 0, width: 380, height: 558))
         func label(_ text: String, y: CGFloat) -> NSTextField {
             let field = NSTextField(labelWithString: text)
             field.frame = NSRect(x: 20, y: y, width: 340, height: 18)
             return field
         }
-        content.addSubview(label("缩放", y: 580))
-        zoomSlider.frame = NSRect(x: 20, y: 552, width: 260, height: 24)
+        content.addSubview(label("缩放", y: 518))
+        zoomSlider.frame = NSRect(x: 20, y: 490, width: 260, height: 24)
         zoomSlider.target = self
         zoomSlider.action = #selector(zoomChanged)
-        zoomLabel.frame = NSRect(x: 290, y: 554, width: 70, height: 20)
+        zoomLabel.frame = NSRect(x: 290, y: 492, width: 70, height: 20)
         content.addSubview(zoomSlider)
         content.addSubview(zoomLabel)
-        content.addSubview(label("卡片短边上限（像素）", y: 518))
-        cardMaxField.frame = NSRect(x: 20, y: 490, width: 120, height: 24)
+        content.addSubview(label("卡片短边上限（像素）", y: 456))
+        cardMaxField.frame = NSRect(x: 20, y: 428, width: 120, height: 24)
         cardMaxField.placeholderString = "600"
         content.addSubview(cardMaxField)
-        content.addSubview(label("长时间无互动后切换表情（分钟，0 为关闭）", y: 456))
-        minutesField.frame = NSRect(x: 20, y: 428, width: 120, height: 24)
+        content.addSubview(label("长时间无互动后切换表情（分钟，0 为关闭）", y: 394))
+        minutesField.frame = NSRect(x: 20, y: 366, width: 120, height: 24)
         minutesField.placeholderString = "10"
         content.addSubview(minutesField)
-        content.addSubview(label("短期内多次悬停（次数 / 统计窗口分钟，0 关闭）", y: 394))
-        repeatCountField.frame = NSRect(x: 20, y: 366, width: 70, height: 24)
-        repeatCountField.placeholderString = "5"
-        repeatWindowField.frame = NSRect(x: 100, y: 366, width: 70, height: 24)
-        repeatWindowField.placeholderString = "1"
-        content.addSubview(repeatCountField)
-        content.addSubview(repeatWindowField)
         content.addSubview(label("移开后多久才退出悬停（秒）", y: 332))
         hoverExitField.frame = NSRect(x: 20, y: 304, width: 120, height: 24)
         hoverExitField.placeholderString = "1"
@@ -1803,8 +1774,6 @@ final class SettingsController: NSObject {
         zoom: Double,
         cardMax: Int,
         minutes: Double,
-        repeatAfter: Int,
-        repeatWindow: Double,
         hoverExit: Double,
         studyMode: StudyMode,
         explainPrompt: String,
@@ -1816,8 +1785,6 @@ final class SettingsController: NSObject {
         zoomSlider.doubleValue = zoom
         cardMaxField.stringValue = "\(cardMax)"
         minutesField.stringValue = String(format: "%g", minutes)
-        repeatCountField.stringValue = "\(repeatAfter)"
-        repeatWindowField.stringValue = String(format: "%g", repeatWindow)
         hoverExitField.stringValue = String(format: "%g", hoverExit)
         applyStudyMode(studyMode)
         promptField.stringValue = explainPrompt
@@ -1853,8 +1820,6 @@ final class SettingsController: NSObject {
             zoomSlider.doubleValue,
             parsedCardMax(),
             parsedMinutes(),
-            parsedRepeatAfter(),
-            parsedRepeatWindow(),
             parsedHoverExit(),
             parsedStudyMode(),
             parsedPrompt(),
@@ -1870,14 +1835,6 @@ final class SettingsController: NSObject {
 
     private func parsedMinutes() -> Double {
         max(0, Double(minutesField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 10)
-    }
-
-    private func parsedRepeatAfter() -> Int {
-        max(0, Int(repeatCountField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 5)
-    }
-
-    private func parsedRepeatWindow() -> Double {
-        max(0, Double(repeatWindowField.stringValue.trimmingCharacters(in: .whitespaces)) ?? 1)
     }
 
     private func parsedHoverExit() -> Double {
@@ -1932,10 +1889,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var peekHoverLeft: NSImage!
     private var peekAwayLeft: NSImage!
     private var peekInboxLeft: NSImage!
-    private var peekRepeatHoverLeft: NSImage!
     private var peekRevealLeft: NSImage!
     private var inboxQueue: InboxQueue!
-    private var repeatHoverClock = RepeatHoverClock()
     private var inboxServer: InboxServer?
     private var sessionInbox: URL?
     private var cards: [URL] = []
@@ -1943,9 +1898,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var petInside = false
     private var cardInside = false
     private var cardMarking = false
-    private var hoverSessionInside = false
-    private var hoverSessionLeaveWork: DispatchWorkItem?
-    private let hoverSessionGap: TimeInterval = 0.18
     private var hideWork: DispatchWorkItem?
     private var showing = false
     private var awayClock = AwayClock()
@@ -1958,6 +1910,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var cardImageSize = NSSize.zero
     private let explainClient = ExplainClient()
     private var explainTerm = ""
+    private var explainMessages: [ChatTurn] = []
+    private var settledBody = ""
     private var bubbleVisible = false
     /// Text-drag / drop should explain only — never reveal the study card.
     private var suppressCardReveal = false
@@ -1984,8 +1938,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             peekAway: spec.peekAway.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
             inbox: spec.inbox.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
             peekInbox: spec.peekInbox.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? peek,
-            repeatHover: spec.repeatHover.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
-            peekRepeatHover: spec.peekRepeatHover.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? peek,
             reveal: spec.reveal.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? hover,
             peekReveal: spec.peekReveal.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? peekHover,
             away: spec.away.flatMap { loadImage(packDir.appendingPathComponent($0)) } ?? idle,
@@ -1997,7 +1949,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         peekHoverLeft = flippedHorizontally(pack.peekHover)
         peekAwayLeft = flippedHorizontally(pack.peekAway)
         peekInboxLeft = flippedHorizontally(pack.peekInbox)
-        peekRepeatHoverLeft = flippedHorizontally(pack.peekRepeatHover)
         peekRevealLeft = flippedHorizontally(pack.peekReveal)
         inboxQueue = InboxQueue(directory: root.appendingPathComponent("inbox", isDirectory: true))
         inboxQueue.loadFromDisk()
@@ -2041,6 +1992,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         bubbleView = SpeechBubbleView(frame: .zero)
         bubbleView.applyStyle(config.bubbleStyle)
         bubbleView.onDismiss = { [weak self] in self?.hideBubble() }
+        bubbleView.onFollowUp = { [weak self] question in
+            self?.askFollowUp(question) ?? false
+        }
 
         petPanel = makePanel()
         petPanel.contentView = petView
@@ -2136,44 +2090,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return panel
     }
 
-    private func isRepeatHoverNow() -> Bool {
-        repeatHoverClock.isActive(
-            afterHovers: config.repeatHoverAfter,
-            windowMinutes: config.repeatHoverWindowMinutes
-        )
-    }
-
     private func poseImage() -> NSImage {
         let sidePeek = docked == .left || docked == .right
         let hasMail = !inboxQueue.isEmpty
-        let repeating = isRepeatHoverNow()
-        if sidePeek { return peekImage(hasMail: hasMail, repeating: repeating) }
+        if sidePeek { return peekImage(hasMail: hasMail) }
         if showing {
             if config.studyMode == .reveal { return pack.reveal }
-            if repeating { return pack.repeatHover }
             return pack.hover
         }
         if hasMail { return pack.inbox }
-        if repeating { return pack.repeatHover }
         if awayClock.isAway { return pack.away }
         return pack.idle
     }
 
-    private func peekImage(hasMail: Bool, repeating: Bool) -> NSImage {
+    private func peekImage(hasMail: Bool) -> NSImage {
         if showing {
             if config.studyMode == .reveal {
                 return docked == .left ? peekRevealLeft : pack.peekReveal
-            }
-            if repeating {
-                return docked == .left ? peekRepeatHoverLeft : pack.peekRepeatHover
             }
             return docked == .left ? peekHoverLeft : pack.peekHover
         }
         if hasMail {
             return docked == .left ? peekInboxLeft : pack.peekInbox
-        }
-        if repeating {
-            return docked == .left ? peekRepeatHoverLeft : pack.peekRepeatHover
         }
         if awayClock.isAway {
             return docked == .left ? peekAwayLeft : pack.peekAway
@@ -2319,49 +2257,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func checkClocks() {
         let wasAway = awayClock.isAway
-        let wasRepeating = isRepeatHoverNow()
         awayClock.tick(
             afterMinutes: config.awayAfterMinutes,
             paused: petInside || showing
         )
-        repeatHoverClock.tick(windowMinutes: config.repeatHoverWindowMinutes)
-        if awayClock.isAway != wasAway || isRepeatHoverNow() != wasRepeating {
+        if awayClock.isAway != wasAway {
             applyPose()
         }
     }
 
     private func syncHover() {
         hideWork?.cancel()
-        hoverSessionLeaveWork?.cancel()
         let inside = petInside || cardInside || cardMarking
         if inside {
             awayClock.hoverChanged(inside: true)
-            let repeatingBefore = isRepeatHoverNow()
-            if !hoverSessionInside {
-                hoverSessionInside = true
-                repeatHoverClock.hoverBegan()
-            }
             if !showing {
                 showing = true
                 applyPose()
                 if !suppressCardReveal {
                     showCard()
                 }
-            } else if isRepeatHoverNow() != repeatingBefore {
-                applyPose()
             }
             return
         }
-        let leaveSession = DispatchWorkItem { [weak self] in
-            self?.hoverSessionInside = false
-        }
-        hoverSessionLeaveWork = leaveSession
-        DispatchQueue.main.asyncAfter(deadline: .now() + hoverSessionGap, execute: leaveSession)
         let work = DispatchWorkItem { [weak self] in
             guard let self, !self.petInside, !self.cardInside, !self.cardMarking else { return }
             self.awayClock.hoverChanged(inside: false)
             self.showing = false
-            self.hoverSessionInside = false
             self.suppressCardReveal = false
             self.cardView.clearStudy()
             self.cardPanel.orderOut(nil)
@@ -2436,11 +2358,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func explainDroppedText(_ text: String) {
         let term = String(text.prefix(200))
         explainTerm = term
+        explainMessages = []
+        settledBody = ""
         suppressCardReveal = true
         hideStudyCardOnly()
         resetInteract()
         showBubble(term: term, body: "正在解释…", loading: true)
-        explainClient.explain(term: term, config: config.explain) { [weak self] event in
+        let prompt = config.explain.promptTemplate.replacingOccurrences(of: "{简写}", with: term)
+        explainClient.complete(
+            messages: [ChatTurn(role: "user", content: prompt)],
+            config: config.explain
+        ) { [weak self] event in
             guard let self else { return }
             guard self.explainTerm == term else { return }
             switch event {
@@ -2448,12 +2376,71 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 guard !reply.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
                 self.updateBubble(term: term, body: reply, loading: false, streaming: true)
             case .success(let reply):
+                self.explainMessages = [
+                    ChatTurn(role: "user", content: prompt),
+                    ChatTurn(role: "assistant", content: reply),
+                ]
+                self.settledBody = reply
                 self.updateBubble(term: term, body: reply, loading: false, streaming: false)
+                self.bubbleView.setFollowUpEnabled(true)
             case .failure(let error):
                 let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 self.updateBubble(term: term, body: message, loading: false, streaming: false)
             }
         }
+    }
+
+    private static let followUpSystem = """
+    你正在继续给学生解释刚才的内容。直接、具体地回答追问，承接前面的解释。不要再套用「一句话解释 / 举例 / 总结」三段格式，除非学生明确要求。
+    """
+
+    private func askFollowUp(_ question: String) -> Bool {
+        let q = question.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty, bubbleVisible, explainMessages.count >= 2 else { return false }
+        let term = explainTerm
+        var messages = explainMessages
+        messages.append(ChatTurn(role: "user", content: q))
+        messages.insert(ChatTurn(role: "system", content: Self.followUpSystem), at: 0)
+        let prefix = settledBody + "\n\n追问：\(q)\n\n"
+        updateBubble(term: term, body: prefix + "正在想…", loading: true, streaming: false, pinToEnd: true)
+        explainClient.complete(messages: messages, config: config.explain) { [weak self] event in
+            guard let self else { return }
+            guard self.explainTerm == term else { return }
+            switch event {
+            case .partial(let reply):
+                guard !reply.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+                self.updateBubble(
+                    term: term,
+                    body: prefix + reply,
+                    loading: false,
+                    streaming: true,
+                    pinToEnd: true
+                )
+            case .success(let reply):
+                self.explainMessages.append(ChatTurn(role: "user", content: q))
+                self.explainMessages.append(ChatTurn(role: "assistant", content: reply))
+                self.settledBody = prefix + reply
+                self.updateBubble(
+                    term: term,
+                    body: self.settledBody,
+                    loading: false,
+                    streaming: false,
+                    pinToEnd: true
+                )
+                self.bubbleView.setFollowUpEnabled(true)
+            case .failure(let error):
+                let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                self.updateBubble(
+                    term: term,
+                    body: prefix + message,
+                    loading: false,
+                    streaming: false,
+                    pinToEnd: true
+                )
+                self.bubbleView.setFollowUpEnabled(true)
+            }
+        }
+        return true
     }
 
     private func showBubble(term: String, body: String, loading: Bool) {
@@ -2467,14 +2454,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     /// Replace the body of an already-visible bubble without moving the panel.
-    private func updateBubble(term: String, body: String, loading: Bool, streaming: Bool) {
+    private func updateBubble(
+        term: String,
+        body: String,
+        loading: Bool,
+        streaming: Bool,
+        pinToEnd: Bool = false
+    ) {
         guard bubbleVisible else { return }
-        bubbleView.show(term: term, body: body, loading: loading, streaming: streaming)
+        bubbleView.show(
+            term: term,
+            body: body,
+            loading: loading,
+            streaming: streaming,
+            pinToEnd: pinToEnd
+        )
     }
 
     private func hideBubble() {
         explainClient.cancel()
         explainTerm = ""
+        explainMessages = []
+        settledBody = ""
+        bubbleView.clearFollowUp()
         bubbleVisible = false
         bubblePanel.orderOut(nil)
         // Explain flow sets suppressCardReveal; clear it so the next hover can show the card.
@@ -2557,8 +2559,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 zoom: config.zoom,
                 cardMax: config.cardMaxWidth,
                 minutes: config.awayAfterMinutes,
-                repeatAfter: config.repeatHoverAfter,
-                repeatWindow: config.repeatHoverWindowMinutes,
                 hoverExit: config.hoverExitSeconds,
                 studyMode: config.studyMode,
                 explainPrompt: config.explainPrompt,
@@ -2570,13 +2570,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.config.zoom = zoom
                 self?.applyPose()
             }
-            panel.onApply = { [weak self] zoom, cardMax, minutes, repeatAfter, repeatWindow, hoverExit, studyMode, prompt, bubbleW, bubbleH, fontSize in
+            panel.onApply = { [weak self] zoom, cardMax, minutes, hoverExit, studyMode, prompt, bubbleW, bubbleH, fontSize in
                 guard let self else { return }
                 self.config.zoom = zoom
                 self.config.cardMaxWidth = cardMax
                 self.config.awayAfterMinutes = minutes
-                self.config.repeatHoverAfter = repeatAfter
-                self.config.repeatHoverWindowMinutes = repeatWindow
                 self.config.hoverExitSeconds = hoverExit
                 self.config.studyMode = studyMode
                 self.config.explainPrompt = prompt
@@ -2600,8 +2598,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             zoom: config.zoom,
             cardMax: config.cardMaxWidth,
             minutes: config.awayAfterMinutes,
-            repeatAfter: config.repeatHoverAfter,
-            repeatWindow: config.repeatHoverWindowMinutes,
             hoverExit: config.hoverExitSeconds,
             studyMode: config.studyMode,
             explainPrompt: config.explainPrompt,

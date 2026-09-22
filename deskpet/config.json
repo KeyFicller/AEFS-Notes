@@ -15,8 +15,6 @@
   "inbox_hostname" : "squeak-emerald-jogging.ngrok-free.dev",
   "inbox_port" : 8765,
   "inbox_tunnel" : true,
-  "repeat_hover_after" : 5,
-  "repeat_hover_window_minutes" : 0.1,
   "study_mode" : "annotate",
   "zoom" : 0.750614872685185
 }

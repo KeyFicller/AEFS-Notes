@@ -95,6 +95,11 @@ enum LocalEnv {
     }
 }
 
+struct ChatTurn {
+    var role: String
+    var content: String
+}
+
 final class ExplainClient {
     private let session: URLSession
     private let lock = NSLock()
@@ -145,14 +150,19 @@ final class ExplainClient {
         LocalEnv.value("DEEPSEEK_API_KEY", root: root)
     }
 
-    func explain(
-        term: String,
+    func complete(
+        messages: [ChatTurn],
         config: ExplainConfig,
         onEvent: @escaping (ExplainEvent) -> Void
     ) {
         let (previous, previousURL) = retire()
         previous?.cancel()
         previousURL?.cancel()
+
+        guard !messages.isEmpty else {
+            onEvent(.failure(ExplainError.emptyReply))
+            return
+        }
 
         guard let apiKey = Self.resolveAPIKey(), !apiKey.isEmpty else {
             onEvent(.failure(ExplainError.missingAPIKey))
@@ -165,12 +175,9 @@ final class ExplainClient {
             return
         }
 
-        let prompt = config.promptTemplate.replacingOccurrences(of: "{简写}", with: term)
         let body: [String: Any] = [
             "model": config.model,
-            "messages": [
-                ["role": "user", "content": prompt],
-            ],
+            "messages": messages.map { ["role": $0.role, "content": $0.content] },
             "stream": true,
         ]
         guard let payload = try? JSONSerialization.data(withJSONObject: body) else {

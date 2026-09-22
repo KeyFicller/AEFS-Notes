@@ -91,14 +91,58 @@ enum MemoType {
     static let link = NSColor(calibratedRed: 0.22, green: 0.40, blue: 0.55, alpha: 1)
 }
 
-final class SpeechBubbleView: NSView {
+private final class FollowUpField: NSTextField {
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+
+    override func mouseDown(with event: NSEvent) {
+        NSApp.activate(ignoringOtherApps: true)
+        window?.makeKey()
+        super.mouseDown(with: event)
+    }
+}
+
+/// Rounded tray behind the follow-up field. Clicks in the padding focus the field.
+private final class FollowUpChrome: NSView {
+    var onClick: (() -> Void)?
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        wantsLayer = true
+        layer?.cornerRadius = 8
+        layer?.backgroundColor = NSColor(calibratedRed: 1, green: 0.985, blue: 0.95, alpha: 1).cgColor
+        layer?.borderWidth = 1
+        layer?.borderColor = NSColor(calibratedWhite: 0.45, alpha: 0.35).cgColor
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { fatalError() }
+
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+
+    override func mouseDown(with event: NSEvent) {
+        NSApp.activate(ignoringOtherApps: true)
+        window?.makeKey()
+        onClick?()
+    }
+}
+
+private final class FirstMouseButton: NSButton {
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+}
+
+final class SpeechBubbleView: NSView, NSTextFieldDelegate {
     var onDismiss: (() -> Void)?
+    /// Return true when the question is accepted and the field should clear.
+    var onFollowUp: ((String) -> Bool)?
 
     private let paper = PaperBackgroundView()
     private let scroll = NSScrollView()
     private let textView = NSTextView()
     private let titleLabel = NSTextField(labelWithString: "")
     private let closeButton = NSButton()
+    private let followChrome = FollowUpChrome(frame: .zero)
+    private let followField = FollowUpField(string: "")
+    private let sendButton = FirstMouseButton()
     private var style = BubbleStyle.defaults
 
     override init(frame frameRect: NSRect) {
@@ -155,6 +199,35 @@ final class SpeechBubbleView: NSView {
             .underlineStyle: NSUnderlineStyle.single.rawValue,
         ]
         paper.addSubview(scroll)
+
+        followField.placeholderString = "追问…"
+        followField.font = MemoType.font(ofSize: style.fontSize)
+        followField.textColor = MemoType.ink
+        followField.drawsBackground = false
+        followField.isBezeled = false
+        followField.isBordered = false
+        followField.focusRingType = .none
+        followField.cell?.usesSingleLineMode = true
+        followField.cell?.wraps = false
+        followField.cell?.isScrollable = true
+        followField.lineBreakMode = .byTruncatingTail
+        followField.delegate = self
+        followField.isEnabled = false
+        followChrome.onClick = { [weak self] in
+            guard let self, self.followField.isEnabled else { return }
+            self.window?.makeFirstResponder(self.followField)
+        }
+        followChrome.addSubview(followField)
+        paper.addSubview(followChrome)
+
+        sendButton.bezelStyle = .rounded
+        sendButton.title = "问"
+        sendButton.font = MemoType.font(ofSize: 13, weight: .medium)
+        sendButton.target = self
+        sendButton.action = #selector(sendFollowUp)
+        sendButton.isEnabled = false
+        paper.addSubview(sendButton)
+
         applyStyle(style)
     }
 
@@ -166,6 +239,8 @@ final class SpeechBubbleView: NSView {
         textView.font = MemoType.font(ofSize: style.fontSize)
         titleLabel.font = MemoType.font(ofSize: titleFontSize, weight: .semibold)
         closeButton.font = MemoType.font(ofSize: max(titleFontSize - 1, 11), weight: .medium)
+        followField.font = MemoType.font(ofSize: style.fontSize)
+        sendButton.font = MemoType.font(ofSize: max(style.fontSize - 2, 12), weight: .medium)
         textView.textContainer?.containerSize = NSSize(
             width: max(style.width - 28, 40),
             height: CGFloat.greatestFiniteMagnitude
@@ -177,6 +252,10 @@ final class SpeechBubbleView: NSView {
     var preferredSize: NSSize { style.size }
 
     private var titleFontSize: CGFloat { max(style.fontSize, 12) }
+
+    private var inputHeight: CGFloat { max(28, style.fontSize + 14) }
+
+    private var sendWidth: CGFloat { max(36, style.fontSize + 22) }
 
     /// Title row height scales with font; keep padding above/below the label.
     private var titleBarHeight: CGFloat {
@@ -201,19 +280,60 @@ final class SpeechBubbleView: NSView {
             width: closeSize,
             height: closeSize
         )
-        let bottomPad: CGFloat = 10
+        let inputY: CGFloat = 10
+        let gap: CGFloat = 6
+        sendButton.frame = NSRect(
+            x: bounds.width - 12 - sendWidth,
+            y: inputY,
+            width: sendWidth,
+            height: inputHeight
+        )
+        let chrome = NSRect(
+            x: 12,
+            y: inputY,
+            width: max(40, bounds.width - 12 - gap - sendWidth - 12),
+            height: inputHeight
+        )
+        followChrome.frame = chrome
+        placeFollowField(in: chrome)
+        let scrollBottom = inputY + inputHeight + 8
         scroll.frame = NSRect(
             x: 12,
-            y: bottomPad,
+            y: scrollBottom,
             width: bounds.width - 24,
-            height: max(0, bounds.height - bar - bottomPad)
+            height: max(0, bounds.height - bar - scrollBottom)
         )
         resizeTextDocument()
         paper.needsDisplay = true
     }
 
-    func show(term: String, body: String, loading: Bool, streaming: Bool = false) {
-        let stick = !loading && isNearBottom()
+    /// Handwriting faces leave the descender empty, so a line-box-centered
+    /// field looks high. Drop it by half the descender to center the ink.
+    private func placeFollowField(in chrome: NSRect) {
+        let font = followField.font ?? MemoType.font(ofSize: style.fontSize)
+        let line = ceil(font.ascender - font.descender)
+        let textH = min(max(line, font.pointSize), chrome.height)
+        let drop = min(-font.descender / 2, max(0, (chrome.height - textH) / 2))
+        let textY = (chrome.height - textH) / 2 - drop
+        followField.frame = NSRect(
+            x: 8,
+            y: max(0, textY),
+            width: max(20, chrome.width - 16),
+            height: textH
+        )
+    }
+
+    func show(
+        term: String,
+        body: String,
+        loading: Bool,
+        streaming: Bool = false,
+        pinToEnd: Bool = false
+    ) {
+        if loading || streaming {
+            setFollowUpEnabled(false)
+        }
+        let stick = pinToEnd || (!loading && isNearBottom())
         let savedOrigin = scroll.contentView.bounds.origin
         let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
         titleLabel.stringValue = trimmed.isEmpty ? "解释" : "解释：\(trimmed)"
@@ -399,6 +519,55 @@ final class SpeechBubbleView: NSView {
             return text.trimmingCharacters(in: .whitespacesAndNewlines)
         }
         return text
+    }
+
+    func setFollowUpEnabled(_ enabled: Bool) {
+        followField.isEnabled = enabled
+        sendButton.isEnabled = enabled
+        followChrome.alphaValue = enabled ? 1 : 0.55
+        sendButton.alphaValue = enabled ? 1 : 0.55
+    }
+
+    func clearFollowUp() {
+        followField.stringValue = ""
+        if let editor = followField.currentEditor() as? NSTextView {
+            editor.string = ""
+        }
+        setFollowUpEnabled(false)
+    }
+
+    func control(
+        _ control: NSControl,
+        textView: NSTextView,
+        doCommandBy commandSelector: Selector
+    ) -> Bool {
+        if commandSelector == #selector(NSResponder.insertNewline(_:)) {
+            submitFollowUp()
+            return true
+        }
+        return false
+    }
+
+    @objc private func sendFollowUp() {
+        submitFollowUp()
+    }
+
+    private func submitFollowUp() {
+        let raw = currentFollowUpText().trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !raw.isEmpty else { return }
+        let question = String(raw.prefix(1000))
+        guard onFollowUp?(question) == true else { return }
+        followField.stringValue = ""
+        if let editor = followField.currentEditor() as? NSTextView {
+            editor.string = ""
+        }
+    }
+
+    private func currentFollowUpText() -> String {
+        if let editor = followField.currentEditor() as? NSTextView {
+            return editor.string
+        }
+        return followField.stringValue
     }
 
     @objc private func dismissTapped() {
