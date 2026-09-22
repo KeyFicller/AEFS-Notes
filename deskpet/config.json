@@ -2,7 +2,8 @@
   "away_after_minutes" : 0.2,
   "card_max_width" : 600,
   "cards_dir" : [
-    "..\/notes\/cards"
+    "..\/notes\/cards",
+    "..\/codes\/python_base"
   ],
   "character" : "dafeiyu",
   "explain_api_base" : "https:\/\/api.deepseek.com",
