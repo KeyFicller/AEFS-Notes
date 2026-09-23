@@ -39,6 +39,8 @@ codes/python_base/{模块名}/<题目目录>/       # 运行时产物，不进 g
 
 每题两格：Markdown 问题描述，代码格是前置代码加空的 `# 作答`。前置代码准备环境即可，不要把这题的写法示范出来。各题文件目录互相独立，放在 `ROOT` 下。
 
+**不要为凑最后一题硬塞读写文件。** 只有模块本身就围绕路径/文件/序列化（如 `pathlib`、`os`、`json`、`csv`、`shutil`、`logging` 写日志文件）时，才出文件题；`random`、`math`、`hashlib`、`functools`、`itertools`、`typing`、`enum` 等用模块内的 API 收束即可（`hashlib` 可对内存中的 bytes 做摘要，不必为收束而写文件）。
+
 开篇说明：先运行下一格得到 `ROOT`；只改 `# 作答`；先不要对答案。`ROOT` 用这段，把 `pathlib` 换成当前模块名：
 
 ```python
@@ -80,6 +82,13 @@ ROOT
 
 ## 出卡
 
-只在用户要求时出。用 Cursor `GenerateImage`，`aspect_ratio` 为 `3:4`，文件落在 `codes/python_base/{模块名}/card.png`。
+只在用户要求时出。先读 [template-card.md](../aefs-lesson-memo/template-card.md)，版式按那份走。路径例外：文件落在 `codes/python_base/{模块名}/card.png`，不要写到 `notes/cards/`。
 
-手绘、浅格子纸、中文、手机能读。1–2 个必须记住的写法占主视觉，其余收成小标签。图上不要印「英雄点」或 `HERO`。代码字符串按笔记本里的惯用法写，不要发明模块里没有的层。生成后读图，文字错了就重画一次。
+用 Cursor `GenerateImage`，`aspect_ratio` 为 `3:4`。按模板四层排，不要把写法平均铺成一排代码框：
+
+- 身份：眉头是模块名，标题一句中文，Motto 一行。轻，别抢主视觉。
+- 主视觉：1–2 个必须记住的写法，最大。代码按笔记本惯用法，1–3 行。
+- 支撑：只在能澄清主视觉时放短标签。
+- 边角：一个坑，小。
+
+图上不要印「英雄点」或 `HERO`。`description` 里用「上区 / 主视觉 / 边角」，不要写会被照抄的 HERO。不要发明模块里没有的层。无 URL、无答案。生成后读图，文字错了就重画一次。
