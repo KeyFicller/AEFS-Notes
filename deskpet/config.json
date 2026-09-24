@@ -3,7 +3,8 @@
   "card_max_width" : 600,
   "cards_dir" : [
     "..\/notes\/cards",
-    "..\/codes\/python_base"
+    "..\/codes\/python_stdlibs",
+    "..\/codes\/pytorch"
   ],
   "character" : "dafeiyu",
   "explain_api_base" : "https:\/\/api.deepseek.com",
@@ -17,5 +18,5 @@
   "inbox_port" : 8765,
   "inbox_tunnel" : true,
   "study_mode" : "annotate",
-  "zoom" : 0.750614872685185
+  "zoom" : 0.5
 }

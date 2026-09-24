@@ -1,6 +1,6 @@
 # 示例
 
-以英雄点是否落地评判；勿照抄分区。出图只走 SKILL「出图流水线」（`cursor` → `GenerateImage`）。每次生成后 Read attempt PNG + [evaluator.md](evaluator.md)（≥85；初稿 + 至多 1 次重画）。
+以英雄点是否落地评判；勿照抄分区。出图只走 SKILL「出图流水线」（`cursor` → `GenerateImage`，或该节「兜底」时的手写 SVG → `rsvg-convert`）。每次生成后 Read attempt PNG + [evaluator.md](evaluator.md)（≥85；初稿 + 至多 1 次重画）。
 
 语气样例（非必填）：
 

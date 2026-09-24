@@ -20,4 +20,12 @@ attempt*_meta.txt
 !.cursor/
 
 # python_base 各模块 qa 运行时写下的题目目录。名字不限，只忽略子目录。
-codes/python_base/*/*/
+codes/python_stdlibs/*/*/
+# pytorch 各阶段 qa 运行时写下的题目目录。名字不限，只忽略子目录。
+codes/pytorch/*/*/
+
+# langchain 各阶段 qa 运行时写下的题目目录。名字不限，只忽略子目录。
+codes/langchain/*/*/
+
+# temp files
+docs/superpowers/

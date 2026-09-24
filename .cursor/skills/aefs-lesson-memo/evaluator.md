@@ -62,7 +62,7 @@ redraw_directives:   # 仅 RETRY；≤5 条；只修失败
 
 ## 重画
 
-必须重走 SKILL「出图流水线」：仅 `cursor` → `GenerateImage`。  
+必须重走 SKILL「出图流水线」：`cursor` → `GenerateImage`，或命中该节「兜底」时的手写 SVG → `rsvg-convert`。  
 RETRY：≤5 条指令置 `description` 顶；`reference_image_paths` = **本次失败 attempt PNG** 的绝对路径；勿中途改英雄点（除非定义不足，重述一次）。
 
 ACCEPT / EXHAUST：交付 **canonical**（best）+ progress（`done|exhaust score=… attempt=…`）。无配套 md。

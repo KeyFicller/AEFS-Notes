@@ -98,7 +98,7 @@ GenerateImage.filename = <archi_slug>.png    # 仅 basename
 
 ### 出图流水线（唯一，禁止另寻工具）
 
-**只许**用 Cursor 内置 `GenerateImage`（`cursor` → `GenerateImage`）。  
+**只许**用 Cursor 内置 `GenerateImage`（`cursor` → `GenerateImage`）；它缺席时的唯一例外见下节「兜底」。  
 禁止：Python/PIL、浏览器截图、外部 API、其他 MCP 画图、用 markdown/HTML 冒充卡片。  
 **禁止把参考图 / SVG / 程序绘制的图块 ImageMagick·composite 硬贴到卡片上**（会风格突变）。几何要准时：用文字把格子/箭头/数值写进 `description`，或把参考图仅作 `reference_image_paths` 让 GenerateImage **整卡重画**；最终像素必须整卡统一手绘风。
 
@@ -119,7 +119,7 @@ GenerateImage.filename = <archi_slug>.png    # 仅 basename
 
 ```text
 1. CallDynamicTool → GenerateImage
-2. 从工具回执读取产出 PNG 的绝对路径；无路径则停止并报告（禁止改用其他出图方式）
+2. 从工具回执读取产出 PNG 的绝对路径；无路径则停止并报告（未命中下节「兜底」时禁止改用其他出图方式）
 3. mkdir -p notes/cards/<phaseDir>/<lessonDir>/
 4. mv/cp 到副产物目录：
    notes/cards/<phaseDir>/<lessonDir>/attempt<N>.png
@@ -130,6 +130,31 @@ GenerateImage.filename = <archi_slug>.png    # 仅 basename
    notes/cards/<phaseDir>/<lessonDir>/attempt<N>.meta.txt
 旁卡（xx- / archi-）把上式 <lessonDir> 换成对应 slug。
 ```
+
+#### 兜底：`GenerateImage` 缺席时
+
+`GenerateImage` 是否出现在工具清单里，**随会话的供应商模型而变**（同一会话中途切模式也不会补上）。先查 `cursor` 命名空间再分流：
+
+| 情形 | 做 |
+|------|-----|
+| `GenerateImage` 在 | 走本流水线 |
+| 不在，供应商**是** Grok | 视为配置异常 → 停止并报告，**不得自行渲染** |
+| 不在，供应商**不是** Grok | 允许改用**手写 SVG → `rsvg-convert`** 兜底（见下） |
+
+其他渲染途径（PIL 直绘、浏览器截图、外部 API、其他 MCP 画图）任何情况下都禁止。
+
+兜底行硬要求（英雄点、密度、禁元标签等版式规范一律照旧）：
+
+| 项 | 规则 |
+|------|------|
+| 画布 | SVG 的 `width/height` 即目标像素；比例仍只用 `3:4` / `9:16` |
+| 字体 | 中文手写用 `HanziPen SC` / `Yuanti SC`；接口名用 `Menlo`；**勿用拉丁-only 字体承载中文** |
+| 手绘感 | 路径加抖动 + 二次淡描边复描；纸底 + 横格线 + 红色页边线，风格对齐同目录已有 canonical 卡片 |
+| 栅格化 | `rsvg-convert --width <2×设计宽> -o out.png in.svg`；`file` 复核实际像素 |
+| 自检 | 逐槽位做像素级墨迹包围盒检查（文字不溢容器、不越安全边距），再 Read 整卡打分 |
+| 落盘 | 与主路径同规：canonical + `attempt<N>.png` + `.meta.txt`；`progress.md` 照写 |
+
+生成器脚本放 `.cache/`（已 gitignore），勿提交。
 
 ### 生成–评测
 
