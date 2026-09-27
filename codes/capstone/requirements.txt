@@ -1,3 +1,8 @@
 langchain>=1.0
 langgraph>=1.0
 langchain-deepseek>=1.1
+# 分块器单独发版，langchain 自己不依赖它。02_rag_over_codebase/prod_main.py 用到。
+langchain-text-splitters>=1.1
+# 本地真 embedding。torch 由 pytorch 那一侧提供，这里只拉几个纯 Python 包。
+langchain-huggingface>=1.2
+sentence-transformers>=6.0

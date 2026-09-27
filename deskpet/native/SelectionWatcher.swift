@@ -23,40 +23,156 @@ enum AccessibilityAuth {
 enum SelectedTextReader {
     static let maxChars = 200
 
-    static func currentSelection() -> String? {
-        if let text = axSelection() { return text }
-        if let text = browserJavaScriptSelection() { return text }
-        return nil
+    struct AccessibilityProbe {
+        var text: String?
+        /// Hit-tested element looks like a text surface, so a copy fallback is reasonable.
+        var looksTextual: Bool
     }
 
-    /// AX only — safe to call on the main thread during mouseDown (no AppleScript).
+    /// Focused-element AX only. Used on mouseDown; keep it cheap (no AppleScript, no copy).
     static func axSelectionSnapshot() -> String? {
-        axSelection()
+        guard let element = frontmostFocusedElement() else { return nil }
+        return readSelection(from: element)
     }
 
-    /// Prefer the frontmost app's focused element; fall back to system-wide focus.
-    private static func axSelection() -> String? {
-        if let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier {
-            let app = AXUIElementCreateApplication(pid)
-            if let text = selectedText(fromFocusedOf: app) { return text }
-            if let text = selectedTextAttribute(of: app) { return text }
+    /// Call on the main thread. Browsers expose the selection as a text-marker range,
+    /// not `AXSelectedText`, which is why a Safari-only JavaScript path used to be the
+    /// only thing that worked.
+    static func accessibilityProbe(near cocoaPoint: NSPoint) -> AccessibilityProbe {
+        var text: String?
+        var looksTextual = false
+        var secure = false
+        var seen: [AXUIElement] = []
+
+        func consider(_ element: AXUIElement) {
+            if seen.contains(where: { CFEqual($0, element) }) { return }
+            seen.append(element)
+            AXUIElementSetMessagingTimeout(element, 0.2)
+            if isSecure(element) {
+                secure = true
+                return
+            }
+            if isTextual(element) { looksTextual = true }
+            if text == nil {
+                text = readSelection(from: element)
+            }
         }
-        let system = AXUIElementCreateSystemWide()
-        return selectedText(fromFocusedOf: system)
+
+        var current = element(at: cocoaPoint)
+        var depth = 0
+        while let element = current, depth < 8, text == nil, !secure {
+            let role = role(of: element)
+            if role == "AXApplication" { break }
+            consider(element)
+            if role == "AXWindow" { break }
+            current = parent(of: element)
+            depth += 1
+        }
+        if text == nil, !secure, let focused = frontmostFocusedElement() {
+            consider(focused)
+        }
+        if secure {
+            return AccessibilityProbe(text: nil, looksTextual: false)
+        }
+        return AccessibilityProbe(text: text, looksTextual: looksTextual)
     }
 
-    private static func selectedText(fromFocusedOf element: AXUIElement) -> String? {
+    /// AppleScript, then a simulated Copy. Call off the main thread.
+    static func fallbackSelection(allowCopy: Bool) -> String? {
+        if let text = browserJavaScriptSelection() { return text }
+        guard allowCopy else { return nil }
+        return selectionByCopy()
+    }
+
+    private static func frontmostFocusedElement() -> AXUIElement? {
+        guard let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier else {
+            return nil
+        }
+        let app = AXUIElementCreateApplication(pid)
+        AXUIElementSetMessagingTimeout(app, 0.2)
+        return focusedElement(of: app)
+    }
+
+    private static func focusedElement(of element: AXUIElement) -> AXUIElement? {
         var focusedRef: CFTypeRef?
         let status = AXUIElementCopyAttributeValue(
             element,
             kAXFocusedUIElementAttribute as CFString,
             &focusedRef
         )
-        guard status == .success, let focusedRef else { return nil }
-        return selectedTextAttribute(of: focusedRef as! AXUIElement)
+        guard status == .success, let focusedRef, CFGetTypeID(focusedRef) == AXUIElementGetTypeID() else {
+            return nil
+        }
+        return (focusedRef as! AXUIElement)
     }
 
-    private static func selectedTextAttribute(of element: AXUIElement) -> String? {
+    /// Cocoa points grow upward from the primary display; AX points grow downward from its top.
+    private static func axPoint(from cocoa: NSPoint) -> CGPoint {
+        let primaryHeight = NSScreen.screens.first { $0.frame.origin == .zero }?.frame.height
+            ?? NSScreen.main?.frame.height
+            ?? 0
+        return CGPoint(x: cocoa.x, y: primaryHeight - cocoa.y)
+    }
+
+    private static func element(at cocoaPoint: NSPoint) -> AXUIElement? {
+        let system = AXUIElementCreateSystemWide()
+        AXUIElementSetMessagingTimeout(system, 0.2)
+        let point = axPoint(from: cocoaPoint)
+        var element: AXUIElement?
+        let status = AXUIElementCopyElementAtPosition(system, Float(point.x), Float(point.y), &element)
+        guard status == .success else { return nil }
+        return element
+    }
+
+    private static func parent(of element: AXUIElement) -> AXUIElement? {
+        var parentRef: CFTypeRef?
+        let status = AXUIElementCopyAttributeValue(element, kAXParentAttribute as CFString, &parentRef)
+        guard status == .success, let parentRef, CFGetTypeID(parentRef) == AXUIElementGetTypeID() else {
+            return nil
+        }
+        return (parentRef as! AXUIElement)
+    }
+
+    private static func role(of element: AXUIElement) -> String? {
+        var roleRef: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(element, kAXRoleAttribute as CFString, &roleRef) == .success else {
+            return nil
+        }
+        return roleRef as? String
+    }
+
+    private static func isSecure(_ element: AXUIElement) -> Bool {
+        var subroleRef: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(element, kAXSubroleAttribute as CFString, &subroleRef) == .success else {
+            return false
+        }
+        return (subroleRef as? String) == "AXSecureTextField"
+    }
+
+    private static let textualRoles: Set<String> = [
+        "AXTextArea", "AXTextField", "AXStaticText", "AXComboBox", "AXWebArea",
+    ]
+    /// Not exported as Swift constants; WebKit/Blink/Gecko publish selection this way.
+    private static let selectedTextMarkerRange = "AXSelectedTextMarkerRange"
+    private static let stringForTextMarkerRange = "AXStringForTextMarkerRange"
+
+    private static func isTextual(_ element: AXUIElement) -> Bool {
+        if let role = role(of: element), textualRoles.contains(role) { return true }
+        var names: CFArray?
+        guard AXUIElementCopyAttributeNames(element, &names) == .success,
+              let list = names as? [String] else { return false }
+        return list.contains(kAXSelectedTextAttribute)
+            || list.contains(kAXSelectedTextRangeAttribute)
+            || list.contains(selectedTextMarkerRange)
+    }
+
+    private static func readSelection(from element: AXUIElement) -> String? {
+        if let text = plainSelectedText(of: element) { return text }
+        if let text = stringForSelectedRange(of: element) { return text }
+        return stringForTextMarkerRange(of: element)
+    }
+
+    private static func plainSelectedText(of element: AXUIElement) -> String? {
         var selectedRef: CFTypeRef?
         let status = AXUIElementCopyAttributeValue(
             element,
@@ -64,8 +180,51 @@ enum SelectedTextReader {
             &selectedRef
         )
         guard status == .success, let selectedRef else { return nil }
-        let raw = (selectedRef as? String) ?? String(describing: selectedRef)
-        return sanitize(raw)
+        return sanitize(string(from: selectedRef) ?? "")
+    }
+
+    /// Cocoa text views sometimes publish a range instead of `AXSelectedText`.
+    private static func stringForSelectedRange(of element: AXUIElement) -> String? {
+        var rangeRef: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(
+            element,
+            kAXSelectedTextRangeAttribute as CFString,
+            &rangeRef
+        ) == .success, let rangeRef else { return nil }
+        var value: CFTypeRef?
+        guard AXUIElementCopyParameterizedAttributeValue(
+            element,
+            kAXStringForRangeParameterizedAttribute as CFString,
+            rangeRef,
+            &value
+        ) == .success, let value else { return nil }
+        return sanitize(string(from: value) ?? "")
+    }
+
+    /// WebKit, Blink, and Gecko leave `AXSelectedText` empty and publish a marker range.
+    private static func stringForTextMarkerRange(of element: AXUIElement) -> String? {
+        var markerRange: CFTypeRef?
+        guard AXUIElementCopyAttributeValue(
+            element,
+            selectedTextMarkerRange as CFString,
+            &markerRange
+        ) == .success, let markerRange, CFGetTypeID(markerRange) == AXTextMarkerRangeGetTypeID() else {
+            return nil
+        }
+        var value: CFTypeRef?
+        guard AXUIElementCopyParameterizedAttributeValue(
+            element,
+            stringForTextMarkerRange as CFString,
+            markerRange,
+            &value
+        ) == .success, let value else { return nil }
+        return sanitize(string(from: value) ?? "")
+    }
+
+    private static func string(from value: CFTypeRef) -> String? {
+        if let text = value as? String { return text }
+        if let attributed = value as? NSAttributedString { return attributed.string }
+        return nil
     }
 
     /// Safari / Chromium often leave AX selected-text empty; JS selection works with Automation permission.
@@ -128,6 +287,65 @@ enum SelectedTextReader {
         return sanitize(result.stringValue ?? "")
     }
 
+    /// Last resort for apps that never publish a selection (Electron, WeChat, Firefox, …).
+    /// The previous clipboard is restored after the read.
+    private static func selectionByCopy() -> String? {
+        let pasteboard = NSPasteboard.general
+        let hadItems = !(pasteboard.pasteboardItems ?? []).isEmpty
+        let backup = backupPasteboard(pasteboard)
+        // Promised items sometimes can't be snapshotted. Don't clear the clipboard then.
+        if hadItems && backup.isEmpty { return nil }
+        pasteboard.clearContents()
+        let cleared = pasteboard.changeCount
+        postCommandC()
+        let deadline = Date().addingTimeInterval(0.45)
+        while pasteboard.changeCount == cleared && Date() < deadline {
+            Thread.sleep(forTimeInterval: 0.02)
+        }
+        let copied: String?
+        if pasteboard.changeCount != cleared {
+            copied = sanitize(pasteboard.string(forType: .string) ?? "")
+        } else {
+            copied = nil
+        }
+        restorePasteboard(pasteboard, backup)
+        return copied
+    }
+
+    private static func postCommandC() {
+        guard let source = CGEventSource(stateID: .hidSystemState) else { return }
+        let commandKey: CGKeyCode = 0x37
+        let cKey: CGKeyCode = 0x08
+        let commandDown = CGEvent(keyboardEventSource: source, virtualKey: commandKey, keyDown: true)
+        let cDown = CGEvent(keyboardEventSource: source, virtualKey: cKey, keyDown: true)
+        cDown?.flags = .maskCommand
+        let cUp = CGEvent(keyboardEventSource: source, virtualKey: cKey, keyDown: false)
+        cUp?.flags = .maskCommand
+        let commandUp = CGEvent(keyboardEventSource: source, virtualKey: commandKey, keyDown: false)
+        commandDown?.post(tap: .cghidEventTap)
+        cDown?.post(tap: .cghidEventTap)
+        cUp?.post(tap: .cghidEventTap)
+        commandUp?.post(tap: .cghidEventTap)
+    }
+
+    private static func backupPasteboard(_ pasteboard: NSPasteboard) -> [NSPasteboardItem] {
+        (pasteboard.pasteboardItems ?? []).compactMap { item in
+            let copy = NSPasteboardItem()
+            for type in item.types {
+                guard let data = item.data(forType: type) else { continue }
+                copy.setData(data, forType: type)
+            }
+            return copy.types.isEmpty ? nil : copy
+        }
+    }
+
+    private static func restorePasteboard(_ pasteboard: NSPasteboard, _ items: [NSPasteboardItem]) {
+        pasteboard.clearContents()
+        if !items.isEmpty {
+            pasteboard.writeObjects(items)
+        }
+    }
+
     private static func sanitize(_ raw: String) -> String? {
         let text = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, text.count <= maxChars else { return nil }
@@ -151,6 +369,7 @@ final class SelectionWatcher {
     /// Minimum drag distance (points) to treat mouse-up as a text selection gesture.
     private let minDragDistance: CGFloat = 10
     private var mouseDownPoint: NSPoint?
+    private var mouseUpPoint: NSPoint?
     private var selectionAtMouseDown: String?
     private var didDrag = false
 
@@ -170,6 +389,7 @@ final class SelectionWatcher {
         pending?.cancel()
         pending = nil
         mouseDownPoint = nil
+        mouseUpPoint = nil
         selectionAtMouseDown = nil
         didDrag = false
         if let localMonitor {
@@ -187,6 +407,7 @@ final class SelectionWatcher {
         case .leftMouseDown:
             let point = NSEvent.mouseLocation
             mouseDownPoint = point
+            mouseUpPoint = nil
             didDrag = false
             pending?.cancel()
             pending = nil
@@ -205,6 +426,7 @@ final class SelectionWatcher {
                 didDrag = true
             }
         case .leftMouseUp:
+            mouseUpPoint = NSEvent.mouseLocation
             scheduleCheck()
         default:
             break
@@ -221,10 +443,11 @@ final class SelectionWatcher {
     }
 
     private func checkSelection() {
-        let point = NSEvent.mouseLocation
+        let point = mouseUpPoint ?? NSEvent.mouseLocation
         let dragged = didDrag
         let previous = selectionAtMouseDown
         mouseDownPoint = nil
+        mouseUpPoint = nil
         selectionAtMouseDown = nil
         didDrag = false
 
@@ -234,14 +457,21 @@ final class SelectionWatcher {
         guard dragged else { return }
         guard AccessibilityAuth.isTrusted else { return }
 
-        // Browser JS may block briefly on Automation prompt — keep off the hot path.
-        DispatchQueue.global(qos: .userInitiated).async {
-            let text = SelectedTextReader.currentSelection()
+        let probe = SelectedTextReader.accessibilityProbe(near: point)
+        if let text = probe.text {
+            // Ignore unchanged leftover selection after a drag that didn't re-select.
+            guard text != previous else { return }
+            onSelection?(text, point)
+            return
+        }
+
+        // Browser JS and simulated Copy can block — keep them off the main thread.
+        let allowCopy = probe.looksTextual
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let text = SelectedTextReader.fallbackSelection(allowCopy: allowCopy)
             DispatchQueue.main.async {
-                guard let text else { return }
-                // Ignore unchanged leftover selection after a drag that didn't re-select.
-                if text == previous { return }
-                self.onSelection?(text, point)
+                guard let text, text != previous else { return }
+                self?.onSelection?(text, point)
             }
         }
     }

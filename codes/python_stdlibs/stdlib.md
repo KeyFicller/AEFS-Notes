@@ -29,6 +29,7 @@
 | `sqlite3` | 内置 SQLite |
 | `urllib.request` | 发简单 HTTP 请求 |
 | `tempfile` | 临时文件和目录 |
+| `threading` | 线程 |
 | `concurrent.futures` | 线程池、进程池 |
 | `asyncio` | 异步 I/O |
 | `unittest` | 单元测试 |

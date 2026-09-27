@@ -507,3 +507,4 @@
 | 2026-09-22 | phases/18-ethics-safety-alignment/30-dual-use-risk-cyber-bio-chem-nuclear | notes/cards/18-ethics-safety-alignment/30-dual-use-risk-cyber-bio-chem-nuclear.png | done score=95 attempt=1 |
 
 | 2026-09-22 | phases/19-capstone-projects/01-terminal-native-coding-agent | notes/cards/19-capstone-projects/01-terminal-native-coding-agent.png | done score=93 attempt=2 |
+| 2026-09-26 | phases/19-capstone-projects/02-rag-over-codebase | notes/cards/19-capstone-projects/02-rag-over-codebase.png | done score=92 attempt=1 |

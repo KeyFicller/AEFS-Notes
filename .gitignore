@@ -10,6 +10,9 @@ deskpet/inbox/*.png
 deskpet/inbox/public-url.txt
 deskpet/local.env
 
+# 各模块练习用的本地密钥（langchain / langgraph 等），一律不提交。
+local.env
+
 # lesson-memo byproducts (attempt drafts + sidecars)
 attempt*.png
 attempt*.meta.txt
@@ -27,5 +30,14 @@ codes/pytorch/*/*/
 # langchain 各阶段 qa 运行时写下的题目目录。名字不限，只忽略子目录。
 codes/langchain/*/*/
 
+# langgraph 各阶段 qa 运行时写下的题目目录。名字不限，只忽略子目录。
+codes/langgraph/*/*/
+
+# Code RAG 的向量库落盘产物，由 02_rag_over_codebase/prod_main.py 生成。
+codes/capstone/*/.index/
+
 # temp files
 docs/superpowers/
+
+# api 速查
+cheat_api.md
