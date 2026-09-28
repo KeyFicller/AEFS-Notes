@@ -18,5 +18,5 @@
   "inbox_port" : 8765,
   "inbox_tunnel" : true,
   "study_mode" : "annotate",
-  "zoom" : 0.7486096398305084
+  "zoom" : 0.5
 }

@@ -17,3 +17,4 @@
 | 7 | `07_rag_chain` | 检索 + 组 RAG 链 |
 | 8 | `08_agents` | Agent / 工具调用闭环（非 LangGraph 专篇） |
 | 9 | `09_docstring` | docstring → 工具说明、`parse_docstring` 拆 `Args:` 段、模型看到的 function schema |
+| 10 | `10_middleware` | `create_agent` 的 middleware：钩子、`wrap_*`、限流、摘要、工具审批 |
