@@ -42,6 +42,16 @@ codes/capstone/*/tts_out/
 # 多模态文档问答的页物料，由 04_multimodal_document_qa/prod_main.py 扫盘装成语料。
 codes/capstone/*/pages/
 
+# Jupyter 练习的训练产物、权重和下载数据集。笔记本本身仍跟踪。
+notes/jupyter_books/**/out/
+notes/jupyter_books/**/temp/
+notes/jupyter_books/**/models/
+notes/jupyter_books/**/*.safetensors
+notes/jupyter_books/**/*.pt
+notes/jupyter_books/**/*.pth
+notes/jupyter_books/**/*.csv
+.ipynb_checkpoints/
+
 # temp files
 docs/superpowers/
 

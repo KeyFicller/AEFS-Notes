@@ -1,0 +1,502 @@
+[
+  {
+    "instruction": "Explain what supervised fine-tuning is in one sentence.",
+    "input": "",
+    "output": "Supervised fine-tuning trains a pretrained language model on instruction-response pairs so it learns to follow instructions rather than only continue text."
+  },
+  {
+    "instruction": "Summarize this text in one sentence.",
+    "input": "Transformers use attention to weigh different parts of the input sequence.",
+    "output": "Transformers use attention to focus on relevant parts of the input."
+  },
+  {
+    "instruction": "Translate to French.",
+    "input": "Good morning",
+    "output": "Bonjour"
+  },
+  {
+    "instruction": "Write a Python function that returns the factorial of n.",
+    "input": "",
+    "output": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)"
+  },
+  {
+    "instruction": "What is the capital of France?",
+    "input": "",
+    "output": "Paris."
+  },
+  {
+    "instruction": "List three benefits of exercise.",
+    "input": "",
+    "output": "1. Improves cardiovascular health\n2. Strengthens muscles and bones\n3. Supports mental well-being"
+  },
+  {
+    "instruction": "Rewrite this more politely.",
+    "input": "Give me the report now.",
+    "output": "Could you please share the report when you have a moment?"
+  },
+  {
+    "instruction": "Classify the sentiment as positive or negative.",
+    "input": "I love this product!",
+    "output": "positive"
+  },
+  {
+    "instruction": "Extract the person's name.",
+    "input": "My colleague Alice Chen joined the team yesterday.",
+    "output": "Alice Chen"
+  },
+  {
+    "instruction": "Convert 100 degrees Celsius to Fahrenheit.",
+    "input": "",
+    "output": "212°F"
+  },
+  {
+    "instruction": "What does HTTP stand for?",
+    "input": "",
+    "output": "HyperText Transfer Protocol"
+  },
+  {
+    "instruction": "Write a haiku about rain.",
+    "input": "",
+    "output": "Soft rain on the roof\nPuddles mirror cloudy skies\nEarth drinks quietly"
+  },
+  {
+    "instruction": "Fix the grammar.",
+    "input": "She don't like apples.",
+    "output": "She doesn't like apples."
+  },
+  {
+    "instruction": "Explain overfitting briefly.",
+    "input": "",
+    "output": "Overfitting happens when a model memorizes training data and performs poorly on new data."
+  },
+  {
+    "instruction": "Give two synonyms for 'happy'.",
+    "input": "",
+    "output": "joyful, cheerful"
+  },
+  {
+    "instruction": "Is 17 a prime number?",
+    "input": "",
+    "output": "Yes, 17 is a prime number."
+  },
+  {
+    "instruction": "Write a SQL query to select all rows from users.",
+    "input": "",
+    "output": "SELECT * FROM users;"
+  },
+  {
+    "instruction": "What is 15% of 200?",
+    "input": "",
+    "output": "30"
+  },
+  {
+    "instruction": "Name the three states of matter commonly taught in school.",
+    "input": "",
+    "output": "Solid, liquid, and gas."
+  },
+  {
+    "instruction": "Complete the analogy: bird is to fly as fish is to",
+    "input": "",
+    "output": "swim"
+  },
+  {
+    "instruction": "Define machine learning in plain words.",
+    "input": "",
+    "output": "Machine learning lets computers learn patterns from data instead of being hard-coded with every rule."
+  },
+  {
+    "instruction": "What is a token in NLP?",
+    "input": "",
+    "output": "A token is a discrete unit of text, such as a word or subword piece, that a model processes."
+  },
+  {
+    "instruction": "Sort these numbers ascending: 5, 1, 9, 3",
+    "input": "",
+    "output": "1, 3, 5, 9"
+  },
+  {
+    "instruction": "Write a one-line bash command to list files.",
+    "input": "",
+    "output": "ls"
+  },
+  {
+    "instruction": "What color do you get by mixing red and blue?",
+    "input": "",
+    "output": "Purple."
+  },
+  {
+    "instruction": "Explain the difference between precision and recall briefly.",
+    "input": "",
+    "output": "Precision is how many predicted positives are correct; recall is how many actual positives were found."
+  },
+  {
+    "instruction": "Generate a strong password example (fake).",
+    "input": "",
+    "output": "Tr0p!cal-M0untain-92"
+  },
+  {
+    "instruction": "What is the chemical formula for water?",
+    "input": "",
+    "output": "H2O"
+  },
+  {
+    "instruction": "Name two programming paradigms.",
+    "input": "",
+    "output": "Object-oriented and functional programming."
+  },
+  {
+    "instruction": "Turn this into bullet points.",
+    "input": "Buy milk eggs bread",
+    "output": "- Buy milk\n- Buy eggs\n- Buy bread"
+  },
+  {
+    "instruction": "Does the sun revolve around the Earth?",
+    "input": "",
+    "output": "No. The Earth revolves around the sun."
+  },
+  {
+    "instruction": "Write a regex that matches digits.",
+    "input": "",
+    "output": "\\d+"
+  },
+  {
+    "instruction": "What year did World War II end?",
+    "input": "",
+    "output": "1945"
+  },
+  {
+    "instruction": "Explain residual connections in one sentence.",
+    "input": "",
+    "output": "Residual connections add a layer's input to its output so gradients can flow more easily through deep networks."
+  },
+  {
+    "instruction": "Make this title case.",
+    "input": "the quick brown fox",
+    "output": "The Quick Brown Fox"
+  },
+  {
+    "instruction": "What is JSON?",
+    "input": "",
+    "output": "JSON is a lightweight text format for structured data using objects and arrays."
+  },
+  {
+    "instruction": "Compute 2**10.",
+    "input": "",
+    "output": "1024"
+  },
+  {
+    "instruction": "Name a famous painting by Leonardo da Vinci.",
+    "input": "",
+    "output": "The Mona Lisa"
+  },
+  {
+    "instruction": "What does GPU stand for?",
+    "input": "",
+    "output": "Graphics Processing Unit"
+  },
+  {
+    "instruction": "Write a polite decline to a meeting.",
+    "input": "",
+    "output": "Thank you for the invitation. I won't be able to join this time, but I appreciate you thinking of me."
+  },
+  {
+    "instruction": "Identify the verb.",
+    "input": "The cat sleeps on the sofa.",
+    "output": "sleeps"
+  },
+  {
+    "instruction": "What is binary search used for?",
+    "input": "",
+    "output": "Finding an item in a sorted list in logarithmic time."
+  },
+  {
+    "instruction": "Convert 1 kilometer to meters.",
+    "input": "",
+    "output": "1000 meters"
+  },
+  {
+    "instruction": "Give an example of a boolean value.",
+    "input": "",
+    "output": "true"
+  },
+  {
+    "instruction": "What is an API?",
+    "input": "",
+    "output": "An API is an interface that lets software components communicate with each other."
+  },
+  {
+    "instruction": "Unscramble: PYPTHON",
+    "input": "",
+    "output": "PYTHON"
+  },
+  {
+    "instruction": "Why use version control?",
+    "input": "",
+    "output": "It tracks changes, enables collaboration, and makes it easy to roll back mistakes."
+  },
+  {
+    "instruction": "What is the opposite of 'ancient'?",
+    "input": "",
+    "output": "modern"
+  },
+  {
+    "instruction": "Write a docstring for add(a, b).",
+    "input": "",
+    "output": "\"\"\"Return the sum of a and b.\"\"\""
+  },
+  {
+    "instruction": "Name the largest planet in our solar system.",
+    "input": "",
+    "output": "Jupiter"
+  },
+  {
+    "instruction": "Explain dropout briefly.",
+    "input": "",
+    "output": "Dropout randomly disables units during training to reduce overfitting."
+  },
+  {
+    "instruction": "What is 0! ?",
+    "input": "",
+    "output": "1"
+  },
+  {
+    "instruction": "Format as YYYY-MM-DD: March 5, 2024",
+    "input": "",
+    "output": "2024-03-05"
+  },
+  {
+    "instruction": "What does CSS stand for?",
+    "input": "",
+    "output": "Cascading Style Sheets"
+  },
+  {
+    "instruction": "Give a synonym of 'quick'.",
+    "input": "",
+    "output": "fast"
+  },
+  {
+    "instruction": "Is Python interpreted or compiled primarily?",
+    "input": "",
+    "output": "Primarily interpreted (via bytecode), though implementations vary."
+  },
+  {
+    "instruction": "What is entropy in information theory (short)?",
+    "input": "",
+    "output": "A measure of uncertainty or information content in a distribution."
+  },
+  {
+    "instruction": "Write 'hello' reversed.",
+    "input": "",
+    "output": "olleh"
+  },
+  {
+    "instruction": "Name two sorting algorithms.",
+    "input": "",
+    "output": "Merge sort and quicksort."
+  },
+  {
+    "instruction": "What is the speed of light approximately?",
+    "input": "",
+    "output": "About 3×10^8 meters per second."
+  },
+  {
+    "instruction": "Explain bias-variance tradeoff briefly.",
+    "input": "",
+    "output": "Models with high bias underfit; high variance overfit; good models balance both."
+  },
+  {
+    "instruction": "What continent is Egypt in?",
+    "input": "",
+    "output": "Africa"
+  },
+  {
+    "instruction": "Create a markdown link to example.com labeled Docs.",
+    "input": "",
+    "output": "[Docs](https://example.com)"
+  },
+  {
+    "instruction": "What is a hashmap good for?",
+    "input": "",
+    "output": "Fast key-based lookups on average."
+  },
+  {
+    "instruction": "Pluralize 'mouse' (animal).",
+    "input": "",
+    "output": "mice"
+  },
+  {
+    "instruction": "What does RAM stand for?",
+    "input": "",
+    "output": "Random Access Memory"
+  },
+  {
+    "instruction": "Give an example of an idempotent HTTP method.",
+    "input": "",
+    "output": "GET"
+  },
+  {
+    "instruction": "What is π approximately to 2 decimals?",
+    "input": "",
+    "output": "3.14"
+  },
+  {
+    "instruction": "Explain teacher forcing briefly.",
+    "input": "",
+    "output": "During training, the model receives the ground-truth previous token instead of its own prediction."
+  },
+  {
+    "instruction": "What is the plural of 'criterion'?",
+    "input": "",
+    "output": "criteria"
+  },
+  {
+    "instruction": "Write a CSS rule making text red.",
+    "input": "",
+    "output": "color: red;"
+  },
+  {
+    "instruction": "Name a deep learning framework.",
+    "input": "",
+    "output": "PyTorch"
+  },
+  {
+    "instruction": "What is catastrophic forgetting?",
+    "input": "",
+    "output": "When fine-tuning on new data causes a model to lose previously learned capabilities."
+  },
+  {
+    "instruction": "Convert true/false: 0 == False in Python?",
+    "input": "",
+    "output": "True"
+  },
+  {
+    "instruction": "What is the boiling point of water at sea level in C?",
+    "input": "",
+    "output": "100°C"
+  },
+  {
+    "instruction": "Give one reason to use batching in training.",
+    "input": "",
+    "output": "It improves hardware utilization and stabilizes gradient estimates."
+  },
+  {
+    "instruction": "What does NLP stand for?",
+    "input": "",
+    "output": "Natural Language Processing"
+  },
+  {
+    "instruction": "Write an assert that x is positive.",
+    "input": "",
+    "output": "assert x > 0"
+  },
+  {
+    "instruction": "Name the author of '1984'.",
+    "input": "",
+    "output": "George Orwell"
+  },
+  {
+    "instruction": "What is a learning rate?",
+    "input": "",
+    "output": "A hyperparameter controlling how large each parameter update is during training."
+  },
+  {
+    "instruction": "Translate to Spanish: Thank you",
+    "input": "",
+    "output": "Gracias"
+  },
+  {
+    "instruction": "What is underfitting?",
+    "input": "",
+    "output": "When a model is too simple to capture the underlying patterns in the data."
+  },
+  {
+    "instruction": "List two activation functions.",
+    "input": "",
+    "output": "ReLU and sigmoid"
+  },
+  {
+    "instruction": "What does IDE stand for?",
+    "input": "",
+    "output": "Integrated Development Environment"
+  },
+  {
+    "instruction": "Compute the mean of 2, 4, 6.",
+    "input": "",
+    "output": "4"
+  },
+  {
+    "instruction": "What is tokenization?",
+    "input": "",
+    "output": "Splitting text into discrete tokens for a model to process."
+  },
+  {
+    "instruction": "Name a loss used for classification.",
+    "input": "",
+    "output": "Cross-entropy loss"
+  },
+  {
+    "instruction": "What is gradient descent?",
+    "input": "",
+    "output": "An optimization method that updates parameters in the direction that reduces loss."
+  },
+  {
+    "instruction": "Give an example of a primary key use.",
+    "input": "",
+    "output": "Uniquely identifying each row in a database table."
+  },
+  {
+    "instruction": "What is a transformer decoder used for in GPT?",
+    "input": "",
+    "output": "Autoregressive next-token prediction conditioned on previous tokens."
+  },
+  {
+    "instruction": "Spell the number 42 in words.",
+    "input": "",
+    "output": "forty-two"
+  },
+  {
+    "instruction": "What is temperature in sampling?",
+    "input": "",
+    "output": "A parameter that sharpens or flattens the next-token probability distribution."
+  },
+  {
+    "instruction": "Name one evaluation metric for generation.",
+    "input": "",
+    "output": "BLEU"
+  },
+  {
+    "instruction": "What is fine-tuning?",
+    "input": "",
+    "output": "Continuing training of a pretrained model on a smaller, task-specific dataset."
+  },
+  {
+    "instruction": "Write a Python list comprehension for squares 1..5.",
+    "input": "",
+    "output": "[x*x for x in range(1, 6)]"
+  },
+  {
+    "instruction": "What is ChatML used for?",
+    "input": "",
+    "output": "Formatting multi-turn chat messages with special role delimiters."
+  },
+  {
+    "instruction": "Why mask loss on instruction tokens in SFT?",
+    "input": "",
+    "output": "So the model is trained to generate responses, not to imitate the instructions themselves."
+  },
+  {
+    "instruction": "What is an epoch?",
+    "input": "",
+    "output": "One full pass through the training dataset."
+  },
+  {
+    "instruction": "Name two special tokens often used in chat models.",
+    "input": "",
+    "output": "BOS and EOS (or role markers like <|im_start|>)."
+  },
+  {
+    "instruction": "What does SFT stand for?",
+    "input": "",
+    "output": "Supervised Fine-Tuning"
+  }
+]
