@@ -508,3 +508,5 @@
 
 | 2026-09-22 | phases/19-capstone-projects/01-terminal-native-coding-agent | notes/cards/19-capstone-projects/01-terminal-native-coding-agent.png | done score=93 attempt=2 |
 | 2026-09-26 | phases/19-capstone-projects/02-rag-over-codebase | notes/cards/19-capstone-projects/02-rag-over-codebase.png | done score=92 attempt=1 |
+| 2026-09-28 | phases/19-capstone-projects/03-realtime-voice-assistant | notes/cards/19-capstone-projects/03-realtime-voice-assistant.png | done score=92 attempt=2 |
+| 2026-09-28 | phases/19-capstone-projects/04-multimodal-document-qa | notes/cards/19-capstone-projects/04-multimodal-document-qa.png | done score=93 attempt=1 |

@@ -36,6 +36,12 @@ codes/langgraph/*/*/
 # Code RAG 的向量库落盘产物，由 02_rag_over_codebase/prod_main.py 生成。
 codes/capstone/*/.index/
 
+# 语音助手 --tts file 逐句合成的音频，由 03_realtime_voice_assistant/prod_main.py 生成。
+codes/capstone/*/tts_out/
+
+# 多模态文档问答的页物料，由 04_multimodal_document_qa/prod_main.py 扫盘装成语料。
+codes/capstone/*/pages/
+
 # temp files
 docs/superpowers/
 
