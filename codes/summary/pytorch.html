@@ -1,0 +1,2460 @@
+<!doctype html>
+<html lang="en" data-theme="blueprint" data-mode="auto" data-style="80">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Answer me with HTML 0.4.9">
+<title>PyTorch API 速查</title>
+<style>
+html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 0px;
+  --shadow: none;
+  --bw: 1.5px;
+  --head-font: var(--font-sans);
+  --bg: #f6f6f3;
+  --paper: #ffffff;
+  --ink: #16181d;
+  --ink-2: #4b5260;
+  --ink-3: #8b929e;
+  --line: #1d2026;
+  --line-2: #d6dae1;
+  --fill: #f3f5f8;
+  --accent: #1d5fbf;
+  --accent-bg: #e4ecf8;
+  --ok: #1d5fbf;
+  --ok-bg: #e4ecf8;
+  --err: #c62828;
+  --err-bg: #fbeaea;
+  --warn: #a8620a;
+  --warn-bg: #fdf3e2;
+  --head-bg: #16181d;
+  --head-fg: #ffffff;
+}
+html[data-theme="blueprint"][data-mode="dark"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="blueprint"][data-mode="auto"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+}
+
+html[data-theme="shadcn"], html[data-theme="shadcn"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 8px;
+  --shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --bw: 1px;
+  --head-font: var(--font-sans);
+  --bg: #fafafa;
+  --paper: #ffffff;
+  --ink: #09090b;
+  --ink-2: #71717a;
+  --ink-3: #a1a1aa;
+  --line: #e4e4e7;
+  --line-2: #f0f0f2;
+  --fill: #f4f4f5;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --ok: #16a34a;
+  --ok-bg: #f0fdf4;
+  --err: #dc2626;
+  --err-bg: #fef2f2;
+  --warn: #d97706;
+  --warn-bg: #fffbeb;
+  --head-bg: #18181b;
+  --head-fg: #fafafa;
+}
+html[data-theme="shadcn"][data-mode="dark"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="shadcn"][data-mode="auto"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+}
+
+html[lang="ja"][data-theme][data-mode] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", "PingFang SC", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+html[lang="ja"][data-theme="3b1b"][data-mode] {
+  --v-title-font: "CMU Serif", "Latin Modern Roman", "Iowan Old Style", "Palatino", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Serif JP", "Songti SC", serif;
+}
+
+/* Answer me with HTML base — uses theme variables only, never hard-coded colors (theme tokens: themes/index.js). Exception: the var() fallbacks of diagrams (flow / sequence) equal the blueprint light tokens, guarded by a test. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* ── Toolbar ─────────────────────────────── */
+.am-toolbar {
+  position: fixed; top: 12px; right: 12px; z-index: 10; display: flex; gap: 6px;
+}
+.am-btn {
+  font: 12px/1 var(--font-sans); color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); padding: 7px 10px; cursor: pointer;
+}
+.am-btn:hover { border-color: var(--ink-3); }
+.am-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Header ───────────────────────────────── */
+.am-head { margin: 0 0 20px; padding-right: 260px; }
+.am-head h1 { margin: 0; font-size: 24px; line-height: 1.25; letter-spacing: -0.01em; }
+.am-sub { margin: 4px 0 0; color: var(--ink-2); }
+.am-head-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+.am-head-meta b { font-family: var(--font-mono); font-weight: 400; color: var(--ink-3); margin-right: 6px; }
+.am-intro { margin-top: 12px; max-width: 80ch; }
+
+/* ── sheet template ────────────────────────── */
+.am-sheet { max-width: 1680px; margin: 0 auto; padding: 32px 28px 40px; }
+.am-frame { position: relative; }
+.am-grid {
+  display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 20px; align-items: start;
+}
+.am-ruler { display: none; }
+html[data-theme="blueprint"] .am-frame { border: 1px solid var(--line); padding: 30px; }
+html[data-theme="blueprint"] .am-frame::before {
+  content: ""; position: absolute; inset: 18px; border: 1px solid var(--line); pointer-events: none;
+}
+html[data-theme="blueprint"] .am-ruler {
+  display: flex; position: absolute; font: 10px/1 var(--font-mono); color: var(--ink-3);
+}
+.am-ruler span { flex: 1; display: flex; align-items: center; justify-content: center; }
+.am-ruler--top, .am-ruler--bottom { left: 18px; right: 18px; height: 18px; }
+.am-ruler--top { top: 0; }
+.am-ruler--bottom { bottom: 0; }
+.am-ruler--left, .am-ruler--right { top: 18px; bottom: 18px; width: 18px; flex-direction: column; }
+.am-ruler--left { left: 0; }
+.am-ruler--right { right: 0; }
+.am-ruler--top span + span, .am-ruler--bottom span + span { border-left: 1px solid var(--line); }
+.am-ruler--left span + span, .am-ruler--right span + span { border-top: 1px solid var(--line); }
+
+/* ── Panels ───────────────────────────────── */
+.am-panel {
+  background: var(--paper); border: var(--bw) solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); min-width: 0; overflow: hidden;
+}
+.am-panel-head {
+  display: flex; align-items: stretch; gap: 0; border-bottom: var(--bw) solid var(--line); min-height: 34px;
+}
+.am-panel-id {
+  display: flex; align-items: center; justify-content: center; min-width: 34px; padding: 0 8px;
+  background: var(--head-bg); color: var(--head-fg); font-weight: 600; font-size: 14px;
+}
+html[data-theme="shadcn"] .am-panel-id { border-radius: 6px; min-width: 24px; height: 24px; margin: 9px 0 9px 14px; font-size: 12px; }
+html[data-theme="shadcn"] .am-panel-head { border-bottom-width: 1px; }
+.am-panel-head h2 { margin: 0; padding: 7px 12px; font-size: 15px; font-weight: 600; flex: 1; display: flex; align-items: center; }
+.am-panel-meta { align-self: center; padding: 0 12px; font: 11px/1.3 var(--font-mono); color: var(--ink-2); text-align: right; }
+.am-panel-body { padding: 14px 16px 16px; }
+.am-panel-body > * + * { margin-top: 12px; }
+
+/* ── Markdown body ───────────────────────── */
+.am-md > :first-child { margin-top: 0; }
+.am-md > :last-child { margin-bottom: 0; }
+.am-md p { margin: 0 0 8px; }
+.am-md ul, .am-md ol { margin: 0 0 8px; padding-left: 20px; }
+.am-md li + li { margin-top: 3px; }
+.am-md h3, .am-md h4 { margin: 14px 0 6px; font-size: 13px; }
+.am-md a { color: var(--accent); }
+.am-md blockquote { margin: 0 0 8px; padding: 2px 12px; border-left: 3px solid var(--line-2); color: var(--ink-2); }
+.am-md :not(pre) > code { font-size: 0.9em; background: var(--fill); padding: 1px 5px; border-radius: 4px; }
+.am-md hr { border: 0; border-top: 1px solid var(--line-2); margin: 12px 0; }
+.am-md table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.am-md th {
+  text-align: left; font: 11px/1.3 var(--font-mono); color: var(--ink-2); font-weight: 400;
+  padding: 6px 10px; border-bottom: 1px solid var(--line-2);
+}
+/* th { text-align: left } outranks the align attribute from Markdown alignment, so restore right and center columns explicitly. */
+.am-md th[align="right"] { text-align: right; }
+.am-md th[align="center"] { text-align: center; }
+.am-md td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.am-md tbody tr:nth-child(even) td { background: var(--fill); }
+.am-table-wrap { overflow-x: auto; }
+.am-code {
+  margin: 0; padding: 12px 14px; background: var(--fill); border: 1px solid var(--line-2);
+  border-radius: var(--radius); overflow-x: auto; font-size: 12.5px; line-height: 1.5;
+}
+
+/* ── Status badges ok / no / warn ──────────────── */
+.am-status { white-space: nowrap; font-weight: 500; }
+.am-status--ok { color: var(--ok); }
+.am-status--no { color: var(--err); }
+.am-status--warn { color: var(--warn); }
+.am-status-icon { display: inline-block; width: 1.1em; font-weight: 700; }
+
+/* ── callout ─────────────────────────────── */
+.am-callout {
+  border: 1px solid var(--line-2); border-left: 3px solid var(--accent); background: var(--accent-bg);
+  padding: 10px 14px; border-radius: var(--radius);
+}
+.am-callout--ok { border-left-color: var(--ok); background: var(--ok-bg); }
+.am-callout--warn { border-left-color: var(--warn); background: var(--warn-bg); }
+.am-callout--err { border-left-color: var(--err); background: var(--err-bg); }
+.am-callout-title { font-weight: 600; margin-bottom: 4px; }
+
+/* ── kv title block ─────────────────────────── */
+.am-kv {
+  display: grid; grid-template-columns: repeat(var(--kv-cols, 2), minmax(0, 1fr)); margin: 0;
+  border-top: var(--bw) solid var(--line); border-left: var(--bw) solid var(--line);
+}
+.am-kv-cell { border-right: var(--bw) solid var(--line); border-bottom: var(--bw) solid var(--line); padding: 6px 10px 8px; min-width: 0; }
+.am-kv-cell--wide { grid-column: 1 / -1; }
+.am-kv dt { font: 11px/1.4 var(--font-mono); color: var(--ink-2); }
+.am-kv dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.am-kv-cell--wide dd { font-size: 17px; font-weight: 600; }
+html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var(--radius); overflow: hidden; }
+
+/* ── timeline ────────────────────────────── */
+.am-timeline { list-style: none; margin: 0; padding: 0; }
+.am-timeline--h { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); padding-top: 4px; }
+.am-timeline--h li { position: relative; text-align: center; padding: 0 6px; }
+.am-timeline--h li::before {
+  content: ""; position: absolute; top: 31px; left: 0; right: 0; border-top: var(--bw) solid var(--line);
+}
+.am-timeline--h li:first-child::before { left: 50%; }
+.am-timeline--h li:last-child::before { right: 50%; }
+.am-tl-when { display: block; font-size: 15px; font-weight: 500; height: 24px; }
+.am-tl-dot {
+  position: relative; display: block; width: 11px; height: 11px; margin: 2px auto 8px;
+  border: var(--bw) solid var(--line); border-radius: 50%; background: var(--paper);
+}
+.am-tl-item--hi .am-tl-dot { background: var(--accent); border-color: var(--accent); }
+.am-tl-title { display: block; font-size: 12.5px; font-weight: 500; }
+.am-tl-text { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+.am-timeline--v li { position: relative; padding: 0 0 14px 22px; }
+.am-timeline--v li::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: -6px; border-left: var(--bw) solid var(--line-2); }
+.am-timeline--v li:last-child::before { display: none; }
+.am-timeline--v .am-tl-dot { position: absolute; left: 0; top: 4px; margin: 0; }
+.am-timeline--v .am-tl-when { display: inline; height: auto; font: 12px var(--font-mono); color: var(--ink-2); margin-right: 8px; }
+.am-timeline--v .am-tl-title { display: inline; font-size: 14px; }
+.am-timeline--v .am-tl-text { margin-top: 2px; }
+
+/* ── annot sentence notes ──────────────────────── */
+.am-annot + .am-annot { border-top: 1px solid var(--line-2); padding-top: 12px; }
+.am-annot-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.am-annot-meta { font: 11px var(--font-mono); font-weight: 400; color: var(--ink-2); }
+.am-annot-scroll { overflow-x: auto; }
+.am-annot-line {
+  position: relative; display: inline-block; white-space: pre; font: 14px/1.6 var(--font-mono);
+  padding-bottom: calc(var(--rows, 0) * 17px + 14px);
+}
+.am-annot-line--wrap { display: block; white-space: normal; padding-bottom: 10px; }
+.am-annot-line--wrap .am-seg { white-space: nowrap; }
+.am-seg { position: relative; }
+.am-seg::after {
+  content: ""; position: absolute; left: 1px; right: 1px; top: calc(100% + 1px); height: 5px;
+  border: 1px solid var(--accent); border-top: 0;
+}
+.am-seg-n {
+  position: absolute; left: 0; top: calc(100% + 8px + var(--row, 0) * 17px);
+  font: 11px/16px var(--font-sans); color: var(--accent); white-space: nowrap;
+}
+.am-seg--err { color: var(--err); }
+.am-seg--err::after { border-color: var(--err); }
+.am-seg--err .am-seg-n { color: var(--err); }
+.am-annot-caption { font-size: 12px; color: var(--ink-2); }
+
+/* ── limits bars ───────────────────────── */
+.am-lim + .am-lim { margin-top: 14px; }
+.am-lim-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 4px; }
+.am-lim-val { font: 12px var(--font-mono); color: var(--accent); white-space: nowrap; }
+.am-lim-track { position: relative; height: 12px; border: 1px solid var(--line-2); background: var(--fill); border-radius: calc(var(--radius) / 2); }
+.am-lim-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent-bg); border-right: 1px solid var(--accent); }
+.am-lim-mark { position: absolute; top: -4px; bottom: -4px; border-left: 2px solid var(--accent); }
+.am-lim.is-over .am-lim-fill { background: var(--err-bg); border-right-color: var(--err); }
+.am-lim.is-over .am-lim-val { color: var(--err); }
+.am-lim-ticks { position: relative; height: 16px; font: 10px/16px var(--font-mono); color: var(--ink-3); }
+.am-lim-ticks span { position: absolute; transform: translateX(-50%); }
+.am-lim-ticks span:first-child { transform: none; }
+.am-lim-note { font-size: 11px; color: var(--ink-2); margin-left: 6px; }
+
+/* ── tree ─────────────────────────── */
+.am-tree { font-size: 13px; }
+.am-tree-root { display: flex; justify-content: center; position: relative; padding-bottom: 18px; }
+.am-tree-root::after { content: ""; position: absolute; bottom: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-root--solo { padding-bottom: 12px; }
+.am-tree-root--solo::after { display: none; }
+.am-tree-box {
+  border: var(--bw) solid var(--line); background: var(--paper); padding: 6px 14px; text-align: center;
+  border-radius: var(--radius); font-weight: 600;
+}
+.am-tree-box small { display: block; font-weight: 400; color: var(--ink-2); font-size: 12px; }
+.am-tree-box--root { background: var(--accent-bg); font-size: 15px; padding: 8px 28px; }
+.am-tree-cols { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
+.am-tree-col { position: relative; padding: 18px 8px 0; min-width: 0; }
+.am-tree-col::before { content: ""; position: absolute; top: 0; left: 0; right: 0; border-top: var(--bw) solid var(--line); }
+.am-tree-col:first-child::before { left: 50%; }
+.am-tree-col:last-child::before { right: 50%; }
+.am-tree-col::after { content: ""; position: absolute; top: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-list, .am-tree-list ul { list-style: none; margin: 0; padding: 0; }
+.am-tree-col > .am-tree-list { margin: 8px 0 0 14px; }
+.am-tree-list ul { margin-left: 16px; }
+.am-tree-list li { position: relative; padding: 3px 0 3px 18px; }
+.am-tree-list li::before { content: ""; position: absolute; left: 0; top: 0.95em; width: 12px; border-top: 1px solid var(--ink-3); }
+.am-tree-list li::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--ink-3); }
+.am-tree-list li:last-child::after { bottom: auto; height: 0.95em; }
+.am-tree-tag { font: 11px var(--font-mono); color: var(--ink-3); margin-right: 4px; }
+.am-tree code { font: 12px var(--font-mono); }
+.am-tree-sub { display: block; font-size: 11.5px; color: var(--ink-2); }
+.am-tree-hi > .am-tree-label { color: var(--accent); font-weight: 600; }
+
+/* ── Diagrams (flow / sequence) ───────────────── */
+.am-diagram { margin: 0; overflow-x: auto; text-align: center; }
+/* Embedded previews can lose html[data-theme]; the fallbacks keep diagrams readable, and defined theme variables still win. */
+.am-diagram svg { max-width: 100%; height: auto; font-family: var(--font-sans, sans-serif); }
+.am-diagram text { fill: var(--ink, #16181d); font-size: 13px; }
+.am-node-shape { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-node--hi .am-node-shape { fill: var(--accent-bg, #e4ecf8); stroke: var(--accent, #1d5fbf); }
+.am-node--hi text { fill: var(--accent, #1d5fbf); font-weight: 600; }
+.am-edge { fill: none; stroke: var(--ink-2, #4b5260); stroke-width: 1.3; }
+.am-edge--dashed { stroke-dasharray: 5 4; }
+.am-arrow { fill: var(--ink-2, #4b5260); }
+.am-edge-label rect { fill: var(--paper, #ffffff); }
+.am-diagram .am-edge-label text { fill: var(--accent, #1d5fbf); font-size: 11.5px; }
+.am-cluster { fill: var(--fill, #f3f5f8); stroke: var(--line-2, #d6dae1); stroke-width: 1; stroke-dasharray: 4 3; }
+.am-diagram .am-cluster-label { fill: var(--ink-2, #4b5260); font: 11px var(--font-mono, monospace); }
+.am-lifeline { stroke: var(--ink-3, #8b929e); stroke-width: 1; stroke-dasharray: 4 4; }
+.am-actor { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-note { fill: var(--warn-bg, #fdf3e2); stroke: var(--warn, #a8620a); stroke-width: 1; }
+.am-diagram .am-step { fill: var(--ink-3, #8b929e); font: 10px var(--font-mono, monospace); }
+
+/* ── doc template ────────────────────────── */
+.am-doc { max-width: 1120px; margin: 0 auto; padding: 40px 28px 64px; }
+.am-doc-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+.am-doc-layout--notoc { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.am-toc { position: sticky; top: 24px; font-size: 13px; }
+.am-toc a { display: block; color: var(--ink-2); text-decoration: none; padding: 4px 0 4px 10px; border-left: 2px solid var(--line-2); }
+.am-toc a:hover { color: var(--ink); border-left-color: var(--accent); }
+.am-doc-body > .am-panel + .am-panel { margin-top: 20px; }
+
+/* ── Responsive and print ─────────────────────────── */
+@media (max-width: 1100px) {
+  .am-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .am-grid > .am-panel { grid-column: auto !important; }
+  .am-grid > .am-panel.am-span-wide { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 760px) {
+  .am-sheet, .am-doc { padding: 56px 12px 24px; }
+  .am-head { padding-right: 0; }
+  .am-grid { grid-template-columns: minmax(0, 1fr); }
+  .am-grid > .am-panel.am-span-wide { grid-column: auto !important; }
+  html[data-theme="blueprint"] .am-frame { padding: 0; border: 0; }
+  html[data-theme="blueprint"] .am-frame::before, html[data-theme="blueprint"] .am-ruler { display: none; }
+  .am-doc-layout { grid-template-columns: minmax(0, 1fr); }
+  .am-toc { position: static; }
+  .am-timeline--h { grid-template-columns: minmax(0, 1fr); }
+  .am-tree-cols { grid-template-columns: minmax(0, 1fr); }
+  /* Tables and diagrams keep their size: the wrapper scrolls horizontally when they overflow. */
+  .am-md th, .am-md td { min-width: 6em; }
+  .am-diagram svg { max-width: none; }
+}
+.am-colophon { text-align: center; padding: 0 0 28px; font: 11px var(--font-mono); color: var(--ink-3); }
+
+@media print {
+  .am-toolbar { display: none; }
+  body { background: var(--paper); }
+  .am-panel { break-inside: avoid; box-shadow: none; }
+}
+.am-panel--bare { border: 0; background: transparent; box-shadow: none; }
+.am-panel--bare > .am-panel-body { padding: 0; }
+.am-panel--bare .am-kv { background: var(--paper); }
+
+</style>
+</head>
+<body>
+<div class="am-toolbar">
+<button class="am-btn" type="button" data-am="theme" data-labels="{&quot;blueprint&quot;:&quot;Theme: Blueprint&quot;,&quot;shadcn&quot;:&quot;Theme: Cards&quot;}">Theme: Blueprint</button>
+<button class="am-btn" type="button" data-am="mode" data-labels="{&quot;auto&quot;:&quot;Mode: Auto&quot;,&quot;light&quot;:&quot;Mode: Light&quot;,&quot;dark&quot;:&quot;Mode: Dark&quot;}">Mode: Auto</button>
+<button class="am-btn" type="button" data-am="copy" data-done="Copied ✓">Copy source</button>
+</div>
+<main class="am-doc">
+<header class="am-head"><h1>PyTorch API 速查</h1><div class="am-head-meta"><span><b>source</b>codes/pytorch/cheat_api.md</span></div></header>
+<div class="am-doc-layout">
+<nav class="am-toc" aria-label="Contents"><a href="#panel-A">A · 速览</a><a href="#panel-B">B · API 速查</a><a href="#panel-C">C · 使用用例</a><a href="#panel-D">D · 常见坑</a></nav><div class="am-doc-body">
+<section class="am-panel" id="panel-A">
+<header class="am-panel-head"><span class="am-panel-id">A</span><h2>速览</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>按主题分组的常用 API。签名与默认值对照本机 <code>torch 2.14.0</code> 核对，<code>=</code> 后面是默认值，没写默认值的表示必填。阶段练习见 <code>index.md</code>。</p>
+<p>约定：</p>
+<ul>
+<li><strong>子模块</strong> 一列用简写：<code>nn</code> = <code>torch.nn</code>，<code>nn.functional</code> = <code>torch.nn.functional</code>，<code>optim</code> = <code>torch.optim</code>，<code>lr_scheduler</code> = <code>torch.optim.lr_scheduler</code>，<code>Tensor</code> 表示张量方法（<code>x.sum()</code>）。</li>
+<li>创建类函数大多还接受 <code>dtype=None, device=None, requires_grad=False, out=None</code>，下表只在有区别时重复。</li>
+</ul>
+</div></div>
+</section>
+<section class="am-panel" id="panel-B">
+<header class="am-panel-head"><span class="am-panel-id">B</span><h2>API 速查</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>子模块一览</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>子模块</th>
+<th>里面有什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>torch</code></td>
+<td>张量创建、运算、归约、线性代数、随机数、保存加载</td>
+</tr>
+<tr>
+<td><code>torch.Tensor</code></td>
+<td>张量方法，形状变换、逐元素运算、<code>backward</code> 等</td>
+</tr>
+<tr>
+<td><code>torch.nn</code></td>
+<td>层、损失、容器（<code>Module</code> / <code>Sequential</code> / <code>Linear</code> / <code>LSTM</code> …）</td>
+</tr>
+<tr>
+<td><code>torch.nn.functional</code></td>
+<td>无状态的函数式版本（<code>F.relu</code> / <code>F.cross_entropy</code>）</td>
+</tr>
+<tr>
+<td><code>torch.nn.init</code></td>
+<td>参数初始化（<code>xavier_uniform_</code> / <code>kaiming_normal_</code>）</td>
+</tr>
+<tr>
+<td><code>torch.nn.utils</code></td>
+<td>梯度裁剪等工具</td>
+</tr>
+<tr>
+<td><code>torch.optim</code></td>
+<td>优化器（<code>SGD</code> / <code>AdamW</code>）</td>
+</tr>
+<tr>
+<td><code>torch.optim.lr_scheduler</code></td>
+<td>学习率调度</td>
+</tr>
+<tr>
+<td><code>torch.utils.data</code></td>
+<td><code>Dataset</code> / <code>DataLoader</code> / <code>TensorDataset</code> / <code>random_split</code></td>
+</tr>
+<tr>
+<td><code>torch.autograd</code></td>
+<td><code>grad</code> / <code>backward</code> 的底层入口</td>
+</tr>
+<tr>
+<td><code>torch.amp</code></td>
+<td>混合精度 <code>autocast</code> / <code>GradScaler</code></td>
+</tr>
+</tbody></table></div>
+<h3>张量创建</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tensor</code></td>
+<td><code>torch</code></td>
+<td><code>dtype</code>、<code>device</code>、<code>requires_grad=False</code>、<code>pin_memory=False</code></td>
+<td>从数据拷贝出一个张量，永远复制</td>
+</tr>
+<tr>
+<td><code>as_tensor</code></td>
+<td><code>torch</code></td>
+<td><code>dtype</code>、<code>device</code></td>
+<td>同数据尽量不复制，共享内存时改动会互相影响</td>
+</tr>
+<tr>
+<td><code>from_numpy</code></td>
+<td><code>torch</code></td>
+<td>—</td>
+<td>与 ndarray 共享内存，最省事的互转</td>
+</tr>
+<tr>
+<td><code>zeros</code> / <code>ones</code> / <code>empty</code></td>
+<td><code>torch</code></td>
+<td><code>dtype</code>、<code>device</code>、<code>requires_grad</code>、<code>layout</code></td>
+<td><code>*size</code> 传形状；<code>empty</code> 是未初始化，别指望是 0</td>
+</tr>
+<tr>
+<td><code>zeros_like</code> / <code>ones_like</code> / <code>rand_like</code></td>
+<td><code>torch</code></td>
+<td><code>dtype</code>、<code>device</code>、<code>memory_format=preserve_format</code></td>
+<td>复制形状和 dtype，默认沿用输入的 device</td>
+</tr>
+<tr>
+<td><code>full</code></td>
+<td><code>torch</code></td>
+<td><code>dtype</code>、<code>device</code>、<code>requires_grad</code></td>
+<td><code>full(size, fill_value)</code>，用常数填满</td>
+</tr>
+<tr>
+<td><code>arange</code></td>
+<td><code>torch</code></td>
+<td><code>dtype</code>、<code>device</code>、<code>step=1</code></td>
+<td>左闭右开，<code>arange(5)</code> 不需要写 start</td>
+</tr>
+<tr>
+<td><code>linspace</code></td>
+<td><code>torch</code></td>
+<td><code>dtype</code>、<code>device</code>、<code>steps</code></td>
+<td>左闭右闭的等距点，注意 <code>steps</code> 是必填</td>
+</tr>
+<tr>
+<td><code>eye</code></td>
+<td><code>torch</code></td>
+<td><code>m=None</code>、<code>dtype</code>、<code>device</code></td>
+<td>单位矩阵，<code>m</code> 控制列数以得到矩形</td>
+</tr>
+<tr>
+<td><code>rand</code> / <code>randn</code></td>
+<td><code>torch</code></td>
+<td><code>generator=None</code>、<code>dtype</code>、<code>device</code></td>
+<td><code>[0,1)</code> 均匀分布 / 标准正态</td>
+</tr>
+<tr>
+<td><code>randint</code></td>
+<td><code>torch</code></td>
+<td><code>low=0</code>、<code>high</code>、<code>size</code>、<code>dtype</code>、<code>generator</code></td>
+<td>整数随机，<code>dtype</code> 默认 <code>int64</code></td>
+</tr>
+<tr>
+<td><code>randperm</code></td>
+<td><code>torch</code></td>
+<td><code>dtype=int64</code>、<code>generator</code></td>
+<td>0..n-1 的随机排列，手写 shuffle 常用</td>
+</tr>
+<tr>
+<td><code>normal</code></td>
+<td><code>torch</code></td>
+<td><code>generator=None</code>、<code>out=None</code></td>
+<td><code>normal(mean, std)</code>，两个参数都可以是张量</td>
+</tr>
+<tr>
+<td><code>manual_seed</code></td>
+<td><code>torch</code></td>
+<td>—</td>
+<td>固定 CPU 随机种子，返回 <code>Generator</code></td>
+</tr>
+</tbody></table></div>
+<h3>形状 / 视图 / 结构变换</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>reshape</code></td>
+<td><code>Tensor</code> / <code>torch</code></td>
+<td><code>*shape</code>、<code>shape</code></td>
+<td>能复制就复制，最安全的重排</td>
+</tr>
+<tr>
+<td><code>view</code></td>
+<td><code>Tensor</code></td>
+<td><code>*shape</code></td>
+<td>只能在不连续时直接报错，必须接 <code>contiguous()</code></td>
+</tr>
+<tr>
+<td><code>flatten</code></td>
+<td><code>Tensor</code> / <code>torch</code></td>
+<td><code>start_dim=0</code>、<code>end_dim=-1</code></td>
+<td>展平一段维度；<code>nn.Flatten</code> 默认从 1 开始，两者不同</td>
+</tr>
+<tr>
+<td><code>squeeze</code> / <code>unsqueeze</code></td>
+<td><code>Tensor</code> / <code>torch</code></td>
+<td><code>dim=None</code></td>
+<td>去掉 / 插入长度为 1 的维度，<code>squeeze(dim)</code> 更可控</td>
+</tr>
+<tr>
+<td><code>permute</code></td>
+<td><code>Tensor</code> / <code>torch</code></td>
+<td><code>*dims</code></td>
+<td>任意调换维度顺序，返回视图</td>
+</tr>
+<tr>
+<td><code>transpose</code></td>
+<td><code>Tensor</code> / <code>torch</code></td>
+<td><code>dim0</code>、<code>dim1</code></td>
+<td>只换两个维度，之后往往要 <code>contiguous()</code></td>
+</tr>
+<tr>
+<td><code>expand</code> / <code>broadcast_to</code></td>
+<td><code>Tensor</code> / <code>torch</code></td>
+<td><code>*size</code>、<code>shape</code></td>
+<td>广播出视图，不复制数据，只扩长度为 1 的维</td>
+</tr>
+<tr>
+<td><code>contiguous</code></td>
+<td><code>Tensor</code></td>
+<td><code>memory_format=contiguous_format</code></td>
+<td>把张量整理成连续内存</td>
+</tr>
+<tr>
+<td><code>clone</code></td>
+<td><code>Tensor</code> / <code>torch</code></td>
+<td><code>memory_format=preserve_format</code></td>
+<td>真复制；注意 <code>clone</code> 仍会进计算图</td>
+</tr>
+<tr>
+<td><code>cat</code> / <code>stack</code></td>
+<td><code>torch</code></td>
+<td><code>dim=0</code>、<code>out=None</code></td>
+<td><code>cat</code> 沿已有维拼接，<code>stack</code> 新增一维</td>
+</tr>
+<tr>
+<td><code>chunk</code> / <code>split</code></td>
+<td><code>torch</code></td>
+<td><code>chunks</code>/<code>split_size_or_sections</code>、<code>dim=0</code></td>
+<td>切分；<code>chunk</code> 给份数，<code>split</code> 给每份大小</td>
+</tr>
+<tr>
+<td><code>tile</code> / <code>repeat_interleave</code></td>
+<td><code>torch</code></td>
+<td><code>dims</code> / <code>repeats</code>、<code>dim=None</code></td>
+<td>整体平铺 / 逐元素重复</td>
+</tr>
+<tr>
+<td><code>Flatten</code> / <code>Unflatten</code></td>
+<td><code>nn</code></td>
+<td><code>start_dim=1, end_dim=-1</code> / <code>dim, unflattened_size</code></td>
+<td>写进 <code>Sequential</code> 用，<code>Flatten</code> 默认保留 batch 维</td>
+</tr>
+<tr>
+<td><code>Identity</code></td>
+<td><code>nn</code></td>
+<td>—</td>
+<td>占位层，方便条件分支里保持结构一致</td>
+</tr>
+</tbody></table></div>
+<h3>逐元素数学</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>add</code> / <code>mul</code> / <code>sub</code> / <code>div</code></td>
+<td><code>torch</code></td>
+<td><code>alpha=1</code>、<code>out=None</code></td>
+<td><code>add(a, b, alpha=2)</code> 等价 <code>a + 2b</code></td>
+</tr>
+<tr>
+<td><code>add_</code> / <code>mul_</code> / <code>zero_</code></td>
+<td><code>Tensor</code></td>
+<td><code>alpha=1</code></td>
+<td>原地版本，下划线结尾，会改掉原张量</td>
+</tr>
+<tr>
+<td><code>pow</code> / <code>sqrt</code> / <code>exp</code> / <code>log</code></td>
+<td><code>torch</code></td>
+<td><code>out=None</code></td>
+<td>逐元素；<code>log</code> 底是 e，<code>log2</code> / <code>log10</code> 另算</td>
+</tr>
+<tr>
+<td><code>abs</code> / <code>clamp</code></td>
+<td><code>torch</code></td>
+<td><code>min=None</code>、<code>max=None</code></td>
+<td>截断用 <code>clamp</code>，<code>,</code> 边传 <code>None</code> 表示不设该侧</td>
+</tr>
+<tr>
+<td><code>sigmoid</code> / <code>tanh</code> / <code>relu</code></td>
+<td><code>torch</code></td>
+<td><code>out=None</code></td>
+<td>逐元素激活，等价 <code>Tensor.sigmoid()</code> 等</td>
+</tr>
+<tr>
+<td><code>softmax</code> / <code>log_softmax</code></td>
+<td><code>torch</code></td>
+<td><code>dim</code>、<code>dtype=None</code></td>
+<td>必须显式给 <code>dim</code>，配 <code>NLLLoss</code> 用 log 版</td>
+</tr>
+<tr>
+<td><code>where</code></td>
+<td><code>torch</code></td>
+<td><code>out=None</code></td>
+<td><code>where(cond, a, b)</code>，条件为真取 a</td>
+</tr>
+<tr>
+<td><code>masked_fill</code></td>
+<td><code>Tensor</code></td>
+<td>—</td>
+<td><code>masked_fill(mask, value)</code>，mask 为 True 处填 value</td>
+</tr>
+<tr>
+<td><code>clamp_min</code> / <code>clamp_max</code></td>
+<td><code>Tensor</code></td>
+<td>—</td>
+<td>单侧截断的简写，常用于逐元素下限</td>
+</tr>
+<tr>
+<td><code>relu</code> / <code>gelu</code> / <code>silu</code> / <code>dropout</code></td>
+<td><code>nn.functional</code></td>
+<td><code>inplace=False</code>、<code>approximate=&#39;none&#39;</code>、<code>p=0.5, training=True</code></td>
+<td>函数式版；<code>F.dropout</code> 的 <code>training</code> 必须自己传</td>
+</tr>
+</tbody></table></div>
+<h3>归约 / 统计 / 排序</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sum</code> / <code>mean</code> / <code>prod</code></td>
+<td><code>torch</code></td>
+<td><code>dim=None</code>、<code>keepdim=False</code>、<code>dtype=None</code></td>
+<td>不写 <code>dim</code> 就全部归约成一个标量</td>
+</tr>
+<tr>
+<td><code>std</code> / <code>var</code></td>
+<td><code>torch</code></td>
+<td><code>dim=None</code>、<code>correction=1</code>、<code>keepdim=False</code></td>
+<td><code>correction=1</code> 是样本标准差（无偏）</td>
+</tr>
+<tr>
+<td><code>max</code> / <code>min</code></td>
+<td><code>torch</code></td>
+<td><code>dim=None</code>、<code>keepdim=False</code></td>
+<td>带 <code>dim</code> 返回 <code>(values, indices)</code> 二元组；<code>torch.max(a, b)</code> 是两个张量逐元素取大</td>
+</tr>
+<tr>
+<td><code>argmax</code> / <code>argmin</code></td>
+<td><code>torch</code></td>
+<td><code>dim=None</code>、<code>keepdim=False</code></td>
+<td>返回下标；分类预测常用 <code>argmax(dim=1)</code></td>
+</tr>
+<tr>
+<td><code>amax</code> / <code>amin</code></td>
+<td><code>torch</code></td>
+<td><code>dim=None</code>、<code>keepdim=False</code></td>
+<td>只取值不要下标时用它，避免解包</td>
+</tr>
+<tr>
+<td><code>topk</code></td>
+<td><code>torch</code></td>
+<td><code>k</code>、<code>dim=None</code>、<code>largest=True</code>、<code>sorted=True</code></td>
+<td>返回 <code>(values, indices)</code>，看 top-5 准确率常用</td>
+</tr>
+<tr>
+<td><code>sort</code></td>
+<td><code>torch</code></td>
+<td><code>dim=-1</code>、<code>descending=False</code>、<code>stable=False</code></td>
+<td>返回 <code>(values, indices)</code></td>
+</tr>
+<tr>
+<td><code>cumsum</code></td>
+<td><code>torch</code></td>
+<td><code>dim</code>、<code>dtype=None</code></td>
+<td>前缀和，算 IoU / 面积常用</td>
+</tr>
+<tr>
+<td><code>unique</code></td>
+<td><code>torch</code></td>
+<td><code>sorted=True</code>、<code>return_counts=False</code></td>
+<td>去重，加 <code>return_counts</code> 顺便拿到频次</td>
+</tr>
+<tr>
+<td><code>norm</code></td>
+<td><code>torch</code> / <code>Tensor</code></td>
+<td><code>p=&#39;fro&#39;</code>、<code>dim=None</code>、<code>keepdim=False</code></td>
+<td><code>p</code> 给 <code>2</code> 是 L2，<code>&#39;fro&#39;</code> 是矩阵 Frobenius；新代码建议 <code>torch.linalg.norm</code></td>
+</tr>
+<tr>
+<td><code>count_nonzero</code></td>
+<td><code>torch</code></td>
+<td><code>dim=None</code></td>
+<td>统计非零个数，配 bool mask 数命中数</td>
+</tr>
+</tbody></table></div>
+<h3>线性代数 / 注意力</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>matmul</code> / <code>@</code></td>
+<td><code>torch</code></td>
+<td><code>out=None</code></td>
+<td>通用矩阵乘，支持批量广播</td>
+</tr>
+<tr>
+<td><code>mm</code></td>
+<td><code>torch</code></td>
+<td><code>out=None</code></td>
+<td>只接受二维，比 <code>matmul</code> 约束更强</td>
+</tr>
+<tr>
+<td><code>bmm</code></td>
+<td><code>torch</code></td>
+<td><code>out=None</code></td>
+<td>只接受三维批量矩阵乘</td>
+</tr>
+<tr>
+<td><code>einsum</code></td>
+<td><code>torch</code></td>
+<td>—</td>
+<td>字符串写指标，<code>&#39;bij,bjk-&gt;bik&#39;</code> 就是批量矩阵乘</td>
+</tr>
+<tr>
+<td><code>dot</code> / <code>outer</code></td>
+<td><code>torch</code></td>
+<td><code>out=None</code></td>
+<td>一维内积 / 外积</td>
+</tr>
+<tr>
+<td><code>scaled_dot_product_attention</code></td>
+<td><code>nn.functional</code></td>
+<td><code>attn_mask=None</code>、<code>dropout_p=0.0</code>、<code>is_causal=False</code>、<code>scale=None</code>、<code>enable_gqa=False</code></td>
+<td>融合注意力；因果掩码直接给 <code>is_causal=True</code>，GQA 给 <code>enable_gqa=True</code>（K/V 的 head 数少于 Q，且能整除）</td>
+</tr>
+<tr>
+<td><code>MultiheadAttention</code></td>
+<td><code>nn</code></td>
+<td><code>embed_dim, num_heads</code>、<code>dropout=0.0</code>、<code>batch_first=False</code></td>
+<td>多头注意力层，默认维度顺序是 <code>(seq, batch, dim)</code></td>
+</tr>
+<tr>
+<td><code>normalize</code></td>
+<td><code>nn.functional</code></td>
+<td><code>p=2.0</code>、<code>dim=1</code>、<code>eps=1e-12</code></td>
+<td>按维归一化，余弦相似度前常做</td>
+</tr>
+</tbody></table></div>
+<h3>索引 / 拼接 / 掩码</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>gather</code></td>
+<td><code>torch</code> / <code>Tensor</code></td>
+<td><code>dim</code>、<code>sparse_grad=False</code></td>
+<td>按 index 取值，index 形状要和输出一致</td>
+</tr>
+<tr>
+<td><code>scatter</code></td>
+<td><code>torch</code></td>
+<td><code>dim</code>、<code>index</code>、<code>src</code></td>
+<td>按 index 写入，和 <code>gather</code> 互为反向</td>
+</tr>
+<tr>
+<td><code>index_select</code></td>
+<td><code>torch</code></td>
+<td><code>dim</code>、<code>index</code></td>
+<td>沿某一维按整数张量挑行，比 fancy index 好读</td>
+</tr>
+<tr>
+<td><code>masked_select</code></td>
+<td><code>torch</code></td>
+<td>—</td>
+<td>取出 mask 为 True 的元素，压成一维</td>
+</tr>
+<tr>
+<td><code>nonzero</code></td>
+<td><code>torch</code></td>
+<td><code>as_tuple=False</code></td>
+<td>拿非零下标，bool mask 上就是命中位置</td>
+</tr>
+<tr>
+<td><code>one_hot</code></td>
+<td><code>nn.functional</code></td>
+<td><code>num_classes=-1</code></td>
+<td>整数标签转 one-hot，输入必须是 LongTensor</td>
+</tr>
+<tr>
+<td><code>pad</code></td>
+<td><code>nn.functional</code></td>
+<td><code>pad</code>、<code>mode=&#39;constant&#39;</code>、<code>value=None</code></td>
+<td><code>pad</code> 从最后一维往前写，如 <code>(1,1)</code> 左右各补一</td>
+</tr>
+<tr>
+<td><code>interpolate</code></td>
+<td><code>nn.functional</code></td>
+<td><code>size</code>、<code>scale_factor</code>、<code>mode=&#39;nearest&#39;</code>、<code>align_corners=None</code></td>
+<td>上采样；<code>size</code> 和 <code>scale_factor</code> 只给一个</td>
+</tr>
+</tbody></table></div>
+<h3>dtype / device / NumPy 互转</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>to</code></td>
+<td><code>Tensor</code> / <code>nn.Module</code></td>
+<td><code>device</code>、<code>dtype</code>、<code>non_blocking=False</code></td>
+<td>同时换 dtype 和 device；位置参数顺序是 <code>(device, dtype)</code>，记不清就写关键字；<code>to(other_tensor)</code> 继承对方的 dtype 和 device</td>
+</tr>
+<tr>
+<td><code>cuda</code> / <code>cpu</code></td>
+<td><code>Tensor</code> / <code>nn.Module</code></td>
+<td><code>device=None</code>、<code>non_blocking=False</code></td>
+<td>简写，<code>cuda()</code> 没 GPU 会直接报错，先判 <code>is_available()</code></td>
+</tr>
+<tr>
+<td><code>float</code> / <code>half</code> / <code>bfloat16</code> / <code>long</code> / <code>bool</code></td>
+<td><code>Tensor</code></td>
+<td><code>memory_format=preserve_format</code></td>
+<td>类型转换简写，等价 <code>to(torch.float32)</code> 等</td>
+</tr>
+<tr>
+<td><code>type</code> / <code>type_as</code></td>
+<td><code>Tensor</code></td>
+<td><code>dtype</code> / <code>tensor</code></td>
+<td>老式写法；<code>type(dtype)</code>、<code>type_as(other_tensor)</code>，新代码一般用 <code>to</code></td>
+</tr>
+<tr>
+<td><code>numpy</code></td>
+<td><code>Tensor</code></td>
+<td><code>force=False</code></td>
+<td>转 ndarray；带梯度会报错，先 <code>detach()</code></td>
+</tr>
+<tr>
+<td><code>item</code> / <code>tolist</code></td>
+<td><code>Tensor</code></td>
+<td>—</td>
+<td>取 Python 标量 / 嵌套列表，<code>item</code> 只对单元素张量有效</td>
+</tr>
+<tr>
+<td><code>is_available</code></td>
+<td><code>torch.cuda</code></td>
+<td>—</td>
+<td>判断有没有可用 GPU，写 device 选择时先问它</td>
+</tr>
+<tr>
+<td><code>device</code></td>
+<td><code>Tensor</code></td>
+<td>—</td>
+<td>属性，返回张量所在设备，跨设备运算会报错</td>
+</tr>
+</tbody></table></div>
+<h3>autograd</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>requires_grad_</code></td>
+<td><code>Tensor</code> / <code>nn.Module</code></td>
+<td><code>requires_grad=True</code></td>
+<td>就地打开梯度追踪</td>
+</tr>
+<tr>
+<td><code>backward</code></td>
+<td><code>Tensor</code></td>
+<td><code>gradient=None</code>、<code>retain_graph=None</code>、<code>create_graph=False</code></td>
+<td>标量才能直接调；非标量要传 <code>gradient</code></td>
+</tr>
+<tr>
+<td><code>detach</code></td>
+<td><code>Tensor</code></td>
+<td>—</td>
+<td>从计算图摘出来，仍共享数据，改它会影响原张量</td>
+</tr>
+<tr>
+<td><code>retain_grad</code></td>
+<td><code>Tensor</code></td>
+<td>—</td>
+<td>让非叶子张量也留下 <code>.grad</code>，调试时用</td>
+</tr>
+<tr>
+<td><code>register_hook</code></td>
+<td><code>Tensor</code></td>
+<td><code>hook</code></td>
+<td>反向经过该张量时回调，看梯度异常用</td>
+</tr>
+<tr>
+<td><code>grad_fn</code></td>
+<td><code>Tensor</code></td>
+<td>—</td>
+<td>属性，反向节点；叶子张量是 <code>None</code></td>
+</tr>
+<tr>
+<td><code>is_leaf</code></td>
+<td><code>Tensor</code></td>
+<td>—</td>
+<td>属性，叶子张量才默认存 <code>.grad</code></td>
+</tr>
+<tr>
+<td><code>grad</code></td>
+<td><code>Tensor</code></td>
+<td>—</td>
+<td>属性，<code>backward</code> 之后梯度存在这里</td>
+</tr>
+<tr>
+<td><code>grad</code></td>
+<td><code>torch.autograd</code></td>
+<td><code>inputs</code>、<code>grad_outputs=None</code>、<code>retain_graph=None</code>、<code>create_graph=False</code></td>
+<td>只求梯度不累积，返回元组</td>
+</tr>
+<tr>
+<td><code>no_grad</code> / <code>inference_mode</code></td>
+<td><code>torch</code></td>
+<td><code>mode=True</code></td>
+<td>评估和推理必须包起来，省显存；<code>inference_mode</code> 更彻底</td>
+</tr>
+<tr>
+<td><code>set_grad_enabled</code></td>
+<td><code>torch</code></td>
+<td><code>mode</code></td>
+<td>函数式开关，按条件临时关梯度</td>
+</tr>
+</tbody></table></div>
+<h3>nn.Module 生命周期</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Module</code></td>
+<td><code>nn</code></td>
+<td>—</td>
+<td>自己写模型就继承它，在 <code>__init__</code> 里注册子层，算逻辑写 <code>forward</code></td>
+</tr>
+<tr>
+<td><code>forward</code></td>
+<td><code>nn.Module</code></td>
+<td><code>*input</code></td>
+<td>前向逻辑；调用时用 <code>model(x)</code>，不要直接 <code>.forward(x)</code></td>
+</tr>
+<tr>
+<td><code>train</code> / <code>eval</code></td>
+<td><code>nn.Module</code></td>
+<td><code>mode=True</code></td>
+<td>切换训练/评估，只影响 <code>Dropout</code>、<code>BatchNorm</code> 这类层</td>
+</tr>
+<tr>
+<td><code>parameters</code> / <code>named_parameters</code></td>
+<td><code>nn.Module</code></td>
+<td><code>recurse=True</code>、<code>remove_duplicate=True</code></td>
+<td>交给优化器的就是它，dict 分组时用 named 版</td>
+</tr>
+<tr>
+<td><code>buffers</code> / <code>named_buffers</code></td>
+<td><code>nn.Module</code></td>
+<td><code>recurse=True</code></td>
+<td>BatchNorm 的 running_mean 属于 buffer，会进 <code>state_dict</code> 但不是参数</td>
+</tr>
+<tr>
+<td><code>children</code> / <code>modules</code></td>
+<td><code>nn.Module</code></td>
+<td>— / <code>remove_duplicate=True</code></td>
+<td>遍历直接子层 / 递归包含自己；只有 <code>modules()</code> 有 <code>remove_duplicate</code></td>
+</tr>
+<tr>
+<td><code>apply</code></td>
+<td><code>nn.Module</code></td>
+<td><code>fn</code></td>
+<td>递归对每个子模块执行，初始化权重常用</td>
+</tr>
+<tr>
+<td><code>zero_grad</code></td>
+<td><code>nn.Module</code></td>
+<td><code>set_to_none=True</code></td>
+<td>清梯度，默认置 <code>None</code>（不是 0）</td>
+</tr>
+<tr>
+<td><code>register_buffer</code> / <code>register_parameter</code></td>
+<td><code>nn.Module</code></td>
+<td><code>persistent=True</code></td>
+<td>注册 buffer / 参数，别用普通属性挂张量</td>
+</tr>
+<tr>
+<td><code>to</code></td>
+<td><code>nn.Module</code></td>
+<td><code>device</code>、<code>dtype</code></td>
+<td>整体搬迁，返回值要接住，原地改也可以</td>
+</tr>
+<tr>
+<td><code>get_submodule</code> / <code>get_parameter</code></td>
+<td><code>nn.Module</code></td>
+<td><code>target</code></td>
+<td>按点分名字取，写通用工具时用</td>
+</tr>
+</tbody></table></div>
+<h3>nn 层</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Linear</code></td>
+<td><code>nn</code></td>
+<td><code>in_features, out_features</code>、<code>bias=True</code></td>
+<td>全连接，内部权重形状是 <code>(out, in)</code></td>
+</tr>
+<tr>
+<td><code>Embedding</code></td>
+<td><code>nn</code></td>
+<td><code>num_embeddings, embedding_dim</code>、<code>padding_idx=None</code>、<code>sparse=False</code></td>
+<td>查表；输入必须是 LongTensor</td>
+</tr>
+<tr>
+<td><code>LayerNorm</code></td>
+<td><code>nn</code></td>
+<td><code>normalized_shape</code>、<code>eps=1e-5</code>、<code>elementwise_affine=True</code></td>
+<td>对最后一维做归一化，Transformer 默认选择</td>
+</tr>
+<tr>
+<td><code>BatchNorm1d</code> / <code>BatchNorm2d</code></td>
+<td><code>nn</code></td>
+<td><code>num_features</code>、<code>eps=1e-5</code>、<code>momentum=0.1</code>、<code>affine=True</code>、<code>track_running_stats=True</code></td>
+<td>依赖 batch 统计，小 batch 别用</td>
+</tr>
+<tr>
+<td><code>Dropout</code></td>
+<td><code>nn</code></td>
+<td><code>p=0.5</code>、<code>inplace=False</code></td>
+<td>训练时随机置零，评估时旁路</td>
+</tr>
+<tr>
+<td><code>Conv1d</code> / <code>Conv2d</code></td>
+<td><code>nn</code></td>
+<td><code>in_channels, out_channels, kernel_size</code>、<code>stride=1</code>、<code>padding=0</code>、<code>dilation=1</code>、<code>groups=1</code>、<code>bias=True</code></td>
+<td><code>padding</code> 可给 <code>&#39;same&#39;</code> 保持尺寸</td>
+</tr>
+<tr>
+<td><code>MaxPool2d</code> / <code>AvgPool2d</code></td>
+<td><code>nn</code></td>
+<td><code>kernel_size</code>、<code>stride=None</code>、<code>padding=0</code>、<code>ceil_mode=False</code></td>
+<td><code>stride=None</code> 时默认取 <code>kernel_size</code></td>
+</tr>
+<tr>
+<td><code>AdaptiveAvgPool2d</code></td>
+<td><code>nn</code></td>
+<td><code>output_size</code></td>
+<td>直接指定输出尺寸，分类头前常用</td>
+</tr>
+<tr>
+<td><code>Sequential</code></td>
+<td><code>nn</code></td>
+<td><code>*args</code></td>
+<td>顺序容器，可传 <code>OrderedDict</code> 给层命名</td>
+</tr>
+<tr>
+<td><code>ModuleList</code> / <code>ModuleDict</code></td>
+<td><code>nn</code></td>
+<td><code>modules=None</code></td>
+<td>装子层的容器，会被正确注册；普通 list 不会</td>
+</tr>
+<tr>
+<td><code>Parameter</code></td>
+<td><code>nn</code></td>
+<td>—</td>
+<td>让普通张量进入 <code>parameters()</code></td>
+</tr>
+<tr>
+<td><code>RNN</code> / <code>LSTM</code> / <code>GRU</code></td>
+<td><code>nn</code></td>
+<td><code>input_size, hidden_size</code>、<code>num_layers=1</code>、<code>batch_first=False</code>、<code>dropout=0.0</code>、<code>bidirectional=False</code>、<code>proj_size=0</code></td>
+<td>默认维度顺序 <code>(seq, batch, feature)</code>，<code>dropout</code> 只在 <code>num_layers &gt; 1</code> 生效</td>
+</tr>
+<tr>
+<td><code>TransformerEncoderLayer</code></td>
+<td><code>nn</code></td>
+<td><code>d_model, nhead</code>、<code>dim_feedforward=2048</code>、<code>dropout=0.1</code>、<code>activation=relu</code>、<code>norm_first=False</code>、<code>batch_first=False</code></td>
+<td>单个编码层，<code>norm_first=True</code> 更接近 GPT 式结构</td>
+</tr>
+<tr>
+<td><code>TransformerEncoder</code> / <code>TransformerDecoder</code></td>
+<td><code>nn</code></td>
+<td><code>encoder_layer/decoder_layer</code>、<code>num_layers</code>、<code>norm=None</code></td>
+<td>把层堆叠起来</td>
+</tr>
+</tbody></table></div>
+<h3>损失函数</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>CrossEntropyLoss</code></td>
+<td><code>nn</code></td>
+<td><code>ignore_index=-100</code>、<code>reduction=&#39;mean&#39;</code>、<code>weight=None</code>、<code>label_smoothing=0.0</code></td>
+<td>输入未归一化 logits、目标是类别下标，别自己加 softmax</td>
+</tr>
+<tr>
+<td><code>NLLLoss</code></td>
+<td><code>nn</code></td>
+<td><code>ignore_index=-100</code>、<code>reduction=&#39;mean&#39;</code></td>
+<td>配 <code>log_softmax</code> 用</td>
+</tr>
+<tr>
+<td><code>MSELoss</code></td>
+<td><code>nn</code></td>
+<td><code>reduction=&#39;mean&#39;</code></td>
+<td>回归默认选择</td>
+</tr>
+<tr>
+<td><code>L1Loss</code> / <code>SmoothL1Loss</code></td>
+<td><code>nn</code></td>
+<td><code>reduction=&#39;mean&#39;</code>、<code>beta=1.0</code></td>
+<td>对离群点更稳，检测框回归常用</td>
+</tr>
+<tr>
+<td><code>BCEWithLogitsLoss</code></td>
+<td><code>nn</code></td>
+<td><code>reduction=&#39;mean&#39;</code>、<code>pos_weight=None</code></td>
+<td>二分类；输入 logits，自带 sigmoid</td>
+</tr>
+<tr>
+<td><code>cross_entropy</code> / <code>mse_loss</code> / <code>binary_cross_entropy_with_logits</code></td>
+<td><code>nn.functional</code></td>
+<td>同上，<code>reduction=&#39;mean&#39;</code></td>
+<td>函数式版，不需要建对象</td>
+</tr>
+</tbody></table></div>
+<p>损失函数共有的 <code>reduction</code> 取 <code>&#39;none&#39;</code> / <code>&#39;mean&#39;</code> / <code>&#39;sum&#39;</code>。想要逐样本加权就选 <code>&#39;none&#39;</code>，自己乘权重再求和。</p>
+<h3>参数初始化</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>uniform_</code> / <code>normal_</code></td>
+<td><code>nn.init</code></td>
+<td><code>a=0.0, b=1.0</code> / <code>mean=0.0, std=1.0</code></td>
+<td>就地改张量，调用时用 <code>torch.no_grad()</code> 包住更稳</td>
+</tr>
+<tr>
+<td><code>xavier_uniform_</code> / <code>xavier_normal_</code></td>
+<td><code>nn.init</code></td>
+<td><code>gain=1.0</code></td>
+<td>适配 tanh / sigmoid，深度网络防梯度消失</td>
+</tr>
+<tr>
+<td><code>kaiming_uniform_</code> / <code>kaiming_normal_</code></td>
+<td><code>nn.init</code></td>
+<td><code>a=0</code>、<code>mode=&#39;fan_in&#39;</code>、<code>nonlinearity=&#39;leaky_relu&#39;</code></td>
+<td>ReLU 系列默认选择，<code>a</code> 是负斜率</td>
+</tr>
+<tr>
+<td><code>zeros_</code> / <code>ones_</code> / <code>constant_</code></td>
+<td><code>nn.init</code></td>
+<td><code>val</code></td>
+<td>偏置清零常用</td>
+</tr>
+<tr>
+<td><code>apply</code></td>
+<td><code>nn.Module</code></td>
+<td><code>fn</code></td>
+<td>配合上面写 <code>model.apply(init_fn)</code> 遍历初始化</td>
+</tr>
+</tbody></table></div>
+<h3>优化器</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SGD</code></td>
+<td><code>torch.optim</code></td>
+<td><code>lr=1e-3</code>、<code>momentum=0</code>、<code>weight_decay=0</code>、<code>nesterov=False</code></td>
+<td><code>lr</code> 有默认值但基本都要自己调，习惯显式写</td>
+</tr>
+<tr>
+<td><code>Adam</code> / <code>AdamW</code></td>
+<td><code>torch.optim</code></td>
+<td><code>lr=1e-3</code>、<code>betas=(0.9,0.999)</code>、<code>eps=1e-8</code>、<code>weight_decay=0</code> / <code>0.01</code></td>
+<td><code>AdamW</code> 的 <code>weight_decay</code> 是解耦实现且默认给到 0.01，优先用它</td>
+</tr>
+<tr>
+<td><code>RMSprop</code> / <code>Adagrad</code></td>
+<td><code>torch.optim</code></td>
+<td><code>lr=1e-2</code>、<code>alpha=0.99</code> / <code>lr_decay=0</code></td>
+<td>现在更多是特定场景用</td>
+</tr>
+<tr>
+<td><code>step</code></td>
+<td><code>torch.optim.Optimizer</code></td>
+<td><code>closure=None</code></td>
+<td>真正更新参数</td>
+</tr>
+<tr>
+<td><code>zero_grad</code></td>
+<td><code>torch.optim.Optimizer</code></td>
+<td><code>set_to_none=True</code></td>
+<td>每轮开头清梯度，别忘记</td>
+</tr>
+<tr>
+<td><code>state_dict</code> / <code>load_state_dict</code></td>
+<td><code>torch.optim.Optimizer</code></td>
+<td>—</td>
+<td>断点续训要连优化器状态一起存</td>
+</tr>
+<tr>
+<td><code>param_groups</code></td>
+<td><code>torch.optim.Optimizer</code></td>
+<td>—</td>
+<td>属性，按名字分组的参数，分层学习率靠它</td>
+</tr>
+</tbody></table></div>
+<h3>学习率调度</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>StepLR</code></td>
+<td><code>lr_scheduler</code></td>
+<td><code>step_size</code>、<code>gamma=0.1</code>、<code>last_epoch=-1</code></td>
+<td>每 <code>step_size</code> 个 epoch 乘 <code>gamma</code></td>
+</tr>
+<tr>
+<td><code>MultiStepLR</code></td>
+<td><code>lr_scheduler</code></td>
+<td><code>milestones</code>、<code>gamma=0.1</code></td>
+<td>在指定 epoch 降，比固定步长灵活</td>
+</tr>
+<tr>
+<td><code>ExponentialLR</code></td>
+<td><code>lr_scheduler</code></td>
+<td><code>gamma</code>、<code>last_epoch=-1</code></td>
+<td>每个 epoch 乘 <code>gamma</code></td>
+</tr>
+<tr>
+<td><code>CosineAnnealingLR</code></td>
+<td><code>lr_scheduler</code></td>
+<td><code>T_max</code>、<code>eta_min=0.0</code></td>
+<td>余弦退火，<code>T_max</code> 是半个周期长度</td>
+</tr>
+<tr>
+<td><code>OneCycleLR</code></td>
+<td><code>lr_scheduler</code></td>
+<td><code>max_lr</code>、<code>total_steps</code> / <code>epochs+steps_per_epoch</code>、<code>pct_start=0.3</code>、<code>div_factor=25.0</code></td>
+<td>按 step 调用，配合 warmup 效果好</td>
+</tr>
+<tr>
+<td><code>ReduceLROnPlateau</code></td>
+<td><code>lr_scheduler</code></td>
+<td><code>mode=&#39;min&#39;</code>、<code>factor=0.1</code>、<code>patience=10</code>、<code>min_lr=0</code></td>
+<td><code>step(metrics)</code> 传验证指标，指标不降才降 lr</td>
+</tr>
+<tr>
+<td><code>LambdaLR</code></td>
+<td><code>lr_scheduler</code></td>
+<td><code>lr_lambda</code>、<code>last_epoch=-1</code></td>
+<td>自己写函数控制，最灵活</td>
+</tr>
+<tr>
+<td><code>step</code></td>
+<td><code>lr_scheduler</code></td>
+<td><code>epoch=None</code></td>
+<td>多数调度器按 epoch 调；<code>OneCycleLR</code>/<code>ReduceLROnPlateau</code> 例外</td>
+</tr>
+</tbody></table></div>
+<h3>数据管道</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Dataset</code></td>
+<td><code>torch.utils.data</code></td>
+<td>—</td>
+<td>继承它实现 <code>__len__</code> 和 <code>__getitem__</code>，索引返回一个样本</td>
+</tr>
+<tr>
+<td><code>DataLoader</code></td>
+<td><code>torch.utils.data</code></td>
+<td><code>batch_size=1</code>、<code>shuffle=None</code>、<code>num_workers=0</code>、<code>drop_last=False</code>、<code>pin_memory=False</code>、<code>persistent_workers=False</code>、<code>collate_fn=None</code>、<code>worker_init_fn=None</code></td>
+<td>开了 <code>num_workers&gt;0</code> 才有多进程加载</td>
+</tr>
+<tr>
+<td><code>TensorDataset</code></td>
+<td><code>torch.utils.data</code></td>
+<td><code>*tensors</code></td>
+<td>把若干张量按第一维对齐打包，最省事的 Dataset</td>
+</tr>
+<tr>
+<td><code>random_split</code></td>
+<td><code>torch.utils.data</code></td>
+<td><code>lengths</code>、<code>generator=None</code></td>
+<td>按长度比例切分，返回 <code>Subset</code> 列表</td>
+</tr>
+<tr>
+<td><code>Subset</code></td>
+<td><code>torch.utils.data</code></td>
+<td><code>dataset</code>、<code>indices</code></td>
+<td>用下标视图切数据集</td>
+</tr>
+<tr>
+<td><code>ConcatDataset</code></td>
+<td><code>torch.utils.data</code></td>
+<td><code>datasets</code></td>
+<td>拼接多个数据集</td>
+</tr>
+<tr>
+<td><code>WeightedRandomSampler</code></td>
+<td><code>torch.utils.data</code></td>
+<td><code>weights</code>、<code>num_samples</code>、<code>replacement=True</code></td>
+<td>类别不平衡时按权重采样</td>
+</tr>
+</tbody></table></div>
+<h3>保存 / 加载</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>state_dict</code></td>
+<td><code>nn.Module</code></td>
+<td><code>destination=None</code>、<code>prefix=&#39;&#39;</code>、<code>keep_vars=False</code></td>
+<td>只存参数和 buffer，推荐存这个</td>
+</tr>
+<tr>
+<td><code>load_state_dict</code></td>
+<td><code>nn.Module</code></td>
+<td><code>strict=True</code>、<code>assign=False</code></td>
+<td>键不匹配会报错，<code>strict=False</code> 用来忽略部分层</td>
+</tr>
+<tr>
+<td><code>save</code></td>
+<td><code>torch</code></td>
+<td><code>pickle_protocol=2</code></td>
+<td>可存张量、dict、整个模型</td>
+</tr>
+<tr>
+<td><code>load</code></td>
+<td><code>torch</code></td>
+<td><code>map_location=None</code>、<code>weights_only=None</code>（按 <code>True</code> 处理）</td>
+<td>2.6 起默认只反序列化张量和基础类型；要读整个模型对象得显式 <code>weights_only=False</code></td>
+</tr>
+<tr>
+<td><code>map_location</code></td>
+<td>—</td>
+<td><code>&#39;cpu&#39;</code> / <code>&#39;cuda:0&#39;</code> / dict</td>
+<td>在只有 CPU 的机器上读 GPU 权重必须传 <code>&#39;cpu&#39;</code></td>
+</tr>
+</tbody></table></div>
+<h3>随机数与可复现</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>manual_seed</code></td>
+<td><code>torch</code></td>
+<td><code>seed</code></td>
+<td>固定 CPU 种子</td>
+</tr>
+<tr>
+<td><code>cuda.manual_seed_all</code></td>
+<td><code>torch</code></td>
+<td><code>seed</code></td>
+<td>固定所有 GPU 的种子</td>
+</tr>
+<tr>
+<td><code>initial_seed</code></td>
+<td><code>torch</code></td>
+<td>—</td>
+<td>查当前种子，排查不可复现问题用</td>
+</tr>
+<tr>
+<td><code>Generator</code></td>
+<td><code>torch</code></td>
+<td><code>device=&#39;cpu&#39;</code></td>
+<td>独立随机源，给具体函数传 <code>generator=</code> 用</td>
+</tr>
+<tr>
+<td><code>use_deterministic_algorithms</code></td>
+<td><code>torch</code></td>
+<td><code>mode</code>、<code>warn_only=False</code></td>
+<td>强制确定性算子；没有确定实现的 GPU 算子会直接报错</td>
+</tr>
+<tr>
+<td><code>backends.cudnn.deterministic</code> / <code>benchmark</code></td>
+<td><code>torch</code></td>
+<td>—</td>
+<td>分别设 <code>True</code> / <code>False</code>，GPU 上完全复现还要靠它</td>
+</tr>
+</tbody></table></div>
+<h3>混合精度与梯度裁剪</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>autocast</code></td>
+<td><code>torch.amp</code></td>
+<td><code>device_type</code>、<code>dtype=None</code>、<code>enabled=True</code>、<code>cache_enabled=None</code></td>
+<td>前向包一层即可，<code>dtype</code> 一般给 <code>torch.float16</code> / <code>bfloat16</code></td>
+</tr>
+<tr>
+<td><code>GradScaler</code></td>
+<td><code>torch.amp</code></td>
+<td><code>device=&#39;cuda&#39;</code>、<code>init_scale=65536.0</code>、<code>growth_factor=2.0</code>、<code>enabled=True</code></td>
+<td><code>scaler.scale(loss).backward()</code> → <code>scaler.step(opt)</code> → <code>scaler.update()</code></td>
+</tr>
+<tr>
+<td><code>clip_grad_norm_</code></td>
+<td><code>nn.utils</code></td>
+<td><code>max_norm</code>、<code>norm_type=2.0</code>、<code>error_if_nonfinite=False</code></td>
+<td>按范数整体缩放，RNN / Transformer 常设 1.0</td>
+</tr>
+<tr>
+<td><code>clip_grad_value_</code></td>
+<td><code>nn.utils</code></td>
+<td><code>clip_value</code></td>
+<td>逐个裁剪到区间，比 norm 版更粗暴</td>
+</tr>
+</tbody></table></div>
+<h3>编译 / 性能</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>compile</code></td>
+<td><code>torch</code></td>
+<td><code>model=None</code>、<code>mode=&#39;default&#39;</code>、<code>fullgraph=False</code>、<code>dynamic=None</code></td>
+<td>把模型 / 函数编译成图加速，首次编译有开销；<code>mode=&#39;reduce-overhead&#39;</code> 更省 CPU 启动开销</td>
+</tr>
+<tr>
+<td><code>set_float32_matmul_precision</code></td>
+<td><code>torch</code></td>
+<td><code>precision</code></td>
+<td>给 <code>&#39;high&#39;</code> / <code>&#39;medium&#39;</code> 允许 TF32，Ampere 及以后的 GPU 提速明显</td>
+</tr>
+</tbody></table></div>
+</div></div>
+</section>
+<section class="am-panel" id="panel-C">
+<header class="am-panel-head"><span class="am-panel-id">C</span><h2>使用用例</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>01_tensor_basics</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 从列表建张量，再造同形全零&#39;, &#39;x = torch.tensor(data)\nprint(x)\nprint(torch.zeros_like(x))&#39;), (&#39;2. ones 与 arange&#39;, &#39;print(torch.ones(2, 3))\nprint(torch.arange(6))&#39;), (&#39;3. 索引与切片&#39;, &#39;print(t[1])\nprint(t[:2, :2])\nprint(t[:, -1])&#39;), (&#39;4. shape、dtype、device，再改精度&#39;, &#39;print(x.shape, x.dtype, x.device)\nprint(x.float().dtype)&#39;), (&#39;5. 逐元素运算与归约&#39;, &#39;print(a + b)\nprint(a * b)\nprint(m.sum())\nprint(m.mean(dim=0))&#39;)]</code></pre>
+<div class="am-md"><h3>02_shape_broadcast</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. reshape 改形状&#39;, &#39;y = t.reshape(3, 4)\nprint(y)\nprint(y.shape)&#39;), (&#39;2. view 改形状&#39;, &#39;y = t.view(2, 3)\nprint(y)\nprint(y.shape)&#39;), (&#39;3. permute 调维序&#39;, &#39;print(x.permute(1, 0, 2).shape)&#39;), (&#39;4. 广播相加&#39;, &#39;out = a + b\nprint(out)\nprint(out.shape)&#39;), (&#39;5. 不连续后再 view&#39;, &#39;print(y.is_contiguous())\nz = y.contiguous()\nprint(z.is_contiguous())\nprint(z.view(12).shape)&#39;)]</code></pre>
+<div class="am-md"><h3>03_autograd</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 打开梯度追踪&#39;, &#39;x = torch.tensor(2.0, requires_grad=True)\nprint(x)\nprint(x.requires_grad)&#39;), (&#39;2. 一次 backward&#39;, &#39;y = x ** 2\ny.backward()\nprint(y)\nprint(x.grad)&#39;), (&#39;3. 叶子与非叶子&#39;, &#39;print(a.is_leaf, b.is_leaf, a.requires_grad, b.requires_grad)&#39;), (&#39;4. 梯度会累加&#39;, &#39;y = x * 2\ny.backward()\ny = x * 2\ny.backward()\nprint(x.grad)&#39;), (&#39;5. 清零后再反传&#39;, &#39;x.grad = None\nprint(x.grad)\ny = x ** 3\ny.backward()\nprint(x.grad)&#39;)]</code></pre>
+<div class="am-md"><h3>04_nn_module</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 一层线性&#39;, &#39;layer = nn.Linear(4, 2)\nprint(layer(x).shape)&#39;), (&#39;2. 自定义 Module&#39;, &#39;class DoubleLinear(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.fc = nn.Linear(3, 3)\n    def forward(self, x):\n        return self.fc(x) * 2\nprint(DoubleLinear()(x).shape)&#39;), (&#39;3. Sequential 串两层&#39;, &#39;net = nn.Sequential(nn.Linear(5, 8), nn.ReLU(), nn.Linear(8, 1))\nprint(net(x).shape)&#39;), (&#39;4. 看参数&#39;, &#39;params = list(net.parameters())\nprint(len(params))\nprint(params[0].shape)&#39;), (&#39;5. train / eval 模式&#39;, &#39;net.eval()\nprint(torch.allclose(net(x), net(x)))\nnet.train()\nprint(torch.allclose(net(x), net(x)))&#39;)]</code></pre>
+<div class="am-md"><h3>05_data_train</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 自定义 Dataset&#39;, &#39;class TinySet(Dataset):\n    def __init__(self, features, labels):\n        self.features, self.labels = features, labels\n    def __len__(self):\n        return len(self.features)\n    def __getitem__(self, i):\n        return self.features[i], self.labels[i]\nds = TinySet(X, y)\nprint(len(ds), ds[1])&#39;), (&#39;2. DataLoader 取一个 batch&#39;, &#39;loader = DataLoader(ds, batch_size=2, shuffle=False)\nxb, yb = next(iter(loader))\nprint(xb.shape, yb.shape)&#39;), (&#39;3. 算一次 loss&#39;, &#39;print(nn.MSELoss()(pred, target).item())&#39;), (&#39;4. 挂上优化器&#39;, &#39;optimizer = torch.optim.SGD(net.parameters(), lr=0.1)\nprint(optimizer.param_groups[0][&quot;lr&quot;])&#39;), (&#39;5. 完整一步训练&#39;, &#39;opt.zero_grad()\nloss = loss_fn(net(xb), yb)\nloss.backward()\nopt.step()\nprint(loss.item())&#39;)]</code></pre>
+<div class="am-md"><h3>06_checkpoint_eval</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 看 state_dict 的键&#39;, &#39;print(list(net.state_dict().keys()))&#39;), (&#39;2. 保存权重到文件&#39;, &#39;path = ROOT / &quot;q2&quot; / &quot;net.pt&quot;\npath.parent.mkdir(parents=True, exist_ok=True)\ntorch.save(net.state_dict(), path)\nprint(path.exists())&#39;), (&#39;3. 加载到新模型&#39;, &#39;new_net.load_state_dict(torch.load(ckpt_path))\nprint(torch.allclose(net(x), new_net(x)))&#39;), (&#39;4. 保存更完整的 checkpoint&#39;, &#39;path = ROOT / &quot;q4&quot; / &quot;train.pt&quot;\npath.parent.mkdir(parents=True, exist_ok=True)\ntorch.save({&quot;model&quot;: net.state_dict(), &quot;optim&quot;: opt.state_dict(), &quot;epoch&quot;: 3}, path)\nprint(torch.load(path)[&quot;epoch&quot;])&#39;), (&#39;5. eval 推理时关掉梯度&#39;, &#39;net.eval()\nwith torch.no_grad():\n    a, b = net(x), net(x)\nprint(torch.allclose(a, b))\nprint(b.requires_grad)&#39;)]</code></pre>
+<div class="am-md"><h3>07_cnn_seq</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 一层 Conv2d&#39;, &#39;print(nn.Conv2d(1, 4, 3, padding=1)(x).shape)&#39;), (&#39;2. MaxPool 再看形状&#39;, &#39;print(nn.MaxPool2d(2)(feat).shape)&#39;), (&#39;3. 小 CNN 前向&#39;, &#39;net = nn.Sequential(\n    nn.Conv2d(1, 8, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),\n    nn.Flatten(), nn.Linear(8 * 4 * 4, 3),\n)\nprint(net(x).shape)&#39;), (&#39;4. 一层 RNN&#39;, &#39;out, h_n = nn.RNN(5, 7, batch_first=True)(x)\nprint(out.shape, h_n.shape)&#39;), (&#39;5. LSTM 取最后一步&#39;, &#39;out, _ = lstm(x)\nprint(out[:, -1, :].shape)&#39;)]</code></pre>
+<div class="am-md"><h3>08_transformer_device</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 选 device&#39;, &#39;device = torch.device(&quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;)\nprint(device)&#39;), (&#39;2. 张量与模型迁到同一设备&#39;, &#39;net = net.to(device)\ny = net(x.to(device))\nprint(y.device)&#39;), (&#39;3. MultiheadAttention 一次&#39;, &#39;attn_out, _ = nn.MultiheadAttention(8, 2, batch_first=True)(x, x, x)\nprint(attn_out.shape)&#39;), (&#39;4. TransformerEncoderLayer&#39;, &#39;layer = nn.TransformerEncoderLayer(d_model=8, nhead=2, batch_first=True)\nprint(layer(x).shape)&#39;), (&#39;5. 对齐设备后再算&#39;, &#39;print(next(net.parameters()).device == x.device)\nnet = net.to(x.device)\nprint(net(x).shape)&#39;)]</code></pre></div>
+</section>
+<section class="am-panel" id="panel-D">
+<header class="am-panel-head"><span class="am-panel-id">D</span><h2>常见坑</h2></header>
+<div class="am-panel-body"><div class="am-md"><ul>
+<li><code>view</code> 遇到不连续张量会直接报错，<code>reshape</code> 会自动复制；<code>transpose</code> / <code>permute</code> 之后想 <code>view</code> 先 <code>contiguous()</code>。</li>
+<li><code>nn.Flatten</code> 默认 <code>start_dim=1</code>，<code>torch.flatten</code> 默认 <code>start_dim=0</code>，前者保留 batch 维，后者会把 batch 也压掉。</li>
+<li><code>CrossEntropyLoss</code> 吃的是 logits，不要再接 <code>softmax</code>；模型输出接 <code>argmax</code> 得到类别就行。</li>
+<li><code>Dropout</code>、<code>BatchNorm</code> 在 <code>eval()</code> 下行为不同，评估前一定 <code>model.eval()</code>，推理再包 <code>torch.no_grad()</code>。</li>
+<li>优化器的 <code>zero_grad()</code> 默认把梯度置 <code>None</code>，不是置 0；手动读 <code>.grad</code> 前先确认不是 <code>None</code>。</li>
+<li>读 GPU 上存的权重，<code>torch.load</code> 要显式给 <code>map_location=&#39;cpu&#39;</code>，否则在没有 GPU 的机器上直接失败。</li>
+<li>DataLoader 用 <code>num_workers &gt; 0</code> 时，Dataset 里的自定义对象要能被 pickle；Windows / macOS 上还要注意 <code>if __name__ == &#39;__main__&#39;</code> 保护。</li>
+<li><code>Tensor.numpy()</code> 要求张量不带梯度且不在 GPU 上，跨设备先 <code>.detach().cpu()</code>。</li>
+<li><code>torch.compile(model)</code> 后 <code>model.state_dict()</code> 的键会多一层 <code>_orig_mod.</code> 前缀，加载旧 checkpoint 前先看清键名。</li>
+</ul>
+</div></div>
+</section>
+</div>
+</div>
+</main>
+<footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-07 10:32</footer>
+<textarea id="am-source" hidden readonly aria-hidden="true">---
+title: PyTorch API 速查
+
+template: doc
+theme: blueprint
+source: codes/pytorch/cheat_api.md
+---
+
+## 速览
+按主题分组的常用 API。签名与默认值对照本机 `torch 2.14.0` 核对，`=` 后面是默认值，没写默认值的表示必填。阶段练习见 `index.md`。
+
+约定：
+
+- **子模块** 一列用简写：`nn` = `torch.nn`，`nn.functional` = `torch.nn.functional`，`optim` = `torch.optim`，`lr_scheduler` = `torch.optim.lr_scheduler`，`Tensor` 表示张量方法（`x.sum()`）。
+- 创建类函数大多还接受 `dtype=None, device=None, requires_grad=False, out=None`，下表只在有区别时重复。
+
+## API 速查
+### 子模块一览
+| 子模块 | 里面有什么 |
+| --- | --- |
+| `torch` | 张量创建、运算、归约、线性代数、随机数、保存加载 |
+| `torch.Tensor` | 张量方法，形状变换、逐元素运算、`backward` 等 |
+| `torch.nn` | 层、损失、容器（`Module` / `Sequential` / `Linear` / `LSTM` …） |
+| `torch.nn.functional` | 无状态的函数式版本（`F.relu` / `F.cross_entropy`） |
+| `torch.nn.init` | 参数初始化（`xavier_uniform_` / `kaiming_normal_`） |
+| `torch.nn.utils` | 梯度裁剪等工具 |
+| `torch.optim` | 优化器（`SGD` / `AdamW`） |
+| `torch.optim.lr_scheduler` | 学习率调度 |
+| `torch.utils.data` | `Dataset` / `DataLoader` / `TensorDataset` / `random_split` |
+| `torch.autograd` | `grad` / `backward` 的底层入口 |
+| `torch.amp` | 混合精度 `autocast` / `GradScaler` |
+
+### 张量创建
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `tensor` | `torch` | `dtype`、`device`、`requires_grad=False`、`pin_memory=False` | 从数据拷贝出一个张量，永远复制 |
+| `as_tensor` | `torch` | `dtype`、`device` | 同数据尽量不复制，共享内存时改动会互相影响 |
+| `from_numpy` | `torch` | — | 与 ndarray 共享内存，最省事的互转 |
+| `zeros` / `ones` / `empty` | `torch` | `dtype`、`device`、`requires_grad`、`layout` | `*size` 传形状；`empty` 是未初始化，别指望是 0 |
+| `zeros_like` / `ones_like` / `rand_like` | `torch` | `dtype`、`device`、`memory_format=preserve_format` | 复制形状和 dtype，默认沿用输入的 device |
+| `full` | `torch` | `dtype`、`device`、`requires_grad` | `full(size, fill_value)`，用常数填满 |
+| `arange` | `torch` | `dtype`、`device`、`step=1` | 左闭右开，`arange(5)` 不需要写 start |
+| `linspace` | `torch` | `dtype`、`device`、`steps` | 左闭右闭的等距点，注意 `steps` 是必填 |
+| `eye` | `torch` | `m=None`、`dtype`、`device` | 单位矩阵，`m` 控制列数以得到矩形 |
+| `rand` / `randn` | `torch` | `generator=None`、`dtype`、`device` | `[0,1)` 均匀分布 / 标准正态 |
+| `randint` | `torch` | `low=0`、`high`、`size`、`dtype`、`generator` | 整数随机，`dtype` 默认 `int64` |
+| `randperm` | `torch` | `dtype=int64`、`generator` | 0..n-1 的随机排列，手写 shuffle 常用 |
+| `normal` | `torch` | `generator=None`、`out=None` | `normal(mean, std)`，两个参数都可以是张量 |
+| `manual_seed` | `torch` | — | 固定 CPU 随机种子，返回 `Generator` |
+
+### 形状 / 视图 / 结构变换
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `reshape` | `Tensor` / `torch` | `*shape`、`shape` | 能复制就复制，最安全的重排 |
+| `view` | `Tensor` | `*shape` | 只能在不连续时直接报错，必须接 `contiguous()` |
+| `flatten` | `Tensor` / `torch` | `start_dim=0`、`end_dim=-1` | 展平一段维度；`nn.Flatten` 默认从 1 开始，两者不同 |
+| `squeeze` / `unsqueeze` | `Tensor` / `torch` | `dim=None` | 去掉 / 插入长度为 1 的维度，`squeeze(dim)` 更可控 |
+| `permute` | `Tensor` / `torch` | `*dims` | 任意调换维度顺序，返回视图 |
+| `transpose` | `Tensor` / `torch` | `dim0`、`dim1` | 只换两个维度，之后往往要 `contiguous()` |
+| `expand` / `broadcast_to` | `Tensor` / `torch` | `*size`、`shape` | 广播出视图，不复制数据，只扩长度为 1 的维 |
+| `contiguous` | `Tensor` | `memory_format=contiguous_format` | 把张量整理成连续内存 |
+| `clone` | `Tensor` / `torch` | `memory_format=preserve_format` | 真复制；注意 `clone` 仍会进计算图 |
+| `cat` / `stack` | `torch` | `dim=0`、`out=None` | `cat` 沿已有维拼接，`stack` 新增一维 |
+| `chunk` / `split` | `torch` | `chunks`/`split_size_or_sections`、`dim=0` | 切分；`chunk` 给份数，`split` 给每份大小 |
+| `tile` / `repeat_interleave` | `torch` | `dims` / `repeats`、`dim=None` | 整体平铺 / 逐元素重复 |
+| `Flatten` / `Unflatten` | `nn` | `start_dim=1, end_dim=-1` / `dim, unflattened_size` | 写进 `Sequential` 用，`Flatten` 默认保留 batch 维 |
+| `Identity` | `nn` | — | 占位层，方便条件分支里保持结构一致 |
+
+### 逐元素数学
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `add` / `mul` / `sub` / `div` | `torch` | `alpha=1`、`out=None` | `add(a, b, alpha=2)` 等价 `a + 2b` |
+| `add_` / `mul_` / `zero_` | `Tensor` | `alpha=1` | 原地版本，下划线结尾，会改掉原张量 |
+| `pow` / `sqrt` / `exp` / `log` | `torch` | `out=None` | 逐元素；`log` 底是 e，`log2` / `log10` 另算 |
+| `abs` / `clamp` | `torch` | `min=None`、`max=None` | 截断用 `clamp`，`,` 边传 `None` 表示不设该侧 |
+| `sigmoid` / `tanh` / `relu` | `torch` | `out=None` | 逐元素激活，等价 `Tensor.sigmoid()` 等 |
+| `softmax` / `log_softmax` | `torch` | `dim`、`dtype=None` | 必须显式给 `dim`，配 `NLLLoss` 用 log 版 |
+| `where` | `torch` | `out=None` | `where(cond, a, b)`，条件为真取 a |
+| `masked_fill` | `Tensor` | — | `masked_fill(mask, value)`，mask 为 True 处填 value |
+| `clamp_min` / `clamp_max` | `Tensor` | — | 单侧截断的简写，常用于逐元素下限 |
+| `relu` / `gelu` / `silu` / `dropout` | `nn.functional` | `inplace=False`、`approximate=&#39;none&#39;`、`p=0.5, training=True` | 函数式版；`F.dropout` 的 `training` 必须自己传 |
+
+### 归约 / 统计 / 排序
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `sum` / `mean` / `prod` | `torch` | `dim=None`、`keepdim=False`、`dtype=None` | 不写 `dim` 就全部归约成一个标量 |
+| `std` / `var` | `torch` | `dim=None`、`correction=1`、`keepdim=False` | `correction=1` 是样本标准差（无偏） |
+| `max` / `min` | `torch` | `dim=None`、`keepdim=False` | 带 `dim` 返回 `(values, indices)` 二元组；`torch.max(a, b)` 是两个张量逐元素取大 |
+| `argmax` / `argmin` | `torch` | `dim=None`、`keepdim=False` | 返回下标；分类预测常用 `argmax(dim=1)` |
+| `amax` / `amin` | `torch` | `dim=None`、`keepdim=False` | 只取值不要下标时用它，避免解包 |
+| `topk` | `torch` | `k`、`dim=None`、`largest=True`、`sorted=True` | 返回 `(values, indices)`，看 top-5 准确率常用 |
+| `sort` | `torch` | `dim=-1`、`descending=False`、`stable=False` | 返回 `(values, indices)` |
+| `cumsum` | `torch` | `dim`、`dtype=None` | 前缀和，算 IoU / 面积常用 |
+| `unique` | `torch` | `sorted=True`、`return_counts=False` | 去重，加 `return_counts` 顺便拿到频次 |
+| `norm` | `torch` / `Tensor` | `p=&#39;fro&#39;`、`dim=None`、`keepdim=False` | `p` 给 `2` 是 L2，`&#39;fro&#39;` 是矩阵 Frobenius；新代码建议 `torch.linalg.norm` |
+| `count_nonzero` | `torch` | `dim=None` | 统计非零个数，配 bool mask 数命中数 |
+
+### 线性代数 / 注意力
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `matmul` / `@` | `torch` | `out=None` | 通用矩阵乘，支持批量广播 |
+| `mm` | `torch` | `out=None` | 只接受二维，比 `matmul` 约束更强 |
+| `bmm` | `torch` | `out=None` | 只接受三维批量矩阵乘 |
+| `einsum` | `torch` | — | 字符串写指标，`&#39;bij,bjk-&gt;bik&#39;` 就是批量矩阵乘 |
+| `dot` / `outer` | `torch` | `out=None` | 一维内积 / 外积 |
+| `scaled_dot_product_attention` | `nn.functional` | `attn_mask=None`、`dropout_p=0.0`、`is_causal=False`、`scale=None`、`enable_gqa=False` | 融合注意力；因果掩码直接给 `is_causal=True`，GQA 给 `enable_gqa=True`（K/V 的 head 数少于 Q，且能整除） |
+| `MultiheadAttention` | `nn` | `embed_dim, num_heads`、`dropout=0.0`、`batch_first=False` | 多头注意力层，默认维度顺序是 `(seq, batch, dim)` |
+| `normalize` | `nn.functional` | `p=2.0`、`dim=1`、`eps=1e-12` | 按维归一化，余弦相似度前常做 |
+
+### 索引 / 拼接 / 掩码
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `gather` | `torch` / `Tensor` | `dim`、`sparse_grad=False` | 按 index 取值，index 形状要和输出一致 |
+| `scatter` | `torch` | `dim`、`index`、`src` | 按 index 写入，和 `gather` 互为反向 |
+| `index_select` | `torch` | `dim`、`index` | 沿某一维按整数张量挑行，比 fancy index 好读 |
+| `masked_select` | `torch` | — | 取出 mask 为 True 的元素，压成一维 |
+| `nonzero` | `torch` | `as_tuple=False` | 拿非零下标，bool mask 上就是命中位置 |
+| `one_hot` | `nn.functional` | `num_classes=-1` | 整数标签转 one-hot，输入必须是 LongTensor |
+| `pad` | `nn.functional` | `pad`、`mode=&#39;constant&#39;`、`value=None` | `pad` 从最后一维往前写，如 `(1,1)` 左右各补一 |
+| `interpolate` | `nn.functional` | `size`、`scale_factor`、`mode=&#39;nearest&#39;`、`align_corners=None` | 上采样；`size` 和 `scale_factor` 只给一个 |
+
+### dtype / device / NumPy 互转
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `to` | `Tensor` / `nn.Module` | `device`、`dtype`、`non_blocking=False` | 同时换 dtype 和 device；位置参数顺序是 `(device, dtype)`，记不清就写关键字；`to(other_tensor)` 继承对方的 dtype 和 device |
+| `cuda` / `cpu` | `Tensor` / `nn.Module` | `device=None`、`non_blocking=False` | 简写，`cuda()` 没 GPU 会直接报错，先判 `is_available()` |
+| `float` / `half` / `bfloat16` / `long` / `bool` | `Tensor` | `memory_format=preserve_format` | 类型转换简写，等价 `to(torch.float32)` 等 |
+| `type` / `type_as` | `Tensor` | `dtype` / `tensor` | 老式写法；`type(dtype)`、`type_as(other_tensor)`，新代码一般用 `to` |
+| `numpy` | `Tensor` | `force=False` | 转 ndarray；带梯度会报错，先 `detach()` |
+| `item` / `tolist` | `Tensor` | — | 取 Python 标量 / 嵌套列表，`item` 只对单元素张量有效 |
+| `is_available` | `torch.cuda` | — | 判断有没有可用 GPU，写 device 选择时先问它 |
+| `device` | `Tensor` | — | 属性，返回张量所在设备，跨设备运算会报错 |
+
+### autograd
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `requires_grad_` | `Tensor` / `nn.Module` | `requires_grad=True` | 就地打开梯度追踪 |
+| `backward` | `Tensor` | `gradient=None`、`retain_graph=None`、`create_graph=False` | 标量才能直接调；非标量要传 `gradient` |
+| `detach` | `Tensor` | — | 从计算图摘出来，仍共享数据，改它会影响原张量 |
+| `retain_grad` | `Tensor` | — | 让非叶子张量也留下 `.grad`，调试时用 |
+| `register_hook` | `Tensor` | `hook` | 反向经过该张量时回调，看梯度异常用 |
+| `grad_fn` | `Tensor` | — | 属性，反向节点；叶子张量是 `None` |
+| `is_leaf` | `Tensor` | — | 属性，叶子张量才默认存 `.grad` |
+| `grad` | `Tensor` | — | 属性，`backward` 之后梯度存在这里 |
+| `grad` | `torch.autograd` | `inputs`、`grad_outputs=None`、`retain_graph=None`、`create_graph=False` | 只求梯度不累积，返回元组 |
+| `no_grad` / `inference_mode` | `torch` | `mode=True` | 评估和推理必须包起来，省显存；`inference_mode` 更彻底 |
+| `set_grad_enabled` | `torch` | `mode` | 函数式开关，按条件临时关梯度 |
+
+### nn.Module 生命周期
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `Module` | `nn` | — | 自己写模型就继承它，在 `__init__` 里注册子层，算逻辑写 `forward` |
+| `forward` | `nn.Module` | `*input` | 前向逻辑；调用时用 `model(x)`，不要直接 `.forward(x)` |
+| `train` / `eval` | `nn.Module` | `mode=True` | 切换训练/评估，只影响 `Dropout`、`BatchNorm` 这类层 |
+| `parameters` / `named_parameters` | `nn.Module` | `recurse=True`、`remove_duplicate=True` | 交给优化器的就是它，dict 分组时用 named 版 |
+| `buffers` / `named_buffers` | `nn.Module` | `recurse=True` | BatchNorm 的 running_mean 属于 buffer，会进 `state_dict` 但不是参数 |
+| `children` / `modules` | `nn.Module` | — / `remove_duplicate=True` | 遍历直接子层 / 递归包含自己；只有 `modules()` 有 `remove_duplicate` |
+| `apply` | `nn.Module` | `fn` | 递归对每个子模块执行，初始化权重常用 |
+| `zero_grad` | `nn.Module` | `set_to_none=True` | 清梯度，默认置 `None`（不是 0） |
+| `register_buffer` / `register_parameter` | `nn.Module` | `persistent=True` | 注册 buffer / 参数，别用普通属性挂张量 |
+| `to` | `nn.Module` | `device`、`dtype` | 整体搬迁，返回值要接住，原地改也可以 |
+| `get_submodule` / `get_parameter` | `nn.Module` | `target` | 按点分名字取，写通用工具时用 |
+
+### nn 层
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `Linear` | `nn` | `in_features, out_features`、`bias=True` | 全连接，内部权重形状是 `(out, in)` |
+| `Embedding` | `nn` | `num_embeddings, embedding_dim`、`padding_idx=None`、`sparse=False` | 查表；输入必须是 LongTensor |
+| `LayerNorm` | `nn` | `normalized_shape`、`eps=1e-5`、`elementwise_affine=True` | 对最后一维做归一化，Transformer 默认选择 |
+| `BatchNorm1d` / `BatchNorm2d` | `nn` | `num_features`、`eps=1e-5`、`momentum=0.1`、`affine=True`、`track_running_stats=True` | 依赖 batch 统计，小 batch 别用 |
+| `Dropout` | `nn` | `p=0.5`、`inplace=False` | 训练时随机置零，评估时旁路 |
+| `Conv1d` / `Conv2d` | `nn` | `in_channels, out_channels, kernel_size`、`stride=1`、`padding=0`、`dilation=1`、`groups=1`、`bias=True` | `padding` 可给 `&#39;same&#39;` 保持尺寸 |
+| `MaxPool2d` / `AvgPool2d` | `nn` | `kernel_size`、`stride=None`、`padding=0`、`ceil_mode=False` | `stride=None` 时默认取 `kernel_size` |
+| `AdaptiveAvgPool2d` | `nn` | `output_size` | 直接指定输出尺寸，分类头前常用 |
+| `Sequential` | `nn` | `*args` | 顺序容器，可传 `OrderedDict` 给层命名 |
+| `ModuleList` / `ModuleDict` | `nn` | `modules=None` | 装子层的容器，会被正确注册；普通 list 不会 |
+| `Parameter` | `nn` | — | 让普通张量进入 `parameters()` |
+| `RNN` / `LSTM` / `GRU` | `nn` | `input_size, hidden_size`、`num_layers=1`、`batch_first=False`、`dropout=0.0`、`bidirectional=False`、`proj_size=0` | 默认维度顺序 `(seq, batch, feature)`，`dropout` 只在 `num_layers &gt; 1` 生效 |
+| `TransformerEncoderLayer` | `nn` | `d_model, nhead`、`dim_feedforward=2048`、`dropout=0.1`、`activation=relu`、`norm_first=False`、`batch_first=False` | 单个编码层，`norm_first=True` 更接近 GPT 式结构 |
+| `TransformerEncoder` / `TransformerDecoder` | `nn` | `encoder_layer/decoder_layer`、`num_layers`、`norm=None` | 把层堆叠起来 |
+
+### 损失函数
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `CrossEntropyLoss` | `nn` | `ignore_index=-100`、`reduction=&#39;mean&#39;`、`weight=None`、`label_smoothing=0.0` | 输入未归一化 logits、目标是类别下标，别自己加 softmax |
+| `NLLLoss` | `nn` | `ignore_index=-100`、`reduction=&#39;mean&#39;` | 配 `log_softmax` 用 |
+| `MSELoss` | `nn` | `reduction=&#39;mean&#39;` | 回归默认选择 |
+| `L1Loss` / `SmoothL1Loss` | `nn` | `reduction=&#39;mean&#39;`、`beta=1.0` | 对离群点更稳，检测框回归常用 |
+| `BCEWithLogitsLoss` | `nn` | `reduction=&#39;mean&#39;`、`pos_weight=None` | 二分类；输入 logits，自带 sigmoid |
+| `cross_entropy` / `mse_loss` / `binary_cross_entropy_with_logits` | `nn.functional` | 同上，`reduction=&#39;mean&#39;` | 函数式版，不需要建对象 |
+
+损失函数共有的 `reduction` 取 `&#39;none&#39;` / `&#39;mean&#39;` / `&#39;sum&#39;`。想要逐样本加权就选 `&#39;none&#39;`，自己乘权重再求和。
+
+### 参数初始化
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `uniform_` / `normal_` | `nn.init` | `a=0.0, b=1.0` / `mean=0.0, std=1.0` | 就地改张量，调用时用 `torch.no_grad()` 包住更稳 |
+| `xavier_uniform_` / `xavier_normal_` | `nn.init` | `gain=1.0` | 适配 tanh / sigmoid，深度网络防梯度消失 |
+| `kaiming_uniform_` / `kaiming_normal_` | `nn.init` | `a=0`、`mode=&#39;fan_in&#39;`、`nonlinearity=&#39;leaky_relu&#39;` | ReLU 系列默认选择，`a` 是负斜率 |
+| `zeros_` / `ones_` / `constant_` | `nn.init` | `val` | 偏置清零常用 |
+| `apply` | `nn.Module` | `fn` | 配合上面写 `model.apply(init_fn)` 遍历初始化 |
+
+### 优化器
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `SGD` | `torch.optim` | `lr=1e-3`、`momentum=0`、`weight_decay=0`、`nesterov=False` | `lr` 有默认值但基本都要自己调，习惯显式写 |
+| `Adam` / `AdamW` | `torch.optim` | `lr=1e-3`、`betas=(0.9,0.999)`、`eps=1e-8`、`weight_decay=0` / `0.01` | `AdamW` 的 `weight_decay` 是解耦实现且默认给到 0.01，优先用它 |
+| `RMSprop` / `Adagrad` | `torch.optim` | `lr=1e-2`、`alpha=0.99` / `lr_decay=0` | 现在更多是特定场景用 |
+| `step` | `torch.optim.Optimizer` | `closure=None` | 真正更新参数 |
+| `zero_grad` | `torch.optim.Optimizer` | `set_to_none=True` | 每轮开头清梯度，别忘记 |
+| `state_dict` / `load_state_dict` | `torch.optim.Optimizer` | — | 断点续训要连优化器状态一起存 |
+| `param_groups` | `torch.optim.Optimizer` | — | 属性，按名字分组的参数，分层学习率靠它 |
+
+### 学习率调度
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `StepLR` | `lr_scheduler` | `step_size`、`gamma=0.1`、`last_epoch=-1` | 每 `step_size` 个 epoch 乘 `gamma` |
+| `MultiStepLR` | `lr_scheduler` | `milestones`、`gamma=0.1` | 在指定 epoch 降，比固定步长灵活 |
+| `ExponentialLR` | `lr_scheduler` | `gamma`、`last_epoch=-1` | 每个 epoch 乘 `gamma` |
+| `CosineAnnealingLR` | `lr_scheduler` | `T_max`、`eta_min=0.0` | 余弦退火，`T_max` 是半个周期长度 |
+| `OneCycleLR` | `lr_scheduler` | `max_lr`、`total_steps` / `epochs+steps_per_epoch`、`pct_start=0.3`、`div_factor=25.0` | 按 step 调用，配合 warmup 效果好 |
+| `ReduceLROnPlateau` | `lr_scheduler` | `mode=&#39;min&#39;`、`factor=0.1`、`patience=10`、`min_lr=0` | `step(metrics)` 传验证指标，指标不降才降 lr |
+| `LambdaLR` | `lr_scheduler` | `lr_lambda`、`last_epoch=-1` | 自己写函数控制，最灵活 |
+| `step` | `lr_scheduler` | `epoch=None` | 多数调度器按 epoch 调；`OneCycleLR`/`ReduceLROnPlateau` 例外 |
+
+### 数据管道
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `Dataset` | `torch.utils.data` | — | 继承它实现 `__len__` 和 `__getitem__`，索引返回一个样本 |
+| `DataLoader` | `torch.utils.data` | `batch_size=1`、`shuffle=None`、`num_workers=0`、`drop_last=False`、`pin_memory=False`、`persistent_workers=False`、`collate_fn=None`、`worker_init_fn=None` | 开了 `num_workers&gt;0` 才有多进程加载 |
+| `TensorDataset` | `torch.utils.data` | `*tensors` | 把若干张量按第一维对齐打包，最省事的 Dataset |
+| `random_split` | `torch.utils.data` | `lengths`、`generator=None` | 按长度比例切分，返回 `Subset` 列表 |
+| `Subset` | `torch.utils.data` | `dataset`、`indices` | 用下标视图切数据集 |
+| `ConcatDataset` | `torch.utils.data` | `datasets` | 拼接多个数据集 |
+| `WeightedRandomSampler` | `torch.utils.data` | `weights`、`num_samples`、`replacement=True` | 类别不平衡时按权重采样 |
+
+### 保存 / 加载
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `state_dict` | `nn.Module` | `destination=None`、`prefix=&#39;&#39;`、`keep_vars=False` | 只存参数和 buffer，推荐存这个 |
+| `load_state_dict` | `nn.Module` | `strict=True`、`assign=False` | 键不匹配会报错，`strict=False` 用来忽略部分层 |
+| `save` | `torch` | `pickle_protocol=2` | 可存张量、dict、整个模型 |
+| `load` | `torch` | `map_location=None`、`weights_only=None`（按 `True` 处理） | 2.6 起默认只反序列化张量和基础类型；要读整个模型对象得显式 `weights_only=False` |
+| `map_location` | — | `&#39;cpu&#39;` / `&#39;cuda:0&#39;` / dict | 在只有 CPU 的机器上读 GPU 权重必须传 `&#39;cpu&#39;` |
+
+### 随机数与可复现
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `manual_seed` | `torch` | `seed` | 固定 CPU 种子 |
+| `cuda.manual_seed_all` | `torch` | `seed` | 固定所有 GPU 的种子 |
+| `initial_seed` | `torch` | — | 查当前种子，排查不可复现问题用 |
+| `Generator` | `torch` | `device=&#39;cpu&#39;` | 独立随机源，给具体函数传 `generator=` 用 |
+| `use_deterministic_algorithms` | `torch` | `mode`、`warn_only=False` | 强制确定性算子；没有确定实现的 GPU 算子会直接报错 |
+| `backends.cudnn.deterministic` / `benchmark` | `torch` | — | 分别设 `True` / `False`，GPU 上完全复现还要靠它 |
+
+### 混合精度与梯度裁剪
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `autocast` | `torch.amp` | `device_type`、`dtype=None`、`enabled=True`、`cache_enabled=None` | 前向包一层即可，`dtype` 一般给 `torch.float16` / `bfloat16` |
+| `GradScaler` | `torch.amp` | `device=&#39;cuda&#39;`、`init_scale=65536.0`、`growth_factor=2.0`、`enabled=True` | `scaler.scale(loss).backward()` → `scaler.step(opt)` → `scaler.update()` |
+| `clip_grad_norm_` | `nn.utils` | `max_norm`、`norm_type=2.0`、`error_if_nonfinite=False` | 按范数整体缩放，RNN / Transformer 常设 1.0 |
+| `clip_grad_value_` | `nn.utils` | `clip_value` | 逐个裁剪到区间，比 norm 版更粗暴 |
+
+### 编译 / 性能
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `compile` | `torch` | `model=None`、`mode=&#39;default&#39;`、`fullgraph=False`、`dynamic=None` | 把模型 / 函数编译成图加速，首次编译有开销；`mode=&#39;reduce-overhead&#39;` 更省 CPU 启动开销 |
+| `set_float32_matmul_precision` | `torch` | `precision` | 给 `&#39;high&#39;` / `&#39;medium&#39;` 允许 TF32，Ampere 及以后的 GPU 提速明显 |
+
+## 使用用例
+### 01_tensor_basics
+```python
+[(&#39;1. 从列表建张量，再造同形全零&#39;, &#39;x = torch.tensor(data)\nprint(x)\nprint(torch.zeros_like(x))&#39;), (&#39;2. ones 与 arange&#39;, &#39;print(torch.ones(2, 3))\nprint(torch.arange(6))&#39;), (&#39;3. 索引与切片&#39;, &#39;print(t[1])\nprint(t[:2, :2])\nprint(t[:, -1])&#39;), (&#39;4. shape、dtype、device，再改精度&#39;, &#39;print(x.shape, x.dtype, x.device)\nprint(x.float().dtype)&#39;), (&#39;5. 逐元素运算与归约&#39;, &#39;print(a + b)\nprint(a * b)\nprint(m.sum())\nprint(m.mean(dim=0))&#39;)]
+```
+
+### 02_shape_broadcast
+```python
+[(&#39;1. reshape 改形状&#39;, &#39;y = t.reshape(3, 4)\nprint(y)\nprint(y.shape)&#39;), (&#39;2. view 改形状&#39;, &#39;y = t.view(2, 3)\nprint(y)\nprint(y.shape)&#39;), (&#39;3. permute 调维序&#39;, &#39;print(x.permute(1, 0, 2).shape)&#39;), (&#39;4. 广播相加&#39;, &#39;out = a + b\nprint(out)\nprint(out.shape)&#39;), (&#39;5. 不连续后再 view&#39;, &#39;print(y.is_contiguous())\nz = y.contiguous()\nprint(z.is_contiguous())\nprint(z.view(12).shape)&#39;)]
+```
+
+### 03_autograd
+```python
+[(&#39;1. 打开梯度追踪&#39;, &#39;x = torch.tensor(2.0, requires_grad=True)\nprint(x)\nprint(x.requires_grad)&#39;), (&#39;2. 一次 backward&#39;, &#39;y = x ** 2\ny.backward()\nprint(y)\nprint(x.grad)&#39;), (&#39;3. 叶子与非叶子&#39;, &#39;print(a.is_leaf, b.is_leaf, a.requires_grad, b.requires_grad)&#39;), (&#39;4. 梯度会累加&#39;, &#39;y = x * 2\ny.backward()\ny = x * 2\ny.backward()\nprint(x.grad)&#39;), (&#39;5. 清零后再反传&#39;, &#39;x.grad = None\nprint(x.grad)\ny = x ** 3\ny.backward()\nprint(x.grad)&#39;)]
+```
+
+### 04_nn_module
+```python
+[(&#39;1. 一层线性&#39;, &#39;layer = nn.Linear(4, 2)\nprint(layer(x).shape)&#39;), (&#39;2. 自定义 Module&#39;, &#39;class DoubleLinear(nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.fc = nn.Linear(3, 3)\n    def forward(self, x):\n        return self.fc(x) * 2\nprint(DoubleLinear()(x).shape)&#39;), (&#39;3. Sequential 串两层&#39;, &#39;net = nn.Sequential(nn.Linear(5, 8), nn.ReLU(), nn.Linear(8, 1))\nprint(net(x).shape)&#39;), (&#39;4. 看参数&#39;, &#39;params = list(net.parameters())\nprint(len(params))\nprint(params[0].shape)&#39;), (&#39;5. train / eval 模式&#39;, &#39;net.eval()\nprint(torch.allclose(net(x), net(x)))\nnet.train()\nprint(torch.allclose(net(x), net(x)))&#39;)]
+```
+
+### 05_data_train
+```python
+[(&#39;1. 自定义 Dataset&#39;, &#39;class TinySet(Dataset):\n    def __init__(self, features, labels):\n        self.features, self.labels = features, labels\n    def __len__(self):\n        return len(self.features)\n    def __getitem__(self, i):\n        return self.features[i], self.labels[i]\nds = TinySet(X, y)\nprint(len(ds), ds[1])&#39;), (&#39;2. DataLoader 取一个 batch&#39;, &#39;loader = DataLoader(ds, batch_size=2, shuffle=False)\nxb, yb = next(iter(loader))\nprint(xb.shape, yb.shape)&#39;), (&#39;3. 算一次 loss&#39;, &#39;print(nn.MSELoss()(pred, target).item())&#39;), (&#39;4. 挂上优化器&#39;, &#39;optimizer = torch.optim.SGD(net.parameters(), lr=0.1)\nprint(optimizer.param_groups[0][&quot;lr&quot;])&#39;), (&#39;5. 完整一步训练&#39;, &#39;opt.zero_grad()\nloss = loss_fn(net(xb), yb)\nloss.backward()\nopt.step()\nprint(loss.item())&#39;)]
+```
+
+### 06_checkpoint_eval
+```python
+[(&#39;1. 看 state_dict 的键&#39;, &#39;print(list(net.state_dict().keys()))&#39;), (&#39;2. 保存权重到文件&#39;, &#39;path = ROOT / &quot;q2&quot; / &quot;net.pt&quot;\npath.parent.mkdir(parents=True, exist_ok=True)\ntorch.save(net.state_dict(), path)\nprint(path.exists())&#39;), (&#39;3. 加载到新模型&#39;, &#39;new_net.load_state_dict(torch.load(ckpt_path))\nprint(torch.allclose(net(x), new_net(x)))&#39;), (&#39;4. 保存更完整的 checkpoint&#39;, &#39;path = ROOT / &quot;q4&quot; / &quot;train.pt&quot;\npath.parent.mkdir(parents=True, exist_ok=True)\ntorch.save({&quot;model&quot;: net.state_dict(), &quot;optim&quot;: opt.state_dict(), &quot;epoch&quot;: 3}, path)\nprint(torch.load(path)[&quot;epoch&quot;])&#39;), (&#39;5. eval 推理时关掉梯度&#39;, &#39;net.eval()\nwith torch.no_grad():\n    a, b = net(x), net(x)\nprint(torch.allclose(a, b))\nprint(b.requires_grad)&#39;)]
+```
+
+### 07_cnn_seq
+```python
+[(&#39;1. 一层 Conv2d&#39;, &#39;print(nn.Conv2d(1, 4, 3, padding=1)(x).shape)&#39;), (&#39;2. MaxPool 再看形状&#39;, &#39;print(nn.MaxPool2d(2)(feat).shape)&#39;), (&#39;3. 小 CNN 前向&#39;, &#39;net = nn.Sequential(\n    nn.Conv2d(1, 8, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),\n    nn.Flatten(), nn.Linear(8 * 4 * 4, 3),\n)\nprint(net(x).shape)&#39;), (&#39;4. 一层 RNN&#39;, &#39;out, h_n = nn.RNN(5, 7, batch_first=True)(x)\nprint(out.shape, h_n.shape)&#39;), (&#39;5. LSTM 取最后一步&#39;, &#39;out, _ = lstm(x)\nprint(out[:, -1, :].shape)&#39;)]
+```
+
+### 08_transformer_device
+```python
+[(&#39;1. 选 device&#39;, &#39;device = torch.device(&quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;)\nprint(device)&#39;), (&#39;2. 张量与模型迁到同一设备&#39;, &#39;net = net.to(device)\ny = net(x.to(device))\nprint(y.device)&#39;), (&#39;3. MultiheadAttention 一次&#39;, &#39;attn_out, _ = nn.MultiheadAttention(8, 2, batch_first=True)(x, x, x)\nprint(attn_out.shape)&#39;), (&#39;4. TransformerEncoderLayer&#39;, &#39;layer = nn.TransformerEncoderLayer(d_model=8, nhead=2, batch_first=True)\nprint(layer(x).shape)&#39;), (&#39;5. 对齐设备后再算&#39;, &#39;print(next(net.parameters()).device == x.device)\nnet = net.to(x.device)\nprint(net(x).shape)&#39;)]
+```
+
+## 常见坑
+- `view` 遇到不连续张量会直接报错，`reshape` 会自动复制；`transpose` / `permute` 之后想 `view` 先 `contiguous()`。
+- `nn.Flatten` 默认 `start_dim=1`，`torch.flatten` 默认 `start_dim=0`，前者保留 batch 维，后者会把 batch 也压掉。
+- `CrossEntropyLoss` 吃的是 logits，不要再接 `softmax`；模型输出接 `argmax` 得到类别就行。
+- `Dropout`、`BatchNorm` 在 `eval()` 下行为不同，评估前一定 `model.eval()`，推理再包 `torch.no_grad()`。
+- 优化器的 `zero_grad()` 默认把梯度置 `None`，不是置 0；手动读 `.grad` 前先确认不是 `None`。
+- 读 GPU 上存的权重，`torch.load` 要显式给 `map_location=&#39;cpu&#39;`，否则在没有 GPU 的机器上直接失败。
+- DataLoader 用 `num_workers &gt; 0` 时，Dataset 里的自定义对象要能被 pickle；Windows / macOS 上还要注意 `if __name__ == &#39;__main__&#39;` 保护。
+- `Tensor.numpy()` 要求张量不带梯度且不在 GPU 上，跨设备先 `.detach().cpu()`。
+- `torch.compile(model)` 后 `model.state_dict()` 的键会多一层 `_orig_mod.` 前缀，加载旧 checkpoint 前先看清键名。
+</textarea>
+<script>
+(() => {
+  const root = document.documentElement;
+  const cycle = (list, cur) => list[(list.indexOf(cur) + 1) % list.length];
+  const label = (btn, value) => {
+    const map = JSON.parse(btn.dataset.labels || '{}');
+    btn.textContent = map[value] || value;
+  };
+  const bind = (name, attr, values) => {
+    const btn = document.querySelector(`[data-am="${name}"]`);
+    if (!btn) return;
+    label(btn, root.getAttribute(attr));
+    btn.addEventListener('click', () => {
+      const next = cycle(values, root.getAttribute(attr));
+      root.setAttribute(attr, next);
+      label(btn, next);
+    });
+  };
+  bind('theme', 'data-theme', ['blueprint', 'shadcn']);
+  bind('mode', 'data-mode', ['auto', 'light', 'dark']);
+
+  const copyBtn = document.querySelector('[data-am="copy"]');
+  copyBtn?.addEventListener('click', async () => {
+    const nodes = document.querySelectorAll('#am-source');
+    const text = nodes[nodes.length - 1]?.value ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      document.body.append(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    const original = copyBtn.textContent;
+    copyBtn.textContent = copyBtn.dataset.done;
+    setTimeout(() => { copyBtn.textContent = original; }, 1400);
+  });
+})();
+(() => {
+// Pure planner for justified ("photo wall") rows on sheet pages. No DOM access.
+//
+// This file must stay inlinable into the page script: top-level declarations only, no imports, and the exports are
+// `planLayout` and the constants the DOM adapter shares (STEP, MAX_SCALE, MIN_SCALE). The page build strips the `export ` keyword,
+// and test/layout-plan.test.js checks that this still works.
+//
+// planLayout({ width, gap, cols, panels }) -> { rows: [{ columns: [{ panels: [index, ...], width }], height }] }
+//
+// Input (all lengths in px):
+//   width   container width
+//   gap     space between columns, and between two panels stacked in one column
+//   cols    most columns in one row (the planner never uses more than MAX_COLUMNS, but spans stay shares of `cols`)
+//   panels  one entry per panel, in reading order:
+//     samples   [{ w, h }] panel height at sampled widths, ascending by w (heights between samples are interpolated)
+//     minWidth  narrowest feasible width (clamped to `width`)
+//     maxWidth  widest useful width; beyond it the panel only gains empty space (default: no limit)
+//     natural   natural diagram width for a diagram-only panel (default: none)
+//     pad       panel width not used by the diagram (padding and border; default 0)
+//     span      the author's width hint in grid columns (default 1); span >= cols keeps the panel alone in its row
+//
+// Output: { rows, maxScale }. Rows are in reading order; a row is a list of columns (at most `cols`); a column holds one panel or two
+// consecutive panels, stacked. For integer inputs the column widths plus the gaps between them equal `width`.
+// Rows are chosen by dynamic programming over break points; widths by a search in STEP px steps. Cost per row:
+//   H = tallest column; waste = sum((H - columnHeight) * columnWidth) + sum over diagrams wider than maxWidth of (w - maxWidth) * h
+//   dev = sum(((w - preferred) / oneColumn)^2) + SCALE_WEIGHT * sum over diagrams of (ln(scale) / ln(MAX_SCALE))^2
+//   cost = waste / 1000 + PREF_WEIGHT * dev * H
+// Scale band: diagrams on one page stay at similar sizes. With the result's `maxScale` as the diagram size limit, a diagram is
+// shown at scale min(maxScale, (width - pad) / natural). The planner tries a few bands [lo, lo * BAND_RATIO] (lo in BAND_LOS) and
+// keeps the cheapest plan in which no diagram is narrower than scale lo and none is shown above the band's top, so the largest and
+// smallest diagram scale on the page differ by at most BAND_RATIO. A panel wider than its diagram's top size keeps the diagram at
+// that size, and the page script must set the diagram's max-width to natural * maxScale. The band starts no higher than the
+// largest scale the page allows the least roomy diagram, so one wide diagram lowers the band for the others.
+// If no band is feasible the plan is made without a band (maxScale = MAX_SCALE); if no plan fits (or the input is unusable) the
+// result is a single column: one panel per row at the full width.
+
+const STEP = 10;
+const MAX_SCALE = 1.25;
+const MIN_SCALE = 0.75; // the narrowest a diagram is shown, as a share of its natural width
+const MAX_COLUMNS = 6; // rows with more columns are unreadable, and the search grows steeply with the column count
+const BAND_RATIO = 1.25; // the largest and smallest diagram scale on a page differ by at most this
+const BAND_LOS = [MIN_SCALE, 0.85, 0.95, 1]; // lower ends tried for the band; lo * BAND_RATIO is the upper end (1.25 means no upper limit)
+const SCALE_WEIGHT = 3;
+const PREF_WEIGHT = 0.15;
+
+function heightAt(samples, w) {
+  const i = samples.findIndex((s) => s.w >= w);
+  if (i === -1) return samples[samples.length - 1].h;
+  if (i === 0) return samples[0].h;
+  const a = samples[i - 1];
+  const b = samples[i];
+  return a.h + ((b.h - a.h) * (w - a.w)) / (b.w - a.w);
+}
+
+// Every way to split `len` consecutive panels into columns of 1 or 2 panels, as lists of column sizes.
+function splits(len) {
+  if (len === 0) return [[]];
+  return [1, 2].filter((k) => k <= len).flatMap((k) => splits(len - k).map((rest) => [k, ...rest]));
+}
+
+function singleColumn(width, panels) {
+  return { rows: panels.map((_, i) => ({ columns: [{ panels: [i], width }], height: 0 })) };
+}
+
+function planLayout({ width, gap = 0, cols = 3, panels }) {
+  const usable = Number.isFinite(width) && width > 0 && panels.every((p) => Array.isArray(p.samples) && p.samples.length > 0);
+  if (!usable) return singleColumn(width, panels);
+
+  // `cols` stays the unit of the author's spans; no row gets more than MAX_COLUMNS columns however large `cols` is.
+  const maxColumns = Math.min(cols, MAX_COLUMNS);
+  const oneColumn = Math.max(1, (width - gap * (cols - 1)) / cols);
+  // Per-panel limits. With a band [lo, lo * BAND_RATIO], a diagram is no narrower than scale lo and shown at most at the top of the
+  // band: a wider panel keeps it at that size and gains empty space, which the cost counts as waste.
+  const prepare = (lo) => panels.map((p) => {
+    const pad = p.pad ?? 0;
+    const diagram = lo > 0 && p.natural > 0;
+    const scaleCap = diagram ? Math.min(MAX_SCALE, lo * BAND_RATIO) : MAX_SCALE;
+    return {
+      ...p,
+      minWidth: Math.min(width, Math.max(Math.ceil(p.minWidth || 0), diagram ? Math.ceil(p.natural * lo + pad) : 0)),
+      maxWidth: Math.min(p.maxWidth ?? Infinity, diagram ? p.natural * scaleCap + pad : Infinity),
+      scaleCap,
+      pad,
+      preferred: Math.min(width, (p.span ?? 1) * oneColumn + ((p.span ?? 1) - 1) * gap),
+      alone: (p.span ?? 1) >= cols,
+    };
+  });
+  let info = prepare(0);
+  // Beyond its maxWidth a panel only gains empty space, so its height stops changing there (matters when a band lowers maxWidth).
+  const heightOf = (p, w) => heightAt(p.samples, Math.min(w, p.maxWidth));
+  const columnHeight = (col, w) => col.reduce((h, k) => h + heightOf(info[k], w), 0) + gap * (col.length - 1);
+
+  function bestColumns(columns) {
+    const avail = width - gap * (columns.length - 1);
+    const mins = columns.map((c) => Math.max(...c.map((k) => info[k].minWidth)));
+    const minsFrom = mins.map((_, n) => mins.slice(n).reduce((s, w) => s + w, 0));
+    if (minsFrom[0] > avail) return null;
+    let best = null;
+    const evaluate = (ws) => {
+      const hs = ws.map((w, n) => columnHeight(columns[n], w));
+      const H = Math.max(...hs);
+      let waste = 0;
+      let dev = 0;
+      ws.forEach((w, n) => {
+        waste += (H - hs[n]) * w;
+        for (const k of columns[n]) {
+          const p = info[k];
+          if (w > p.maxWidth) waste += (w - p.maxWidth) * heightOf(p, w);
+          dev += ((w - p.preferred) / oneColumn) ** 2;
+          if (p.natural > 0) {
+            const scale = Math.min(p.scaleCap, Math.max(w - p.pad, 1) / p.natural);
+            dev += SCALE_WEIGHT * (Math.log(scale) / Math.log(MAX_SCALE)) ** 2;
+          }
+        }
+      });
+      const cost = waste / 1000 + PREF_WEIGHT * dev * H;
+      if (!best || cost < best.cost) best = { cost, ws, height: H, columns };
+    };
+    const choose = (n, used, ws) => {
+      if (n === columns.length - 1) {
+        const w = avail - used;
+        if (w >= mins[n]) evaluate([...ws, w]);
+        return;
+      }
+      for (let w = mins[n]; used + w + minsFrom[n + 1] <= avail; w += STEP) choose(n + 1, used + w, [...ws, w]);
+    };
+    choose(0, 0, []);
+    return best;
+  }
+
+  // Best columns for one row of panels i..j.
+  function bestRow(i, j) {
+    if (j > i && info.slice(i, j + 1).some((p) => p.alone)) return null;
+    let best = null;
+    for (const split of splits(j - i + 1)) {
+      if (split.length > maxColumns) continue;
+      let next = i;
+      const columns = split.map((size) => Array.from({ length: size }, () => next++));
+      const r = bestColumns(columns);
+      if (r && (!best || r.cost < best.cost)) best = r;
+    }
+    return best;
+  }
+
+  // Row breaks in reading order, for the band set up in `info`. A row holds at most 2 * maxColumns panels. Null if nothing fits.
+  function solve() {
+    const n = panels.length;
+    const total = Array(n + 1).fill(Infinity);
+    const from = Array(n + 1).fill(-1);
+    const chosen = Array(n + 1).fill(null);
+    total[0] = 0;
+    for (let j = 1; j <= n; j++) {
+      for (let i = Math.max(0, j - 2 * maxColumns); i < j; i++) {
+        if (total[i] === Infinity) continue;
+        const r = bestRow(i, j - 1);
+        if (r && total[i] + r.cost < total[j]) {
+          total[j] = total[i] + r.cost;
+          from[j] = i;
+          chosen[j] = r;
+        }
+      }
+    }
+    if (total[n] === Infinity) return null;
+    const rows = [];
+    for (let j = n; j > 0; j = from[j]) {
+      const r = chosen[j];
+      rows.unshift({ columns: r.columns.map((panelsInColumn, c) => ({ panels: panelsInColumn, width: r.ws[c] })), height: r.height });
+    }
+    return { rows, cost: total[n] };
+  }
+
+  let best = null;
+  const diagrams = panels.filter((p) => p.natural > 0);
+  if (diagrams.length > 1) {
+    // No diagram can be shown larger than the page allows, so the band cannot start above the smallest of those limits.
+    const reach = Math.min(...diagrams.map((p) => Math.min(MAX_SCALE, Math.max(width - (p.pad ?? 0), 1) / p.natural)));
+    for (const lo of new Set([...BAND_LOS.filter((x) => x < reach), reach])) {
+      info = prepare(lo);
+      const r = solve();
+      if (r && (!best || r.cost < best.cost)) best = { ...r, maxScale: Math.min(MAX_SCALE, lo * BAND_RATIO) };
+    }
+    info = prepare(0);
+  }
+  best ??= solve();
+  return best ? { rows: best.rows, maxScale: best.maxScale ?? MAX_SCALE } : singleColumn(width, panels);
+}
+
+// DOM adapter for the sheet's justified ("photo wall") layout. Not a module: compose.js puts it after src/runtime/layout-plan.js
+// (which defines planLayout and the shared STEP, MAX_SCALE, MIN_SCALE) inside one function scope of the page script.
+//
+// It measures every panel at sampled widths, asks planLayout for rows and column widths, and applies them with flexbox.
+// The rendered HTML keeps the plain CSS grid: with JavaScript off, at the single-column breakpoint, or while printing, the grid is what
+// shows (the planned widths belong to the screen width, so print never gets a mix of the two); after printing the layout comes back.
+
+const grid = document.querySelector('.am-grid');
+const panels = grid ? [...grid.children].filter((el) => el.classList.contains('am-panel')) : [];
+
+if (panels.length > 1) {
+  const SINGLE_COLUMN = '(max-width: 760px)'; // the single-column breakpoint in src/themes/base.css
+  const TWO_COLUMNS = '(max-width: 1100px)'; // below this the CSS grid has two columns
+  const SAMPLE_STEP = 20; // width sampling step, px; the planner interpolates between samples
+  const TEXT_MIN = 260; // text keeps at least about 16 CJK characters per line
+  const TABLE_COL_MIN = 96; // per table column, px
+  const DIAGRAM_MIN = 160;
+  const RESIZE_DELAY = 150;
+  const OVERFLOWING = '.am-table-wrap, .am-diagram, .am-annot-scroll, pre';
+
+  const original = new Map([grid, ...panels, ...grid.querySelectorAll('.am-diagram > svg')].map((el) => [el, el.getAttribute('style')]));
+  const restoreStyle = (el) => (original.get(el) === null ? el.removeAttribute('style') : el.setAttribute('style', original.get(el)));
+
+  // Back to the plain grid markup and styles.
+  const restore = () => {
+    for (const box of grid.querySelectorAll(':scope > .am-col')) box.replaceWith(...box.children);
+    for (const el of original.keys()) restoreStyle(el);
+  };
+
+  // The author's width hint, rendered as data-span only when the author wrote one. The inline grid-column is the no-JavaScript fallback
+  // and may hold spans the server added, so it is never read here.
+  const spanHint = (el) => Number(el.dataset.span) || 1;
+  const diagramOnly = (el) => {
+    const body = el.querySelector(':scope > .am-panel-body');
+    return body && body.children.length === 1 ? body.querySelector(':scope > .am-diagram > svg') : null;
+  };
+  const naturalWidth = (svg) => Number(svg.getAttribute('width')) || 0;
+
+  // Height (and, for panels with tables or code, the narrowest width without sideways scrolling) at sampled widths.
+  // Only one panel is displayed while it is measured, so each width change lays out that panel alone.
+  function measure(width) {
+    grid.style.display = 'block';
+    for (const el of panels) {
+      el.style.display = 'none';
+      el.style.boxSizing = 'border-box';
+      for (const svg of el.querySelectorAll('.am-diagram > svg')) {
+        svg.style.width = '100%';
+        svg.style.maxWidth = `${naturalWidth(svg) * MAX_SCALE}px`;
+      }
+    }
+    const info = panels.map((el) => {
+      const svg = diagramOnly(el);
+      const svgs = [...el.querySelectorAll('.am-diagram > svg')];
+      const scrollers = el.querySelectorAll(OVERFLOWING);
+      const tableCols = Math.max(0, ...[...el.querySelectorAll('table tr:first-child')].map((tr) => tr.children.length));
+      el.style.display = '';
+      el.style.width = `${width}px`;
+      const pad = svg ? el.offsetWidth - svg.parentElement.clientWidth : 0;
+      const natural = svg ? naturalWidth(svg) : 0;
+      const shrunk = Math.max(0, ...svgs.map((s) => naturalWidth(s) * MIN_SCALE)) + (svg ? pad : 34);
+      const floor = svg ? Math.max(DIAGRAM_MIN, natural * MIN_SCALE + pad) : Math.max(TEXT_MIN, shrunk, tableCols * TABLE_COL_MIN + 34);
+      const from = Math.min(width, Math.floor(floor / STEP) * STEP);
+      const samples = [];
+      let fits = null;
+      for (let w = from; ; w += SAMPLE_STEP) {
+        w = Math.min(w, width);
+        el.style.width = `${w}px`;
+        if (fits === null && !svg && scrollers.length && ![...scrollers].some((s) => s.scrollWidth > s.clientWidth + 1)) fits = w;
+        samples.push({ w, h: el.offsetHeight });
+        if (w === width) break;
+      }
+      el.style.display = 'none';
+      return {
+        samples,
+        minWidth: svg ? floor : Math.max(floor, fits ?? (scrollers.length ? width : 0)),
+        maxWidth: svg ? natural * MAX_SCALE + pad : Infinity,
+        natural,
+        pad,
+        span: spanHint(el),
+      };
+    });
+    for (const el of panels) {
+      el.style.display = '';
+      el.style.width = '';
+    }
+    return info;
+  }
+
+  // Each column gets a fixed width. A row adds up to the full width, so flex-wrap breaks rows by itself.
+  // Stacked panels go into a column wrapper whose last panel absorbs the extra height.
+  function apply(plan, gap) {
+    grid.style.display = 'flex';
+    grid.style.flexWrap = 'wrap';
+    grid.style.alignItems = 'stretch';
+    grid.style.gap = `${gap}px`;
+    for (const el of panels) {
+      el.style.gridColumn = '';
+      el.style.gridRow = '';
+      el.style.flex = '0 0 auto';
+    }
+    for (const row of plan.rows) {
+      for (const col of row.columns) {
+        const width = `${col.width}px`;
+        if (col.panels.length === 1) {
+          panels[col.panels[0]].style.width = width;
+          continue;
+        }
+        const box = document.createElement('div');
+        box.className = 'am-col';
+        box.style.cssText = `width:${width};flex:0 0 auto;display:flex;flex-direction:column;gap:${gap}px`;
+        panels[col.panels[0]].before(box);
+        for (const k of col.panels) {
+          panels[k].style.width = '';
+          box.append(panels[k]);
+        }
+        panels[col.panels[col.panels.length - 1]].style.flex = '1 1 auto';
+      }
+    }
+  }
+
+  // Diagram-only panels show their diagram at most at the top of the page's scale band; a wider panel gains empty space instead.
+  function capDiagrams(maxScale) {
+    for (const el of panels) {
+      const svg = diagramOnly(el);
+      if (svg) svg.style.maxWidth = `${naturalWidth(svg) * maxScale}px`;
+    }
+  }
+
+  const containerWidth = () => Math.floor(grid.getBoundingClientRect().width);
+
+  function justify() {
+    if (printing || printQuery.matches) return;
+    try {
+      // A vertical scrollbar can appear or vanish once the rows change height; plan again if the width moved.
+      let planned = -1;
+      for (let pass = 0; pass < 3 && planned !== containerWidth(); pass++) {
+        restore();
+        if (matchMedia(SINGLE_COLUMN).matches) return;
+        planned = containerWidth();
+        const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+        const cols = Math.max(1, Number(getComputedStyle(grid).getPropertyValue('--cols')) || 3);
+        const plan = planLayout({ width: planned, gap, cols: matchMedia(TWO_COLUMNS).matches ? Math.min(cols, 2) : cols, panels: measure(planned) });
+        apply(plan, gap);
+        capDiagrams(plan.maxScale);
+      }
+      // The width never settled: columns planned for another width would overflow or leave gaps, so show the plain grid.
+      if (planned !== containerWidth()) restore();
+    } catch {
+      restore();
+    }
+  }
+
+  // Printing: back to the plain grid (spans and all), and the layout again afterwards. Browsers disagree on which of the
+  // `beforeprint` event and the print media query change fires first, or at all, so listen to both; both are idempotent.
+  // While `printing` is set (beforeprint to afterprint) justify() does nothing, so a late resize cannot bring flex widths into the print layout.
+  let printing = false;
+  const printQuery = matchMedia('print');
+  let timer = 0;
+  const later = () => {
+    clearTimeout(timer);
+    timer = setTimeout(justify, RESIZE_DELAY);
+  };
+  const toPrint = () => {
+    clearTimeout(timer);
+    restore();
+  };
+  justify();
+  addEventListener('resize', later);
+  addEventListener('beforeprint', () => {
+    printing = true;
+    toPrint();
+  });
+  addEventListener('afterprint', () => {
+    printing = false;
+    later();
+  });
+  printQuery.addEventListener('change', (e) => (e.matches ? toPrint() : later()));
+  // Late changes to panel heights: web fonts arriving, and images inside the grid finishing their load (load does not bubble, so capture it).
+  document.fonts?.ready.then(later);
+  grid.addEventListener('load', later, true);
+  // Switching theme changes paddings and fonts, hence panel heights.
+  document.querySelector('[data-am="theme"]')?.addEventListener('click', later);
+}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2401 @@
+<!doctype html>
+<html lang="en" data-theme="blueprint" data-mode="auto" data-style="80">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Answer me with HTML 0.4.9">
+<title>LangChain API 速查</title>
+<style>
+html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 0px;
+  --shadow: none;
+  --bw: 1.5px;
+  --head-font: var(--font-sans);
+  --bg: #f6f6f3;
+  --paper: #ffffff;
+  --ink: #16181d;
+  --ink-2: #4b5260;
+  --ink-3: #8b929e;
+  --line: #1d2026;
+  --line-2: #d6dae1;
+  --fill: #f3f5f8;
+  --accent: #1d5fbf;
+  --accent-bg: #e4ecf8;
+  --ok: #1d5fbf;
+  --ok-bg: #e4ecf8;
+  --err: #c62828;
+  --err-bg: #fbeaea;
+  --warn: #a8620a;
+  --warn-bg: #fdf3e2;
+  --head-bg: #16181d;
+  --head-fg: #ffffff;
+}
+html[data-theme="blueprint"][data-mode="dark"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="blueprint"][data-mode="auto"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+}
+
+html[data-theme="shadcn"], html[data-theme="shadcn"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 8px;
+  --shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --bw: 1px;
+  --head-font: var(--font-sans);
+  --bg: #fafafa;
+  --paper: #ffffff;
+  --ink: #09090b;
+  --ink-2: #71717a;
+  --ink-3: #a1a1aa;
+  --line: #e4e4e7;
+  --line-2: #f0f0f2;
+  --fill: #f4f4f5;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --ok: #16a34a;
+  --ok-bg: #f0fdf4;
+  --err: #dc2626;
+  --err-bg: #fef2f2;
+  --warn: #d97706;
+  --warn-bg: #fffbeb;
+  --head-bg: #18181b;
+  --head-fg: #fafafa;
+}
+html[data-theme="shadcn"][data-mode="dark"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="shadcn"][data-mode="auto"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+}
+
+html[lang="ja"][data-theme][data-mode] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", "PingFang SC", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+html[lang="ja"][data-theme="3b1b"][data-mode] {
+  --v-title-font: "CMU Serif", "Latin Modern Roman", "Iowan Old Style", "Palatino", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Serif JP", "Songti SC", serif;
+}
+
+/* Answer me with HTML base — uses theme variables only, never hard-coded colors (theme tokens: themes/index.js). Exception: the var() fallbacks of diagrams (flow / sequence) equal the blueprint light tokens, guarded by a test. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* ── Toolbar ─────────────────────────────── */
+.am-toolbar {
+  position: fixed; top: 12px; right: 12px; z-index: 10; display: flex; gap: 6px;
+}
+.am-btn {
+  font: 12px/1 var(--font-sans); color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); padding: 7px 10px; cursor: pointer;
+}
+.am-btn:hover { border-color: var(--ink-3); }
+.am-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Header ───────────────────────────────── */
+.am-head { margin: 0 0 20px; padding-right: 260px; }
+.am-head h1 { margin: 0; font-size: 24px; line-height: 1.25; letter-spacing: -0.01em; }
+.am-sub { margin: 4px 0 0; color: var(--ink-2); }
+.am-head-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+.am-head-meta b { font-family: var(--font-mono); font-weight: 400; color: var(--ink-3); margin-right: 6px; }
+.am-intro { margin-top: 12px; max-width: 80ch; }
+
+/* ── sheet template ────────────────────────── */
+.am-sheet { max-width: 1680px; margin: 0 auto; padding: 32px 28px 40px; }
+.am-frame { position: relative; }
+.am-grid {
+  display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 20px; align-items: start;
+}
+.am-ruler { display: none; }
+html[data-theme="blueprint"] .am-frame { border: 1px solid var(--line); padding: 30px; }
+html[data-theme="blueprint"] .am-frame::before {
+  content: ""; position: absolute; inset: 18px; border: 1px solid var(--line); pointer-events: none;
+}
+html[data-theme="blueprint"] .am-ruler {
+  display: flex; position: absolute; font: 10px/1 var(--font-mono); color: var(--ink-3);
+}
+.am-ruler span { flex: 1; display: flex; align-items: center; justify-content: center; }
+.am-ruler--top, .am-ruler--bottom { left: 18px; right: 18px; height: 18px; }
+.am-ruler--top { top: 0; }
+.am-ruler--bottom { bottom: 0; }
+.am-ruler--left, .am-ruler--right { top: 18px; bottom: 18px; width: 18px; flex-direction: column; }
+.am-ruler--left { left: 0; }
+.am-ruler--right { right: 0; }
+.am-ruler--top span + span, .am-ruler--bottom span + span { border-left: 1px solid var(--line); }
+.am-ruler--left span + span, .am-ruler--right span + span { border-top: 1px solid var(--line); }
+
+/* ── Panels ───────────────────────────────── */
+.am-panel {
+  background: var(--paper); border: var(--bw) solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); min-width: 0; overflow: hidden;
+}
+.am-panel-head {
+  display: flex; align-items: stretch; gap: 0; border-bottom: var(--bw) solid var(--line); min-height: 34px;
+}
+.am-panel-id {
+  display: flex; align-items: center; justify-content: center; min-width: 34px; padding: 0 8px;
+  background: var(--head-bg); color: var(--head-fg); font-weight: 600; font-size: 14px;
+}
+html[data-theme="shadcn"] .am-panel-id { border-radius: 6px; min-width: 24px; height: 24px; margin: 9px 0 9px 14px; font-size: 12px; }
+html[data-theme="shadcn"] .am-panel-head { border-bottom-width: 1px; }
+.am-panel-head h2 { margin: 0; padding: 7px 12px; font-size: 15px; font-weight: 600; flex: 1; display: flex; align-items: center; }
+.am-panel-meta { align-self: center; padding: 0 12px; font: 11px/1.3 var(--font-mono); color: var(--ink-2); text-align: right; }
+.am-panel-body { padding: 14px 16px 16px; }
+.am-panel-body > * + * { margin-top: 12px; }
+
+/* ── Markdown body ───────────────────────── */
+.am-md > :first-child { margin-top: 0; }
+.am-md > :last-child { margin-bottom: 0; }
+.am-md p { margin: 0 0 8px; }
+.am-md ul, .am-md ol { margin: 0 0 8px; padding-left: 20px; }
+.am-md li + li { margin-top: 3px; }
+.am-md h3, .am-md h4 { margin: 14px 0 6px; font-size: 13px; }
+.am-md a { color: var(--accent); }
+.am-md blockquote { margin: 0 0 8px; padding: 2px 12px; border-left: 3px solid var(--line-2); color: var(--ink-2); }
+.am-md :not(pre) > code { font-size: 0.9em; background: var(--fill); padding: 1px 5px; border-radius: 4px; }
+.am-md hr { border: 0; border-top: 1px solid var(--line-2); margin: 12px 0; }
+.am-md table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.am-md th {
+  text-align: left; font: 11px/1.3 var(--font-mono); color: var(--ink-2); font-weight: 400;
+  padding: 6px 10px; border-bottom: 1px solid var(--line-2);
+}
+/* th { text-align: left } outranks the align attribute from Markdown alignment, so restore right and center columns explicitly. */
+.am-md th[align="right"] { text-align: right; }
+.am-md th[align="center"] { text-align: center; }
+.am-md td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.am-md tbody tr:nth-child(even) td { background: var(--fill); }
+.am-table-wrap { overflow-x: auto; }
+.am-code {
+  margin: 0; padding: 12px 14px; background: var(--fill); border: 1px solid var(--line-2);
+  border-radius: var(--radius); overflow-x: auto; font-size: 12.5px; line-height: 1.5;
+}
+
+/* ── Status badges ok / no / warn ──────────────── */
+.am-status { white-space: nowrap; font-weight: 500; }
+.am-status--ok { color: var(--ok); }
+.am-status--no { color: var(--err); }
+.am-status--warn { color: var(--warn); }
+.am-status-icon { display: inline-block; width: 1.1em; font-weight: 700; }
+
+/* ── callout ─────────────────────────────── */
+.am-callout {
+  border: 1px solid var(--line-2); border-left: 3px solid var(--accent); background: var(--accent-bg);
+  padding: 10px 14px; border-radius: var(--radius);
+}
+.am-callout--ok { border-left-color: var(--ok); background: var(--ok-bg); }
+.am-callout--warn { border-left-color: var(--warn); background: var(--warn-bg); }
+.am-callout--err { border-left-color: var(--err); background: var(--err-bg); }
+.am-callout-title { font-weight: 600; margin-bottom: 4px; }
+
+/* ── kv title block ─────────────────────────── */
+.am-kv {
+  display: grid; grid-template-columns: repeat(var(--kv-cols, 2), minmax(0, 1fr)); margin: 0;
+  border-top: var(--bw) solid var(--line); border-left: var(--bw) solid var(--line);
+}
+.am-kv-cell { border-right: var(--bw) solid var(--line); border-bottom: var(--bw) solid var(--line); padding: 6px 10px 8px; min-width: 0; }
+.am-kv-cell--wide { grid-column: 1 / -1; }
+.am-kv dt { font: 11px/1.4 var(--font-mono); color: var(--ink-2); }
+.am-kv dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.am-kv-cell--wide dd { font-size: 17px; font-weight: 600; }
+html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var(--radius); overflow: hidden; }
+
+/* ── timeline ────────────────────────────── */
+.am-timeline { list-style: none; margin: 0; padding: 0; }
+.am-timeline--h { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); padding-top: 4px; }
+.am-timeline--h li { position: relative; text-align: center; padding: 0 6px; }
+.am-timeline--h li::before {
+  content: ""; position: absolute; top: 31px; left: 0; right: 0; border-top: var(--bw) solid var(--line);
+}
+.am-timeline--h li:first-child::before { left: 50%; }
+.am-timeline--h li:last-child::before { right: 50%; }
+.am-tl-when { display: block; font-size: 15px; font-weight: 500; height: 24px; }
+.am-tl-dot {
+  position: relative; display: block; width: 11px; height: 11px; margin: 2px auto 8px;
+  border: var(--bw) solid var(--line); border-radius: 50%; background: var(--paper);
+}
+.am-tl-item--hi .am-tl-dot { background: var(--accent); border-color: var(--accent); }
+.am-tl-title { display: block; font-size: 12.5px; font-weight: 500; }
+.am-tl-text { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+.am-timeline--v li { position: relative; padding: 0 0 14px 22px; }
+.am-timeline--v li::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: -6px; border-left: var(--bw) solid var(--line-2); }
+.am-timeline--v li:last-child::before { display: none; }
+.am-timeline--v .am-tl-dot { position: absolute; left: 0; top: 4px; margin: 0; }
+.am-timeline--v .am-tl-when { display: inline; height: auto; font: 12px var(--font-mono); color: var(--ink-2); margin-right: 8px; }
+.am-timeline--v .am-tl-title { display: inline; font-size: 14px; }
+.am-timeline--v .am-tl-text { margin-top: 2px; }
+
+/* ── annot sentence notes ──────────────────────── */
+.am-annot + .am-annot { border-top: 1px solid var(--line-2); padding-top: 12px; }
+.am-annot-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.am-annot-meta { font: 11px var(--font-mono); font-weight: 400; color: var(--ink-2); }
+.am-annot-scroll { overflow-x: auto; }
+.am-annot-line {
+  position: relative; display: inline-block; white-space: pre; font: 14px/1.6 var(--font-mono);
+  padding-bottom: calc(var(--rows, 0) * 17px + 14px);
+}
+.am-annot-line--wrap { display: block; white-space: normal; padding-bottom: 10px; }
+.am-annot-line--wrap .am-seg { white-space: nowrap; }
+.am-seg { position: relative; }
+.am-seg::after {
+  content: ""; position: absolute; left: 1px; right: 1px; top: calc(100% + 1px); height: 5px;
+  border: 1px solid var(--accent); border-top: 0;
+}
+.am-seg-n {
+  position: absolute; left: 0; top: calc(100% + 8px + var(--row, 0) * 17px);
+  font: 11px/16px var(--font-sans); color: var(--accent); white-space: nowrap;
+}
+.am-seg--err { color: var(--err); }
+.am-seg--err::after { border-color: var(--err); }
+.am-seg--err .am-seg-n { color: var(--err); }
+.am-annot-caption { font-size: 12px; color: var(--ink-2); }
+
+/* ── limits bars ───────────────────────── */
+.am-lim + .am-lim { margin-top: 14px; }
+.am-lim-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 4px; }
+.am-lim-val { font: 12px var(--font-mono); color: var(--accent); white-space: nowrap; }
+.am-lim-track { position: relative; height: 12px; border: 1px solid var(--line-2); background: var(--fill); border-radius: calc(var(--radius) / 2); }
+.am-lim-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent-bg); border-right: 1px solid var(--accent); }
+.am-lim-mark { position: absolute; top: -4px; bottom: -4px; border-left: 2px solid var(--accent); }
+.am-lim.is-over .am-lim-fill { background: var(--err-bg); border-right-color: var(--err); }
+.am-lim.is-over .am-lim-val { color: var(--err); }
+.am-lim-ticks { position: relative; height: 16px; font: 10px/16px var(--font-mono); color: var(--ink-3); }
+.am-lim-ticks span { position: absolute; transform: translateX(-50%); }
+.am-lim-ticks span:first-child { transform: none; }
+.am-lim-note { font-size: 11px; color: var(--ink-2); margin-left: 6px; }
+
+/* ── tree ─────────────────────────── */
+.am-tree { font-size: 13px; }
+.am-tree-root { display: flex; justify-content: center; position: relative; padding-bottom: 18px; }
+.am-tree-root::after { content: ""; position: absolute; bottom: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-root--solo { padding-bottom: 12px; }
+.am-tree-root--solo::after { display: none; }
+.am-tree-box {
+  border: var(--bw) solid var(--line); background: var(--paper); padding: 6px 14px; text-align: center;
+  border-radius: var(--radius); font-weight: 600;
+}
+.am-tree-box small { display: block; font-weight: 400; color: var(--ink-2); font-size: 12px; }
+.am-tree-box--root { background: var(--accent-bg); font-size: 15px; padding: 8px 28px; }
+.am-tree-cols { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
+.am-tree-col { position: relative; padding: 18px 8px 0; min-width: 0; }
+.am-tree-col::before { content: ""; position: absolute; top: 0; left: 0; right: 0; border-top: var(--bw) solid var(--line); }
+.am-tree-col:first-child::before { left: 50%; }
+.am-tree-col:last-child::before { right: 50%; }
+.am-tree-col::after { content: ""; position: absolute; top: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-list, .am-tree-list ul { list-style: none; margin: 0; padding: 0; }
+.am-tree-col > .am-tree-list { margin: 8px 0 0 14px; }
+.am-tree-list ul { margin-left: 16px; }
+.am-tree-list li { position: relative; padding: 3px 0 3px 18px; }
+.am-tree-list li::before { content: ""; position: absolute; left: 0; top: 0.95em; width: 12px; border-top: 1px solid var(--ink-3); }
+.am-tree-list li::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--ink-3); }
+.am-tree-list li:last-child::after { bottom: auto; height: 0.95em; }
+.am-tree-tag { font: 11px var(--font-mono); color: var(--ink-3); margin-right: 4px; }
+.am-tree code { font: 12px var(--font-mono); }
+.am-tree-sub { display: block; font-size: 11.5px; color: var(--ink-2); }
+.am-tree-hi > .am-tree-label { color: var(--accent); font-weight: 600; }
+
+/* ── Diagrams (flow / sequence) ───────────────── */
+.am-diagram { margin: 0; overflow-x: auto; text-align: center; }
+/* Embedded previews can lose html[data-theme]; the fallbacks keep diagrams readable, and defined theme variables still win. */
+.am-diagram svg { max-width: 100%; height: auto; font-family: var(--font-sans, sans-serif); }
+.am-diagram text { fill: var(--ink, #16181d); font-size: 13px; }
+.am-node-shape { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-node--hi .am-node-shape { fill: var(--accent-bg, #e4ecf8); stroke: var(--accent, #1d5fbf); }
+.am-node--hi text { fill: var(--accent, #1d5fbf); font-weight: 600; }
+.am-edge { fill: none; stroke: var(--ink-2, #4b5260); stroke-width: 1.3; }
+.am-edge--dashed { stroke-dasharray: 5 4; }
+.am-arrow { fill: var(--ink-2, #4b5260); }
+.am-edge-label rect { fill: var(--paper, #ffffff); }
+.am-diagram .am-edge-label text { fill: var(--accent, #1d5fbf); font-size: 11.5px; }
+.am-cluster { fill: var(--fill, #f3f5f8); stroke: var(--line-2, #d6dae1); stroke-width: 1; stroke-dasharray: 4 3; }
+.am-diagram .am-cluster-label { fill: var(--ink-2, #4b5260); font: 11px var(--font-mono, monospace); }
+.am-lifeline { stroke: var(--ink-3, #8b929e); stroke-width: 1; stroke-dasharray: 4 4; }
+.am-actor { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-note { fill: var(--warn-bg, #fdf3e2); stroke: var(--warn, #a8620a); stroke-width: 1; }
+.am-diagram .am-step { fill: var(--ink-3, #8b929e); font: 10px var(--font-mono, monospace); }
+
+/* ── doc template ────────────────────────── */
+.am-doc { max-width: 1120px; margin: 0 auto; padding: 40px 28px 64px; }
+.am-doc-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+.am-doc-layout--notoc { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.am-toc { position: sticky; top: 24px; font-size: 13px; }
+.am-toc a { display: block; color: var(--ink-2); text-decoration: none; padding: 4px 0 4px 10px; border-left: 2px solid var(--line-2); }
+.am-toc a:hover { color: var(--ink); border-left-color: var(--accent); }
+.am-doc-body > .am-panel + .am-panel { margin-top: 20px; }
+
+/* ── Responsive and print ─────────────────────────── */
+@media (max-width: 1100px) {
+  .am-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .am-grid > .am-panel { grid-column: auto !important; }
+  .am-grid > .am-panel.am-span-wide { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 760px) {
+  .am-sheet, .am-doc { padding: 56px 12px 24px; }
+  .am-head { padding-right: 0; }
+  .am-grid { grid-template-columns: minmax(0, 1fr); }
+  .am-grid > .am-panel.am-span-wide { grid-column: auto !important; }
+  html[data-theme="blueprint"] .am-frame { padding: 0; border: 0; }
+  html[data-theme="blueprint"] .am-frame::before, html[data-theme="blueprint"] .am-ruler { display: none; }
+  .am-doc-layout { grid-template-columns: minmax(0, 1fr); }
+  .am-toc { position: static; }
+  .am-timeline--h { grid-template-columns: minmax(0, 1fr); }
+  .am-tree-cols { grid-template-columns: minmax(0, 1fr); }
+  /* Tables and diagrams keep their size: the wrapper scrolls horizontally when they overflow. */
+  .am-md th, .am-md td { min-width: 6em; }
+  .am-diagram svg { max-width: none; }
+}
+.am-colophon { text-align: center; padding: 0 0 28px; font: 11px var(--font-mono); color: var(--ink-3); }
+
+@media print {
+  .am-toolbar { display: none; }
+  body { background: var(--paper); }
+  .am-panel { break-inside: avoid; box-shadow: none; }
+}
+.am-panel--bare { border: 0; background: transparent; box-shadow: none; }
+.am-panel--bare > .am-panel-body { padding: 0; }
+.am-panel--bare .am-kv { background: var(--paper); }
+
+</style>
+</head>
+<body>
+<div class="am-toolbar">
+<button class="am-btn" type="button" data-am="theme" data-labels="{&quot;blueprint&quot;:&quot;Theme: Blueprint&quot;,&quot;shadcn&quot;:&quot;Theme: Cards&quot;}">Theme: Blueprint</button>
+<button class="am-btn" type="button" data-am="mode" data-labels="{&quot;auto&quot;:&quot;Mode: Auto&quot;,&quot;light&quot;:&quot;Mode: Light&quot;,&quot;dark&quot;:&quot;Mode: Dark&quot;}">Mode: Auto</button>
+<button class="am-btn" type="button" data-am="copy" data-done="Copied ✓">Copy source</button>
+</div>
+<main class="am-doc">
+<header class="am-head"><h1>LangChain API 速查</h1><div class="am-head-meta"><span><b>source</b>codes/langchain/cheat_api.md</span></div></header>
+<div class="am-doc-layout">
+<nav class="am-toc" aria-label="Contents"><a href="#panel-A">A · 速览</a><a href="#panel-B">B · API 速查</a><a href="#panel-C">C · 使用用例</a><a href="#panel-D">D · 常见坑</a></nav><div class="am-doc-body">
+<section class="am-panel" id="panel-A">
+<header class="am-panel-head"><span class="am-panel-id">A</span><h2>速览</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>按主题分组的常用 API。签名与默认值对照本机 <code>langchain 1.4.2</code> / <code>langchain-core 1.6.4</code>（配套 <code>langchain-text-splitters 1.1.2</code>、<code>langchain-deepseek 1.1.1</code>、<code>langchain-huggingface 1.2.2</code>、<code>langchain-openai 1.6.3</code>）核对，<code>=</code> 后面是默认值，没写默认值的表示必填。阶段练习见 <code>index.md</code>。</p>
+<p>约定：</p>
+<ul>
+<li><strong>子模块</strong> 一列用简写（见下表）。<code>langchain</code> 主包很薄，真正的东西大多在 <code>langchain_core</code>；厂商模型放在 <code>langchain-&lt;provider&gt;</code> 里。</li>
+<li><strong>Runnable</strong> 指实现了 <code>invoke</code> / <code>batch</code> / <code>stream</code> 的对象。表里凡是标成 Runnable 的，都通吃这三个方法，加 <code>a</code> 前缀（<code>ainvoke</code> / <code>astream</code>）是异步版。</li>
+<li>消息、文档这类对象的字段大多有默认值，下表只在有区别时重复。</li>
+<li>本机<strong>没装</strong> <code>langchain-community</code>，文档加载器 / 第三方向量库那一节标注了「需另装」，签名未核对。</li>
+</ul>
+</div></div>
+</section>
+<section class="am-panel" id="panel-B">
+<header class="am-panel-head"><span class="am-panel-id">B</span><h2>API 速查</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>子模块一览</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>子模块</th>
+<th>里面有什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>langchain</code></td>
+<td>主包：<code>init_chat_model</code>、<code>create_agent</code></td>
+</tr>
+<tr>
+<td><code>messages</code></td>
+<td>消息类型、<code>trim_messages</code></td>
+</tr>
+<tr>
+<td><code>language_models</code></td>
+<td><code>BaseChatModel</code>、假模型</td>
+</tr>
+<tr>
+<td><code>prompts</code></td>
+<td><code>PromptTemplate</code> / <code>ChatPromptTemplate</code> / 少样本模板</td>
+</tr>
+<tr>
+<td><code>output_parsers</code></td>
+<td><code>StrOutputParser</code> / <code>JsonOutputParser</code> 等</td>
+</tr>
+<tr>
+<td><code>runnables</code></td>
+<td>LCEL 基元：<code>RunnableLambda</code> / <code>RunnablePassthrough</code> / <code>RunnableParallel</code></td>
+</tr>
+<tr>
+<td><code>tools</code></td>
+<td><code>@tool</code>、<code>BaseTool</code>、<code>ToolException</code></td>
+</tr>
+<tr>
+<td><code>documents</code></td>
+<td><code>Document</code></td>
+</tr>
+<tr>
+<td><code>document_loaders</code></td>
+<td><code>BaseLoader</code> / <code>Blob</code>（具体加载器在 community）</td>
+</tr>
+<tr>
+<td><code>embeddings</code></td>
+<td><code>Embeddings</code> 接口、<code>DeterministicFakeEmbedding</code></td>
+</tr>
+<tr>
+<td><code>vectorstores</code></td>
+<td><code>VectorStore</code>、<code>InMemoryVectorStore</code></td>
+</tr>
+<tr>
+<td><code>retrievers</code></td>
+<td><code>BaseRetriever</code></td>
+</tr>
+<tr>
+<td><code>callbacks</code></td>
+<td><code>BaseCallbackHandler</code></td>
+</tr>
+<tr>
+<td><code>chat_history</code></td>
+<td><code>BaseChatMessageHistory</code>、<code>InMemoryChatMessageHistory</code></td>
+</tr>
+<tr>
+<td><code>splitters</code></td>
+<td>文本切分器</td>
+</tr>
+<tr>
+<td><code>chat_models</code></td>
+<td><code>init_chat_model</code></td>
+</tr>
+<tr>
+<td><code>agents</code></td>
+<td><code>create_agent</code></td>
+</tr>
+<tr>
+<td><code>middleware</code></td>
+<td>Agent 中间件：钩子、<code>wrap_*</code>、限流、摘要、HITL</td>
+</tr>
+<tr>
+<td><code>deepseek</code> / <code>openai</code> / <code>hf</code></td>
+<td>厂商模型与 embedding 集成</td>
+</tr>
+</tbody></table></div>
+<p>简写对照：<code>messages</code> = <code>langchain_core.messages</code>，<code>language_models</code> = <code>langchain_core.language_models</code>，<code>prompts</code> = <code>langchain_core.prompts</code>，<code>output_parsers</code> = <code>langchain_core.output_parsers</code>，<code>runnables</code> = <code>langchain_core.runnables</code>，<code>tools</code> = <code>langchain_core.tools</code>，<code>documents</code> = <code>langchain_core.documents</code>，<code>document_loaders</code> = <code>langchain_core.document_loaders</code>，<code>embeddings</code> = <code>langchain_core.embeddings</code>，<code>vectorstores</code> = <code>langchain_core.vectorstores</code>，<code>retrievers</code> = <code>langchain_core.retrievers</code>，<code>callbacks</code> = <code>langchain_core.callbacks</code>，<code>chat_history</code> = <code>langchain_core.chat_history</code>，<code>splitters</code> = <code>langchain_text_splitters</code>，<code>chat_models</code> = <code>langchain.chat_models</code>，<code>agents</code> = <code>langchain.agents</code>，<code>middleware</code> = <code>langchain.agents.middleware</code>，<code>deepseek</code> = <code>langchain_deepseek</code>，<code>openai</code> = <code>langchain_openai</code>，<code>hf</code> = <code>langchain_huggingface</code>，<code>runnables.history</code> = <code>langchain_core.runnables.history</code>，<code>function_calling</code> = <code>langchain_core.utils.function_calling</code>。</p>
+<h3>消息</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SystemMessage</code> / <code>HumanMessage</code> / <code>AIMessage</code></td>
+<td><code>messages</code></td>
+<td><code>content=None</code>、<code>name=None</code>、<code>id=None</code></td>
+<td>三种角色消息；<code>content</code> 可以是字符串，也可以是内容块列表</td>
+</tr>
+<tr>
+<td><code>ToolMessage</code></td>
+<td><code>messages</code></td>
+<td><code>content=None</code>、<code>tool_call_id</code>、<code>artifact=None</code>、<code>status=&#39;success&#39;</code></td>
+<td>工具结果，<code>tool_call_id</code> <strong>必填</strong>，要和发起调用的 id 对上</td>
+</tr>
+<tr>
+<td><code>AIMessage.tool_calls</code></td>
+<td><code>messages</code></td>
+<td>—</td>
+<td>属性，模型要求调用的工具列表，每项是 <code>{&quot;name&quot;, &quot;args&quot;, &quot;id&quot;, &quot;type&quot;}</code></td>
+</tr>
+<tr>
+<td><code>AIMessage.invalid_tool_calls</code> / <code>usage_metadata</code></td>
+<td><code>messages</code></td>
+<td>—</td>
+<td>属性，解析失败的调用 / token 用量</td>
+</tr>
+<tr>
+<td><code>AIMessageChunk</code></td>
+<td><code>messages</code></td>
+<td>—</td>
+<td><code>stream()</code> 产出的增量块，可以 <code>+</code> 拼接</td>
+</tr>
+<tr>
+<td><code>trim_messages</code></td>
+<td><code>messages</code></td>
+<td><code>messages</code>、<code>max_tokens</code>、<code>token_counter</code>、<code>strategy=&#39;last&#39;</code>、<code>allow_partial=False</code>、<code>include_system=False</code>、<code>end_on=None</code>、<code>start_on=None</code>、<code>text_splitter=None</code></td>
+<td>按 token 预算裁历史，超长对话必备</td>
+</tr>
+<tr>
+<td><code>get_buffer_string</code></td>
+<td><code>messages</code></td>
+<td><code>messages</code></td>
+<td>把消息列表拼成一段纯文本</td>
+</tr>
+</tbody></table></div>
+<p>消息的 <code>type</code> 属性是 <code>&#39;system&#39;</code> / <code>&#39;human&#39;</code> / <code>&#39;ai&#39;</code> / <code>&#39;tool&#39;</code>；想要类名就 <code>type(m).__name__</code>。</p>
+<h3>ChatModel：创建与调用</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>init_chat_model</code></td>
+<td><code>chat_models</code></td>
+<td><code>model=None</code>、<code>model_provider=None</code>、<code>configurable_fields=None</code>、<code>config_prefix=None</code>、<code>**kwargs</code></td>
+<td>用 <code>&quot;provider:model&quot;</code> 字符串选模型（如 <code>&quot;deepseek:deepseek-v4-flash&quot;</code>）；就是按前缀去 import 对应集成包</td>
+</tr>
+<tr>
+<td><code>ChatDeepSeek</code></td>
+<td><code>deepseek</code></td>
+<td><code>model</code>、<code>temperature=None</code>、<code>api_key=None</code>、<code>base_url=None</code>、<code>max_retries=None</code>、<code>streaming=False</code></td>
+<td>显式建 DeepSeek 模型；<code>init_chat_model</code> 底层就是它</td>
+</tr>
+<tr>
+<td><code>ChatOpenAI</code></td>
+<td><code>openai</code></td>
+<td><code>model=&#39;gpt-3.5-turbo&#39;</code>、<code>temperature=None</code>、<code>max_completion_tokens=None</code>、<code>timeout=None</code></td>
+<td>OpenAI 系；新接口用 <code>max_completion_tokens</code>，不是 <code>max_tokens</code></td>
+</tr>
+<tr>
+<td><code>invoke</code></td>
+<td><code>language_models</code></td>
+<td><code>input</code>、<code>config=None</code>、<code>stop=None</code></td>
+<td>传消息列表或字符串，返回 <code>AIMessage</code></td>
+</tr>
+<tr>
+<td><code>stream</code></td>
+<td><code>language_models</code></td>
+<td><code>input</code>、<code>config=None</code>、<code>stop=None</code></td>
+<td>逐块返回 <code>AIMessageChunk</code>，适合打字机输出</td>
+</tr>
+<tr>
+<td><code>batch</code></td>
+<td><code>language_models</code></td>
+<td><code>inputs</code>、<code>config=None</code>、<code>return_exceptions=False</code></td>
+<td>一批输入一次跑，内部并发</td>
+</tr>
+<tr>
+<td><code>bind_tools</code></td>
+<td><code>language_models</code></td>
+<td><code>tools</code>、<code>tool_choice=None</code></td>
+<td>把工具 schema 绑给模型；<strong>只让模型吐出 <code>tool_calls</code>，不负责执行</strong></td>
+</tr>
+<tr>
+<td><code>with_structured_output</code></td>
+<td><code>language_models</code></td>
+<td><code>schema</code>、<code>include_raw=False</code></td>
+<td>让模型直接按 Pydantic 模型 / dict 结构返回，别和 <code>bind_tools</code> 混用</td>
+</tr>
+<tr>
+<td><code>bind</code></td>
+<td><code>language_models</code></td>
+<td><code>**kwargs</code></td>
+<td>预绑参数（如 <code>stop</code>、<code>temperature</code>）返回新模型，不改原对象</td>
+</tr>
+</tbody></table></div>
+<h3>提示模板</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>PromptTemplate.from_template</code></td>
+<td><code>prompts</code></td>
+<td><code>template</code>、<code>template_format=&#39;f-string&#39;</code>、<code>partial_variables=None</code></td>
+<td>最常用入口，<code>{var}</code> 占位</td>
+</tr>
+<tr>
+<td><code>PromptTemplate</code></td>
+<td><code>prompts</code></td>
+<td><code>template</code>、<code>input_variables</code>、<code>template_format=&#39;f-string&#39;</code>、<code>partial_variables={}</code></td>
+<td>直接构造时 <code>input_variables</code> 要自己给全</td>
+</tr>
+<tr>
+<td><code>ChatPromptTemplate.from_messages</code></td>
+<td><code>prompts</code></td>
+<td><code>messages</code>、<code>template_format=&#39;f-string&#39;</code></td>
+<td><code>messages</code> 里放 <code>(role, template)</code> 元组或消息模板</td>
+</tr>
+<tr>
+<td><code>ChatPromptTemplate.from_template</code></td>
+<td><code>prompts</code></td>
+<td><code>template</code>、<code>template_format=&#39;f-string&#39;</code></td>
+<td>只写一条 human 消息的简写</td>
+</tr>
+<tr>
+<td><code>MessagesPlaceholder</code></td>
+<td><code>prompts</code></td>
+<td><code>variable_name</code>、<code>optional=False</code>、<code>n_messages=None</code></td>
+<td>在固定提示里插一段历史消息列表</td>
+</tr>
+<tr>
+<td><code>HumanMessagePromptTemplate.from_template</code></td>
+<td><code>prompts</code></td>
+<td><code>template</code>、<code>template_format=&#39;f-string&#39;</code></td>
+<td>需要把 <code>{question}</code> 当变量时必须用它，直接 <code>HumanMessage(content=&quot;{question}&quot;)</code> 会被当成字面量</td>
+</tr>
+<tr>
+<td><code>partial</code></td>
+<td><code>prompts</code></td>
+<td><code>**kwargs</code></td>
+<td>预填一部分变量，返回新模板；可传常量或零参函数</td>
+</tr>
+<tr>
+<td><code>format</code> / <code>format_messages</code></td>
+<td><code>prompts</code></td>
+<td><code>**kwargs</code></td>
+<td>前者出字符串，<code>ChatPromptTemplate</code> 用后者出消息列表</td>
+</tr>
+<tr>
+<td><code>invoke</code></td>
+<td><code>prompts</code></td>
+<td><code>input</code>（dict）</td>
+<td><code>PromptTemplate</code> 返回字符串值，<code>ChatPromptTemplate</code> 返回 <code>ChatPromptValue</code></td>
+</tr>
+<tr>
+<td><code>ChatPromptValue.to_messages</code> / <code>to_string</code></td>
+<td><code>prompts</code></td>
+<td>—</td>
+<td><code>invoke</code> 结果的两种取法，别把 <code>ChatPromptValue</code> 直接当 list 用</td>
+</tr>
+<tr>
+<td><code>FewShotPromptTemplate</code></td>
+<td><code>prompts</code></td>
+<td><code>examples=None</code>、<code>example_prompt</code>、<code>suffix</code>、<code>prefix=&#39;&#39;</code>、<code>example_separator=&#39;\n\n&#39;</code>、<code>input_variables</code>、<code>example_selector=None</code></td>
+<td>文本少样本</td>
+</tr>
+<tr>
+<td><code>FewShotChatMessagePromptTemplate</code></td>
+<td><code>prompts</code></td>
+<td><code>examples=None</code>、<code>example_prompt</code>、<code>example_selector=None</code></td>
+<td>消息少样本，塞进 <code>ChatPromptTemplate</code> 用</td>
+</tr>
+<tr>
+<td><code>load_prompt</code></td>
+<td><code>prompts</code></td>
+<td><code>path</code>、<code>encoding=None</code>、<code>allow_dangerous_paths=False</code></td>
+<td>从 JSON / YAML 文件读模板</td>
+</tr>
+</tbody></table></div>
+<h3>输出解析器</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>StrOutputParser</code></td>
+<td><code>output_parsers</code></td>
+<td>—</td>
+<td>取 <code>AIMessage.content</code>，组链尾部几乎都挂它</td>
+</tr>
+<tr>
+<td><code>JsonOutputParser</code></td>
+<td><code>output_parsers</code></td>
+<td><code>diff=False</code>、<code>pydantic_object=None</code></td>
+<td>解析 JSON，<code>pydantic_object</code> 一给就顺带校验</td>
+</tr>
+<tr>
+<td><code>PydanticOutputParser</code></td>
+<td><code>output_parsers</code></td>
+<td><code>pydantic_object</code></td>
+<td>按 Pydantic 模型解析；<code>get_format_instructions()</code> 塞进提示</td>
+</tr>
+<tr>
+<td><code>CommaSeparatedListOutputParser</code></td>
+<td><code>output_parsers</code></td>
+<td>—</td>
+<td>逗号分隔转 list</td>
+</tr>
+<tr>
+<td><code>XMLOutputParser</code></td>
+<td><code>output_parsers</code></td>
+<td>—</td>
+<td>解析 XML 输出</td>
+</tr>
+<tr>
+<td><code>parse</code> / <code>get_format_instructions</code></td>
+<td><code>output_parsers</code></td>
+<td><code>text</code> / —</td>
+<td>解析器也是 Runnable，能 <code>invoke</code>；<code>parse</code> 是底层同步入口</td>
+</tr>
+</tbody></table></div>
+<h3>LCEL / Runnable</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>|</code>（管道）</td>
+<td><code>runnables</code></td>
+<td>—</td>
+<td><code>a | b | c</code> 组 <code>RunnableSequence</code>；右边写 dict 会自动包成 <code>RunnableParallel</code></td>
+</tr>
+<tr>
+<td><code>invoke</code></td>
+<td><code>runnables</code></td>
+<td><code>input</code>、<code>config=None</code></td>
+<td>跑一次</td>
+</tr>
+<tr>
+<td><code>batch</code></td>
+<td><code>runnables</code></td>
+<td><code>inputs</code>、<code>config=None</code>、<code>return_exceptions=False</code></td>
+<td>一批，<code>return_exceptions=True</code> 时失败项以异常对象返回</td>
+</tr>
+<tr>
+<td><code>stream</code> / <code>astream</code></td>
+<td><code>runnables</code></td>
+<td><code>input</code>、<code>config=None</code></td>
+<td>流式；只有链里每段都支持才真流式</td>
+</tr>
+<tr>
+<td><code>batch_as_completed</code></td>
+<td><code>runnables</code></td>
+<td><code>inputs</code>、<code>config=None</code>、<code>return_exceptions=False</code></td>
+<td>产 <code>(下标, 结果)</code>，谁先好谁先出</td>
+</tr>
+<tr>
+<td><code>map</code></td>
+<td><code>runnables</code></td>
+<td>—</td>
+<td>把单输入 Runnable 变成「列表进、列表出」</td>
+</tr>
+<tr>
+<td><code>RunnableLambda</code></td>
+<td><code>runnables</code></td>
+<td><code>func</code>、<code>afunc=None</code>、<code>name=None</code></td>
+<td>把普通函数接进链里</td>
+</tr>
+<tr>
+<td><code>RunnablePassthrough</code></td>
+<td><code>runnables</code></td>
+<td>—</td>
+<td>原样透传输入，常配 <code>.assign</code></td>
+</tr>
+<tr>
+<td><code>RunnablePassthrough.assign</code></td>
+<td><code>runnables</code></td>
+<td><code>**kwargs</code></td>
+<td>在 dict 上补字段，键值可给 Runnable 或函数，返回 <code>RunnableAssign</code></td>
+</tr>
+<tr>
+<td><code>RunnableParallel</code></td>
+<td><code>runnables</code></td>
+<td><code>steps__=None</code>、<code>name=None</code></td>
+<td>同一份输入并行跑多路，输出合并成 dict</td>
+</tr>
+<tr>
+<td><code>RunnableBranch</code></td>
+<td><code>runnables</code></td>
+<td><code>*branches</code></td>
+<td>每个参数是 <code>(条件, Runnable)</code>，<strong>最后一个不带条件</strong>，当默认分支</td>
+</tr>
+<tr>
+<td><code>with_retry</code></td>
+<td><code>runnables</code></td>
+<td><code>retry_if_exception_type=(Exception,)</code>、<code>wait_exponential_jitter=True</code>、<code>stop_after_attempt=3</code></td>
+<td>失败重试，默认指数退避加抖动</td>
+</tr>
+<tr>
+<td><code>with_fallbacks</code></td>
+<td><code>runnables</code></td>
+<td><code>fallbacks</code>、<code>exceptions_to_handle=(Exception,)</code>、<code>exception_key=None</code></td>
+<td>主链失败就换备用链</td>
+</tr>
+<tr>
+<td><code>with_config</code> / <code>with_types</code></td>
+<td><code>runnables</code></td>
+<td><code>config=None, **kwargs</code> / <code>input_type=None, output_type=None</code></td>
+<td>预绑配置 / 标注类型</td>
+</tr>
+<tr>
+<td><code>with_listeners</code> / <code>with_alisteners</code></td>
+<td><code>runnables</code></td>
+<td><code>on_start=None</code>、<code>on_end=None</code>、<code>on_error=None</code></td>
+<td>生命周期钩子，轻量埋点用</td>
+</tr>
+<tr>
+<td><code>RunnableConfig</code></td>
+<td><code>runnables</code></td>
+<td><code>tags</code>、<code>metadata</code>、<code>callbacks</code>、<code>run_name</code>、<code>max_concurrency</code>、<code>recursion_limit</code>、<code>configurable</code></td>
+<td><code>invoke(..., config={...})</code> 传的就是它</td>
+</tr>
+</tbody></table></div>
+<p><code>RunnableParallel</code> 里每一路都会各自拿到同一份输入；RAG 要「同时交答案和来源」就靠它，两路都从 <code>question</code> 出发。</p>
+<h3>工具</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>tool</code></td>
+<td><code>tools</code></td>
+<td><code>name_or_callable=None</code>、<code>description=None</code>、<code>return_direct=False</code>、<code>args_schema=None</code>、<code>infer_schema=True</code>、<code>response_format=&#39;content&#39;</code>、<code>parse_docstring=False</code></td>
+<td>装饰器，三种写法：<code>@tool</code>、<code>@tool(&quot;名字&quot;)</code>、<code>@tool(description=...)</code></td>
+</tr>
+<tr>
+<td><code>name</code> / <code>description</code> / <code>args_schema</code></td>
+<td><code>tools</code></td>
+<td>—</td>
+<td>工具属性；<code>description</code> 不写就取函数 docstring</td>
+</tr>
+<tr>
+<td><code>args</code></td>
+<td><code>tools</code></td>
+<td>—</td>
+<td>属性，参数名到字段的映射，<code>list(add.args.keys())</code> 常用来看 schema</td>
+</tr>
+<tr>
+<td><code>invoke</code></td>
+<td><code>tools</code></td>
+<td><code>input</code>（str / dict / <code>ToolCall</code>）、<code>config=None</code></td>
+<td>手工执行工具，传 <code>tool_call[&quot;args&quot;]</code> 即可</td>
+</tr>
+<tr>
+<td><code>StructuredTool.from_function</code></td>
+<td><code>tools</code></td>
+<td><code>func=None</code>、<code>coroutine=None</code>、<code>name=None</code>、<code>description=None</code>、<code>args_schema=None</code>、<code>infer_schema=True</code>、<code>response_format=&#39;content&#39;</code>、<code>parse_docstring=False</code>、<code>error_on_invalid_docstring=False</code></td>
+<td>从函数建工具，要精细控制 schema 时用它</td>
+</tr>
+<tr>
+<td><code>parse_docstring</code> / <code>error_on_invalid_docstring</code></td>
+<td><code>tools</code></td>
+<td><code>parse_docstring=False</code>、<code>error_on_invalid_docstring=True</code>（<code>@tool</code>；<code>StructuredTool.from_function</code> 那侧默认 <code>False</code>）</td>
+<td>见下面「docstring 怎么进 schema」</td>
+</tr>
+<tr>
+<td><code>render_text_description</code></td>
+<td><code>tools</code></td>
+<td><code>tools</code>（<code>list[BaseTool]</code>）</td>
+<td>渲染成 <code>名字(签名) -&gt; 返回类型 - 摘要</code> 的多行文本，<strong>只带摘要</strong></td>
+</tr>
+<tr>
+<td><code>render_text_description_and_args</code></td>
+<td><code>tools</code></td>
+<td><code>tools</code></td>
+<td>同上，每行末尾再拼 <code>args: {...}</code></td>
+</tr>
+<tr>
+<td><code>convert_to_openai_tool</code></td>
+<td><code>function_calling</code></td>
+<td><code>tool</code>、<code>strict=None</code></td>
+<td>导出函数调用协议 schema（<code>{&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {...}}</code>），<code>bind_tools</code> 底层就是它</td>
+</tr>
+<tr>
+<td><code>ToolException</code></td>
+<td><code>tools</code></td>
+<td>—</td>
+<td>工具内抛这个可交给 <code>handle_tool_error</code> 处理</td>
+</tr>
+</tbody></table></div>
+<p>一次工具调用闭环：<code>bind_tools</code> → 模型返回 <code>AIMessage.tool_calls</code> → 按 <code>name</code> 查表执行 → 把结果包成 <code>ToolMessage(content=..., tool_call_id=那个 id)</code> 追加回消息 → 再调模型。</p>
+<h3>docstring 怎么进 schema</h3>
+<p>说明文字优先取 <code>description=</code>，没给才取函数的 docstring（<code>__doc__</code> 去掉公共缩进和首尾空行）。名字同理，<code>@tool(&quot;score&quot;)</code> 覆盖函数名，否则用 <code>__name__</code>。所以 docstring 有两种读法：</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>写法</th>
+<th><code>description</code></th>
+<th>参数字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>默认 <code>parse_docstring=False</code></td>
+<td><strong>整段</strong> docstring，<code>Args:</code> 段原样留在里面</td>
+<td>只来自类型注解 / <code>Annotated</code>，<code>Args:</code> 那几句白写</td>
+</tr>
+<tr>
+<td><code>parse_docstring=True</code>（只认 <strong>Google 风格</strong>）</td>
+<td>摘要段，<code>Args:</code> 段被摘掉</td>
+<td>来自 <code>Args:</code> 段每条，落进 <code>args_schema</code></td>
+</tr>
+</tbody></table></div>
+<p>模型收到的就是这份：<code>bind_tools</code> 内部走 <code>convert_to_openai_tool</code>，<code>function.description</code> 和 <code>parameters.properties.&lt;参数&gt;.description</code> 直接来自上面两处。<code>render_text_description</code> 只是自己拼提示词用的多行文本，<strong>只有摘要和签名</strong>，要带参数说明得用 <code>render_text_description_and_args</code>。</p>
+<h3>Document 与加载</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Document</code></td>
+<td><code>documents</code></td>
+<td><code>page_content</code>、<code>id=None</code>、<code>metadata={}</code>、<code>type=&#39;Document&#39;</code></td>
+<td>检索的基本单位；<code>page_content</code> 是正文，<code>metadata</code> 放来源、页码</td>
+</tr>
+<tr>
+<td><code>BaseLoader</code></td>
+<td><code>document_loaders</code></td>
+<td>—</td>
+<td>自定义加载器继承它；提供 <code>load</code> / <code>lazy_load</code> / <code>load_and_split</code></td>
+</tr>
+<tr>
+<td><code>load</code> / <code>lazy_load</code></td>
+<td><code>document_loaders</code></td>
+<td>—</td>
+<td>一次全加载 / 惰性产 <code>Document</code></td>
+</tr>
+<tr>
+<td><code>load_and_split</code></td>
+<td><code>document_loaders</code></td>
+<td><code>text_splitter=None</code></td>
+<td>读进来顺手切块</td>
+</tr>
+<tr>
+<td><code>Blob</code></td>
+<td><code>document_loaders</code></td>
+<td>—</td>
+<td>原始字节 + 元信息，加载器的底层载体</td>
+</tr>
+<tr>
+<td><code>TextLoader</code> / <code>PyPDFLoader</code> / <code>DirectoryLoader</code> / <code>WebBaseLoader</code></td>
+<td><code>langchain_community.document_loaders</code></td>
+<td>—</td>
+<td><strong>需另装</strong> <code>langchain-community</code>，本机未核对签名</td>
+</tr>
+</tbody></table></div>
+<h3>文本切分</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TextSplitter</code></td>
+<td><code>splitters</code></td>
+<td><code>chunk_size=4000</code>、<code>chunk_overlap=200</code>、<code>length_function=len</code>、<code>keep_separator=False</code>、<code>add_start_index=False</code>、<code>strip_whitespace=True</code></td>
+<td>所有切分器的基类，这两个默认值比直觉大得多，务必自己写</td>
+</tr>
+<tr>
+<td><code>RecursiveCharacterTextSplitter</code></td>
+<td><code>splitters</code></td>
+<td><code>separators=None</code>、<code>keep_separator=True</code>、<code>is_separator_regex=False</code></td>
+<td>按 <code>[&quot;\n\n&quot;, &quot;\n&quot;, &quot; &quot;, &quot;&quot;]</code> 递归降级，最常用；注意它把 <code>keep_separator</code> 改成 <code>True</code></td>
+</tr>
+<tr>
+<td><code>CharacterTextSplitter</code></td>
+<td><code>splitters</code></td>
+<td><code>separator=&#39;\n\n&#39;</code>、<code>is_separator_regex=False</code></td>
+<td>只按一个分隔符切，找不到分隔符时容易切不动</td>
+</tr>
+<tr>
+<td><code>split_text</code></td>
+<td><code>splitters</code></td>
+<td><code>text</code></td>
+<td>切纯字符串，返回 <code>list[str]</code></td>
+</tr>
+<tr>
+<td><code>split_documents</code></td>
+<td><code>splitters</code></td>
+<td><code>documents</code></td>
+<td>切 <code>Document</code> 并<strong>保留 metadata</strong>，RAG 走这条</td>
+</tr>
+<tr>
+<td><code>create_documents</code></td>
+<td><code>splitters</code></td>
+<td><code>texts</code>、<code>metadatas=None</code></td>
+<td>从字符串列表直接建切好的 <code>Document</code></td>
+</tr>
+<tr>
+<td><code>RecursiveCharacterTextSplitter.from_language</code></td>
+<td><code>splitters</code></td>
+<td><code>language</code>、<code>**kwargs</code></td>
+<td>按语言选分隔符，配 <code>Language</code> 枚举</td>
+</tr>
+<tr>
+<td><code>TokenTextSplitter</code></td>
+<td><code>splitters</code></td>
+<td><code>chunk_size</code>、<code>chunk_overlap</code></td>
+<td>按 token 切，配 embedding 的 token 上限用</td>
+</tr>
+<tr>
+<td><code>MarkdownHeaderTextSplitter</code></td>
+<td><code>splitters</code></td>
+<td><code>headers_to_split_on</code></td>
+<td>按标题层级切，顺带把标题写进 metadata</td>
+</tr>
+<tr>
+<td><code>RecursiveJsonSplitter</code></td>
+<td><code>splitters</code></td>
+<td><code>max_chunk_size=2000</code></td>
+<td>切 JSON，尽量保持结构完整</td>
+</tr>
+</tbody></table></div>
+<h3>Embedding</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Embeddings</code></td>
+<td><code>embeddings</code></td>
+<td>—</td>
+<td>接口：实现 <code>embed_query(text)</code> 和 <code>embed_documents(texts)</code> 即可</td>
+</tr>
+<tr>
+<td><code>embed_query</code></td>
+<td><code>embeddings</code></td>
+<td><code>text</code></td>
+<td>单条查询向量，返回 <code>list[float]</code></td>
+</tr>
+<tr>
+<td><code>embed_documents</code></td>
+<td><code>embeddings</code></td>
+<td><code>texts</code></td>
+<td>批量文档向量，返回 <code>list[list[float]]</code></td>
+</tr>
+<tr>
+<td><code>DeterministicFakeEmbedding</code></td>
+<td><code>embeddings</code></td>
+<td><code>size</code></td>
+<td>离线测试替身，同样文本永远同向量；只用来跑通流程</td>
+</tr>
+<tr>
+<td><code>HuggingFaceEmbeddings</code></td>
+<td><code>hf</code></td>
+<td><code>model=&#39;sentence-transformers/all-mpnet-base-v2&#39;</code>、<code>cache_folder=None</code>、<code>model_kwargs={}</code>、<code>encode_kwargs={}</code>、<code>query_encode_kwargs={}</code>、<code>multi_process=False</code>、<code>show_progress=False</code></td>
+<td>本地跑 sentence-transformers，中文选 <code>BAAI/bge-small-zh-v1.5</code></td>
+</tr>
+<tr>
+<td><code>OpenAIEmbeddings</code></td>
+<td><code>openai</code></td>
+<td><code>model=&#39;text-embedding-ada-002&#39;</code>、<code>dimensions=None</code>、<code>chunk_size=1000</code>、<code>max_retries=2</code></td>
+<td>走 API 的 embedding</td>
+</tr>
+</tbody></table></div>
+<h3>向量库</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>InMemoryVectorStore</code></td>
+<td><code>vectorstores</code></td>
+<td><code>embedding</code></td>
+<td>内存向量库，练习 / 测试够用</td>
+</tr>
+<tr>
+<td><code>from_documents</code></td>
+<td><code>vectorstores</code></td>
+<td><code>documents</code>、<code>embedding</code>、<code>**kwargs</code></td>
+<td>文档列表 → 建库并写入，返回 store</td>
+</tr>
+<tr>
+<td><code>from_texts</code></td>
+<td><code>vectorstores</code></td>
+<td><code>texts</code>、<code>embedding</code>、<code>metadatas=None</code></td>
+<td>纯文本版，省得先包 <code>Document</code></td>
+</tr>
+<tr>
+<td><code>add_documents</code></td>
+<td><code>vectorstores</code></td>
+<td><code>documents</code>、<code>ids=None</code></td>
+<td>追加文档，返回写入的 id 列表</td>
+</tr>
+<tr>
+<td><code>add_texts</code></td>
+<td><code>vectorstores</code></td>
+<td><code>texts</code>、<code>metadatas=None</code>、<code>ids=None</code></td>
+<td>追加纯文本</td>
+</tr>
+<tr>
+<td><code>similarity_search</code></td>
+<td><code>vectorstores</code></td>
+<td><code>query</code>、<code>k=4</code></td>
+<td>相似度检索，返回 <code>list[Document]</code>；<strong>默认 <code>k</code> 是 4</strong></td>
+</tr>
+<tr>
+<td><code>similarity_search_with_score</code></td>
+<td><code>vectorstores</code></td>
+<td><code>query</code>、<code>k=4</code></td>
+<td>返回 <code>list[(Document, score)]</code>，score 的含义随实现变</td>
+</tr>
+<tr>
+<td><code>similarity_search_with_relevance_scores</code></td>
+<td><code>vectorstores</code></td>
+<td><code>query</code>、<code>k=4</code>、<code>score_threshold=None</code></td>
+<td>归一到 <code>[0,1]</code> 的相关性分，能按阈值过滤</td>
+</tr>
+<tr>
+<td><code>max_marginal_relevance_search</code></td>
+<td><code>vectorstores</code></td>
+<td><code>query</code>、<code>k=4</code>、<code>fetch_k=20</code>、<code>lambda_mult=0.5</code></td>
+<td>MMR，牺牲一点相关换多样性</td>
+</tr>
+<tr>
+<td><code>as_retriever</code></td>
+<td><code>vectorstores</code></td>
+<td><code>search_type=&#39;similarity&#39;</code>、<code>search_kwargs={}</code></td>
+<td>转成 <code>VectorStoreRetriever</code>，好接进链里</td>
+</tr>
+<tr>
+<td><code>delete</code></td>
+<td><code>vectorstores</code></td>
+<td><code>ids=None</code></td>
+<td>按 id 删</td>
+</tr>
+<tr>
+<td><code>Chroma</code> / <code>FAISS</code> / <code>PGVector</code></td>
+<td><code>langchain_community.vectorstores</code> 等</td>
+<td>—</td>
+<td><strong>需另装</strong> 对应集成包，本机未核对签名</td>
+</tr>
+</tbody></table></div>
+<h3>Retriever 与 RAG</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>BaseRetriever</code></td>
+<td><code>retrievers</code></td>
+<td>—</td>
+<td>自定义检索器继承它；实现 <code>_get_relevant_documents</code></td>
+</tr>
+<tr>
+<td><code>invoke</code></td>
+<td><code>retrievers</code></td>
+<td><code>query</code>、<code>config=None</code></td>
+<td>检索入口，返回 <code>list[Document]</code>，能直接接进 LCEL</td>
+</tr>
+<tr>
+<td><code>search_type</code></td>
+<td><code>vectorstores</code></td>
+<td><code>&#39;similarity&#39;</code> / <code>&#39;mmr&#39;</code> / <code>&#39;similarity_score_threshold&#39;</code></td>
+<td><code>as_retriever</code> 的检索策略；阈值模式要在 <code>search_kwargs</code> 里给 <code>score_threshold</code></td>
+</tr>
+<tr>
+<td><code>RunnablePassthrough</code> + <code>RunnableParallel</code></td>
+<td><code>runnables</code></td>
+<td>—</td>
+<td>RAG 组链的标准件：一路检索拼上下文出答案，一路抽 <code>metadata[&quot;source&quot;]</code></td>
+</tr>
+<tr>
+<td><code>format_docs</code></td>
+<td>—</td>
+<td><code>docs</code></td>
+<td>自己写的 <code>&quot;\n\n&quot;.join(d.page_content for d in docs)</code>，提示里当 <code>{context}</code></td>
+</tr>
+</tbody></table></div>
+<p>典型组链：<code>retriever | format_docs</code> 拿到上下文，配 <code>RunnablePassthrough</code> 保住原问题，喂进带 <code>{context}</code> / <code>{question}</code> 的 <code>ChatPromptTemplate</code>，再 <code>| model | StrOutputParser()</code>。</p>
+<h3>会话历史</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>InMemoryChatMessageHistory</code></td>
+<td><code>chat_history</code></td>
+<td><code>messages=[]</code></td>
+<td>内存历史，进程结束就没了</td>
+</tr>
+<tr>
+<td><code>BaseChatMessageHistory</code></td>
+<td><code>chat_history</code></td>
+<td>—</td>
+<td>接口：<code>add_message</code> / <code>add_messages</code> / <code>clear</code> / <code>messages</code></td>
+</tr>
+<tr>
+<td><code>RunnableWithMessageHistory</code></td>
+<td><code>runnables.history</code></td>
+<td><code>runnable</code>、<code>get_session_history</code>、<code>input_messages_key=None</code>、<code>output_messages_key=None</code>、<code>history_messages_key=None</code>、<code>history_factory_config=None</code></td>
+<td>自动读写历史；链的输入要带 <code>session_id</code></td>
+</tr>
+</tbody></table></div>
+<h3>Agent</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>create_agent</code></td>
+<td><code>agents</code></td>
+<td><code>model</code>、<code>tools=None</code>、<code>system_prompt=None</code>、<code>middleware=()</code>、<code>response_format=None</code>、<code>state_schema=None</code>、<code>checkpointer=None</code>、<code>store=None</code>、<code>debug=False</code>、<code>name=None</code></td>
+<td>预置好的工具调用 Agent，返回编译后的图，<code>invoke({&quot;messages&quot;: [...]})</code>；挂中间件就传 <code>middleware=[...]</code></td>
+</tr>
+<tr>
+<td>手写闭环</td>
+<td>—</td>
+<td>—</td>
+<td>「模型 → 有 <code>tool_calls</code> 就执行 → 回 <code>ToolMessage</code> → 再模型」，加 <code>max_steps</code> 兜底，见 <code>08_agents</code></td>
+</tr>
+</tbody></table></div>
+<h3>Middleware（Agent 中间件）</h3>
+<p><code>create_agent</code> 在模型循环外包一层钩子。<strong>一次 <code>invoke</code> ≠ 一次模型调用</strong>：有工具往返时，<code>before_model</code> / <code>after_model</code> / <code>wrap_model_call</code> 会按模型调用次数触发。全部从 <code>langchain.agents.middleware</code> 导入。</p>
+<h3>核心类型与钩子</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>AgentState</code></td>
+<td><code>middleware</code></td>
+<td><code>messages</code>、<code>jump_to</code>、<code>structured_response</code></td>
+<td>默认 state；自定义字段要继承它再挂到 <code>state_schema</code></td>
+</tr>
+<tr>
+<td><code>AgentMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>state_schema=AgentState</code>、<code>tools=None</code></td>
+<td>类式中间件基类；重写 <code>before_model</code> / <code>after_model</code> / <code>wrap_model_call</code> / <code>wrap_tool_call</code>（及 <code>*_agent</code>、异步 <code>a*</code>）</td>
+</tr>
+<tr>
+<td><code>ModelRequest</code></td>
+<td><code>middleware</code></td>
+<td><code>model</code>、<code>messages</code>、<code>system_message=None</code>、<code>tools</code>、<code>state</code>、<code>runtime</code>、<code>model_settings={}</code></td>
+<td>进模型前的完整请求；<code>messages</code> <strong>不含</strong> system，system 在 <code>system_message</code></td>
+</tr>
+<tr>
+<td><code>ModelRequest.override</code></td>
+<td><code>middleware</code></td>
+<td><code>**overrides</code>（如 <code>system_prompt=...</code>）</td>
+<td>返回改写后的新请求，原对象不动</td>
+</tr>
+<tr>
+<td><code>ModelResponse</code></td>
+<td><code>middleware</code></td>
+<td><code>result</code>、<code>structured_response</code></td>
+<td><code>wrap_model_call</code> 的 <code>handler</code> 返回值</td>
+</tr>
+<tr>
+<td><code>ToolCallRequest</code></td>
+<td><code>middleware</code></td>
+<td><code>tool_call</code>、<code>tool</code>、<code>state</code>、<code>runtime</code></td>
+<td>工具执行前的请求；兜底时 <code>tool_call[&quot;id&quot;]</code> 用来造 <code>ToolMessage</code></td>
+</tr>
+<tr>
+<td><code>@before_model</code> / <code>@after_model</code></td>
+<td><code>middleware</code></td>
+<td><code>state_schema=None</code>、<code>tools=None</code>、<code>can_jump_to=None</code>、<code>name=None</code></td>
+<td>模型调用前 / 后；签名 <code>(state, runtime) -&gt; dict | None</code></td>
+</tr>
+<tr>
+<td><code>@before_agent</code> / <code>@after_agent</code></td>
+<td><code>middleware</code></td>
+<td>同上</td>
+<td>整次 <code>invoke</code> 进 / 出各一次，不随工具往返重复</td>
+</tr>
+<tr>
+<td><code>@wrap_model_call</code></td>
+<td><code>middleware</code></td>
+<td><code>state_schema=None</code>、<code>tools=None</code>、<code>name=None</code></td>
+<td><code>(request, handler) -&gt; ModelResponse | AIMessage</code>；改请求后 <code>handler(request.override(...))</code></td>
+</tr>
+<tr>
+<td><code>@wrap_tool_call</code></td>
+<td><code>middleware</code></td>
+<td>同上</td>
+<td><code>(request, handler) -&gt; ToolMessage | Command</code>；可 try/except 吞异常并回 <code>ToolMessage</code></td>
+</tr>
+<tr>
+<td><code>@dynamic_prompt</code></td>
+<td><code>middleware</code></td>
+<td>—</td>
+<td>便利写法：<code>(request) -&gt; str</code>，结果当 system prompt</td>
+</tr>
+</tbody></table></div>
+<p>自定义字段示例：<code>class MyState(AgentState): calls: NotRequired[int]</code>，再 <code>class M(AgentMiddleware): state_schema = MyState</code>，在钩子里 <code>return {&quot;calls&quot;: ...}</code>。<strong>不写 <code>state_schema</code> 时自定义键会被静默丢弃</strong>，不报错。</p>
+<h3>内置中间件（本阶段常用）</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ModelCallLimitMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>thread_limit=None</code>、<code>run_limit=None</code>、<code>exit_behavior=&#39;end&#39;</code></td>
+<td>卡「调模型」次数；<code>&#39;end&#39;</code> 体面结束，<code>&#39;error&#39;</code> 抛 <code>ModelCallLimitExceededError</code></td>
+</tr>
+<tr>
+<td><code>ToolCallLimitMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>tool_name=None</code>、<code>thread_limit=None</code>、<code>run_limit=None</code>、<code>exit_behavior=&#39;continue&#39;</code></td>
+<td>卡「执行工具」次数；默认 <code>&#39;continue&#39;</code>（换成提示 <code>ToolMessage</code>），也可 <code>&#39;error&#39;</code></td>
+</tr>
+<tr>
+<td><code>ToolRetryMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>max_retries=2</code>、<code>tools=None</code>、<code>on_failure=&#39;continue&#39;</code>、<code>initial_delay=1.0</code>、<code>backoff_factor=2.0</code>、<code>jitter=True</code></td>
+<td>工具失败重试；和自定义 <code>wrap_tool_call</code> 兜底不同：它是固定重试策略</td>
+</tr>
+<tr>
+<td><code>ModelRetryMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>max_retries=2</code>、<code>on_failure=&#39;continue&#39;</code>、<code>initial_delay=1.0</code>、…</td>
+<td>模型调用失败重试</td>
+</tr>
+<tr>
+<td><code>ModelFallbackMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>first_model</code>、<code>*additional_models</code></td>
+<td>主模型挂了换备用模型</td>
+</tr>
+<tr>
+<td><code>SummarizationMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>model</code>、<code>trigger=None</code>、<code>keep=(&#39;messages&#39;, 20)</code>、<code>token_counter=...</code></td>
+<td>历史超阈值时压成摘要；摘要发生在<strong>进模型前</strong>，不永久改写你看到的全部语义</td>
+</tr>
+<tr>
+<td><code>HumanInTheLoopMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>interrupt_on</code>（<code>dict[str, bool | InterruptOnConfig]</code>）、<code>description_prefix=...</code></td>
+<td>指定工具执行前中断；要配 <code>checkpointer</code> + <code>thread_id</code>，用 <code>Command(resume={&quot;decisions&quot;: [...]})</code> 继续</td>
+</tr>
+<tr>
+<td><code>ToolErrorMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>on_error=None</code>、<code>tools=None</code></td>
+<td>内置工具错误处理</td>
+</tr>
+<tr>
+<td><code>ContextEditingMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>edits=None</code>、<code>token_count_method=&#39;approximate&#39;</code></td>
+<td>按规则裁剪 / 编辑上下文</td>
+</tr>
+<tr>
+<td><code>TodoListMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>system_prompt=...</code>、<code>tool_description=...</code></td>
+<td>给 agent 挂 <code>write_todos</code> 规划工具</td>
+</tr>
+<tr>
+<td><code>LLMToolSelectorMiddleware</code></td>
+<td><code>middleware</code></td>
+<td><code>model=None</code>、<code>max_tools=None</code>、<code>always_include=None</code></td>
+<td>先让小模型筛一批相关工具再交给主模型</td>
+</tr>
+</tbody></table></div>
+<p>HITL 最小闭环：<code>create_agent(..., middleware=[HumanInTheLoopMiddleware(interrupt_on={&quot;add&quot;: True})], checkpointer=MemorySaver())</code> → <code>invoke(..., config={&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;t1&quot;}})</code> → 读 <code>response[&quot;__interrupt__&quot;]</code>（<code>action_requests</code> / <code>review_configs</code>）→ <code>invoke(Command(resume={&quot;decisions&quot;: [{&quot;type&quot;: &quot;approve&quot;}]}), config=同一 thread)</code>。<code>decisions</code> 长度必须等于挂起的工具调用数。</p>
+<h3>执行顺序（洋葱）</h3>
+<p><code>middleware=[A, B]</code> 时，<code>wrap_*</code> 是 <strong>A 进 → B 进 → B 出 → A 出</strong>：列表越靠前越在外层。<code>before_*</code> 按列表顺序，<code>after_*</code> 反过来。</p>
+<h3>回调与调试</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>BaseCallbackHandler</code></td>
+<td><code>callbacks</code></td>
+<td>—</td>
+<td>继承它重写需要的钩子，<code>invoke(..., config={&quot;callbacks&quot;: [handler]})</code> 挂上</td>
+</tr>
+<tr>
+<td><code>on_llm_start</code></td>
+<td><code>callbacks</code></td>
+<td><code>serialized</code>、<code>prompts</code>、<code>run_id</code>、<code>parent_run_id=None</code>、<code>tags=None</code>、<code>metadata=None</code></td>
+<td>模型调用开始</td>
+</tr>
+<tr>
+<td><code>on_llm_new_token</code></td>
+<td><code>callbacks</code></td>
+<td><code>token</code>、<code>chunk=None</code>、<code>run_id</code>、<code>parent_run_id=None</code></td>
+<td>流式每个增量，做打字机输出 / 统计</td>
+</tr>
+<tr>
+<td><code>on_llm_end</code></td>
+<td><code>callbacks</code></td>
+<td><code>response</code>、<code>run_id</code>、<code>parent_run_id=None</code></td>
+<td>模型调用结束，<code>response</code> 里有用量</td>
+</tr>
+<tr>
+<td><code>on_tool_start</code></td>
+<td><code>callbacks</code></td>
+<td><code>serialized</code>、<code>input_str</code>、<code>run_id</code>、<code>inputs=None</code>、<code>metadata=None</code></td>
+<td>工具开始，打日志常用</td>
+</tr>
+<tr>
+<td><code>on_chain_start</code> / <code>on_chain_end</code></td>
+<td><code>callbacks</code></td>
+<td><code>serialized</code>、<code>inputs</code> / <code>outputs</code>、<code>run_id</code></td>
+<td>链级生命周期</td>
+</tr>
+<tr>
+<td><code>set_debug</code></td>
+<td><code>langchain_core.globals</code></td>
+<td><code>value</code></td>
+<td>全局开调试打印</td>
+</tr>
+<tr>
+<td><code>set_verbose</code></td>
+<td><code>langchain_core.globals</code></td>
+<td><code>value</code></td>
+<td>全局啰嗦模式</td>
+</tr>
+</tbody></table></div>
+</div></div>
+</section>
+<section class="am-panel" id="panel-C">
+<header class="am-panel-head"><span class="am-panel-id">C</span><h2>使用用例</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>01_messages_model</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 三种消息&#39;, &#39;messages = [\n    SystemMessage(content=&quot;你是简洁的助手。&quot;),\n    HumanMessage(content=&quot;用一句话介绍你自己。&quot;),\n    AIMessage(content=&quot;我是助手。&quot;),\n]\nfor m in messages:\n    print(type(m).__name__, m.content)&#39;), (&#39;2. 假模型一轮对话&#39;, &#39;print(model.invoke([human]).content)&#39;), (&#39;3. 带系统提示的消息列表&#39;, &#39;msgs = [\n    SystemMessage(content=&quot;只回答一个词。&quot;),\n    HumanMessage(content=&quot;天空通常是什么颜色？&quot;),\n]\nprint(model.invoke(msgs).content)&#39;), (&#39;4. 连续两轮（假模型）&#39;, &#39;r1 = model.invoke([HumanMessage(content=&quot;第一问&quot;)])\nprint(r1.content)\nr2 = model.invoke([HumanMessage(content=&quot;第一问&quot;), r1, HumanMessage(content=&quot;第二问&quot;)])\nprint(r2.content)&#39;), (&#39;5. 真假模型二选一&#39;, &#39;def make_chat_model(model: str = &quot;deepseek:deepseek-v4-flash&quot;):\n    provider, _, _ = model.partition(&quot;:&quot;)\n    if provider == &quot;deepseek&quot; and not os.environ.get(&quot;DEEPSEEK_API_KEY&quot;):\n        return FakeListChatModel(responses=[&quot;（离线假回复）&quot;])\n    return init_chat_model(model)\nprint(make_chat_model().invoke([HumanMessage(content=&quot;ping&quot;)]).content)&#39;)]</code></pre>
+<div class="am-md"><h3>02_prompts</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. PromptTemplate 填空&#39;, &#39;prompt = PromptTemplate.from_template(&quot;城市 {city} 的别称是 {nick}。&quot;)\nprint(prompt.format(city=&quot;重庆&quot;, nick=&quot;山城&quot;))&#39;), (&#39;2. ChatPromptTemplate 两条消息&#39;, &#39;prompt = ChatPromptTemplate.from_messages([\n    (&quot;system&quot;, &quot;你是{role}。&quot;),\n    (&quot;human&quot;, &quot;请用一句话解释 {topic}。&quot;),\n])\nresult = prompt.invoke({&quot;role&quot;: &quot;老师&quot;, &quot;topic&quot;: &quot;引力&quot;})\nfor m in result.to_messages():\n    print(type(m).__name__, m.content)&#39;), (&#39;3. partial 预填一部分&#39;, &#39;print(prompt.partial(tone=&quot;正式&quot;).format(product=&quot;水壶&quot;))&#39;), (&#39;4. MessagesPlaceholder 插入历史&#39;, &#39;prompt = ChatPromptTemplate.from_messages([\n    (&quot;system&quot;, &quot;你是助手。&quot;),\n    MessagesPlaceholder(&quot;history&quot;),\n    (&quot;human&quot;, &quot;{question}&quot;),\n])\nmsgs = prompt.invoke({&quot;history&quot;: history, &quot;question&quot;: &quot;还要点什么？&quot;}).to_messages()\nprint(len(msgs))\nprint(msgs[-1].content)&#39;), (&#39;5. 模板接到假模型&#39;, &#39;msgs = prompt.invoke({&quot;name&quot;: &quot;小明&quot;})\nprint(model.invoke(msgs).content)&#39;)]</code></pre>
+<div class="am-md"><h3>03_lcel_chains</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 用 `|` 串三条&#39;, &#39;chain = prompt | model | parser\nprint(chain.invoke({&quot;topic&quot;: &quot;咖啡&quot;}))&#39;), (&#39;2. RunnableLambda&#39;, &#39;print(RunnableLambda(lambda s: s.upper() + &quot;!&quot;).invoke(&quot;hello&quot;))&#39;), (&#39;3. Passthrough.assign 补字段&#39;, &#39;r = RunnablePassthrough.assign(len=lambda x: len(x[&quot;text&quot;]))\nprint(r.invoke({&quot;text&quot;: &quot;abcd&quot;}))&#39;), (&#39;4. batch 一批输入&#39;, &#39;print(chain.batch([{&quot;n&quot;: 1}, {&quot;n&quot;: 2}, {&quot;n&quot;: 3}]))&#39;), (&#39;5. 两段链再拼接&#39;, &#39;print((prep | tail).invoke({&quot;q&quot;: &quot;雨&quot;}))&#39;)]</code></pre>
+<div class="am-md"><h3>04_tools</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 用 @tool 定义并调用&#39;, &#39;@tool\ndef mul(a: int, b: int) -&gt; int:\n    &quot;&quot;&quot;两数相乘。&quot;&quot;&quot;\n    return a * b\nprint(mul.invoke({&quot;a&quot;: 3, &quot;b&quot;: 4}))&#39;), (&#39;2. 看工具的名字、说明、参数&#39;, &#39;print(add.name)\nprint(add.description)\nprint(list(add.args.keys()))&#39;), (&#39;3. 从 tool_calls 跑工具并回 ToolMessage&#39;, &#39;call = ai.tool_calls[0]\nout = add.invoke(call[&quot;args&quot;])\nmsg = ToolMessage(content=str(out), tool_call_id=call[&quot;id&quot;])\nprint(msg.content, msg.tool_call_id)&#39;), (&#39;4. 按名字分发工具&#39;, &#39;tools_by_name = {t.name: t for t in tools}\nprint(tools_by_name[tool_call[&quot;name&quot;]].invoke(tool_call[&quot;args&quot;]))&#39;), (&#39;5. bind_tools + 真模型发起 tool_call&#39;, &#39;name = os.environ.get(&quot;DEEPSEEK_MODEL&quot;, &quot;deepseek-v4-flash&quot;)\nmodel = init_chat_model(f&quot;deepseek:{name}&quot;).bind_tools([add])\nai = model.invoke([HumanMessage(&quot;用工具计算 2+3&quot;)])\nprint(ai.tool_calls)&#39;)]</code></pre>
+<div class="am-md"><h3>05_docs_split</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 构造 Document&#39;, &#39;doc = Document(\n    page_content=&quot;LangChain 用 Document 表示一段文本。&quot;,\n    metadata={&quot;source&quot;: &quot;memo&quot;, &quot;page&quot;: 1},\n)\nprint(doc.page_content)\nprint(doc.metadata)&#39;), (&#39;2. 从文件读成 Document&#39;, &#39;doc = Document(\n    page_content=note_path.read_text(encoding=&quot;utf-8&quot;),\n    metadata={&quot;source&quot;: str(note_path)},\n)\nprint(doc.page_content)\nprint(doc.metadata[&quot;source&quot;])&#39;), (&#39;3. RecursiveCharacterTextSplitter 切纯文本&#39;, &#39;splitter = RecursiveCharacterTextSplitter(chunk_size=40, chunk_overlap=10)\nchunks = splitter.split_text(text)\nprint(len(chunks))\nfor chunk in chunks:\n    print(len(chunk), chunk)&#39;), (&#39;4. split_documents 保留 metadata&#39;, &#39;splitter = RecursiveCharacterTextSplitter(chunk_size=20, chunk_overlap=4)\nfor doc in splitter.split_documents(docs):\n    print(doc.page_content)\n    print(doc.metadata)&#39;), (&#39;5. CharacterTextSplitter 按分隔符切&#39;, &#39;splitter = CharacterTextSplitter(\n    separator=&quot;\\n\\n&quot;, chunk_size=40, chunk_overlap=0\n)\nfor chunk in splitter.split_text(text):\n    print(chunk)&#39;), (&#39;6. create_documents&#39;, &#39;splitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=0)\ndocs = splitter.create_documents(texts, metadatas=metadatas)\nfor doc in docs:\n    print(doc.page_content)\n    print(doc.metadata)&#39;)]</code></pre>
+<div class="am-md"><h3>06_embeddings_store</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. embed_query / embed_documents&#39;, &#39;emb = DeterministicFakeEmbedding(size=16)\nprint(len(emb.embed_query(&quot;hello&quot;)))\ndocs_emb = emb.embed_documents([&quot;alpha&quot;, &quot;beta&quot;])\nprint(len(docs_emb), len(docs_emb[0]))&#39;), (&#39;2. from_documents 写入&#39;, &#39;store = InMemoryVectorStore.from_documents(docs, emb)\nhit = store.similarity_search(&quot;猫&quot;, k=1)[0]\nprint(hit.page_content)\nprint(hit.metadata)&#39;), (&#39;3. similarity_search_with_score&#39;, &#39;for doc, score in store.similarity_search_with_score(&quot;向量检索&quot;, k=2):\n    print(doc.page_content, score)&#39;), (&#39;4. add_documents 追加&#39;, &#39;ids = store.add_documents([\n    Document(page_content=&quot;新写入的 embedding 说明。&quot;, metadata={&quot;source&quot;: &quot;d.txt&quot;}),\n])\nprint(ids)\nprint(store.similarity_search(&quot;embedding&quot;, k=1)[0].page_content)&#39;), (&#39;5. add_texts&#39;, &#39;store = InMemoryVectorStore(embedding=emb)\nids = store.add_texts(\n    [&quot;苹果派&quot;, &quot;向量检索&quot;],\n    metadatas=[{&quot;tag&quot;: &quot;food&quot;}, {&quot;tag&quot;: &quot;rag&quot;}],\n)\nprint(ids)\nhit = store.similarity_search(&quot;检索&quot;, k=1)[0]\nprint(hit.page_content, hit.metadata)&#39;), (&#39;6. as_retriever&#39;, &#39;retriever = store.as_retriever(search_kwargs={&quot;k&quot;: 1})\ndocs = retriever.invoke(&quot;向量&quot;)\nprint(len(docs))\nprint(docs[0].page_content)&#39;)]</code></pre>
+<div class="am-md"><h3>07_rag_chain</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 检索出上下文&#39;, &#39;retriever = store.as_retriever(search_kwargs={&quot;k&quot;: 2})\nhits = retriever.invoke(&quot;猫喜欢吃什么？&quot;)\nprint(len(hits))\nfor doc in hits:\n    print(doc.page_content, doc.metadata[&quot;source&quot;])&#39;), (&#39;2. 把检索结果拼成上下文&#39;, &#39;def format_docs(docs):\n    return &quot;\\n\\n&quot;.join(d.page_content for d in docs)\nprint(format_docs(docs))\nprint(len(docs))&#39;), (&#39;3. 建一个带 `{context}` 的提示&#39;, &#39;prompt = ChatPromptTemplate.from_messages([\n    (&quot;system&quot;, &quot;只根据下面的上下文回答，上下文没提到就说不知道。\\n\\n上下文：\\n{context}&quot;),\n    (&quot;human&quot;, &quot;{question}&quot;),\n])\nfor m in prompt.format_messages(context=&quot;猫喜欢吃鱼。&quot;, question=&quot;猫喜欢吃什么？&quot;):\n    print(m.content)&#39;), (&#39;4. 手动跑一遍 RAG&#39;, &#39;docs = retriever.invoke(question)\ncontext = format_docs(docs)\nmsgs = prompt.format_messages(context=context, question=question)\nprint(model.invoke(msgs).content)&#39;), (&#39;5. 用 LCEL 把链串起来&#39;, &#39;chain = (\n    {&quot;context&quot;: retriever | format_docs, &quot;question&quot;: RunnablePassthrough()}\n    | prompt\n    | model\n    | StrOutputParser()\n)\nprint(chain.invoke(&quot;猫喜欢吃什么？&quot;))&#39;), (&#39;6. 让链同时交出答案和来源&#39;, &#39;chain = RunnableParallel(\n    answer=(\n        {&quot;context&quot;: retriever | format_docs, &quot;question&quot;: RunnablePassthrough()}\n        | prompt | model | StrOutputParser()\n    ),\n    sources=retriever | (lambda ds: [d.metadata[&quot;source&quot;] for d in ds]),\n)\nres = chain.invoke(&quot;猫喜欢吃什么？&quot;)\nprint(res[&quot;answer&quot;])\nprint(res[&quot;sources&quot;])&#39;)]</code></pre>
+<div class="am-md"><h3>08_agents</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 完成一轮闭环，拿到最终答案&#39;, &#39;ai = bound.invoke(messages)\nprint(ai.tool_calls)\nmessages.append(ai)\ncall = ai.tool_calls[0]\nmessages.append(ToolMessage(\n    content=str(tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])),\n    tool_call_id=call[&quot;id&quot;],\n))\nprint(bound.invoke(messages).content)&#39;), (&#39;2. 漏放 `AIMessage` 会怎样&#39;, &#39;messages.append(ToolMessage(\n    content=str(tools_by_name[tool_call[&quot;name&quot;]].invoke(tool_call[&quot;args&quot;])),\n    tool_call_id=tool_call[&quot;id&quot;],\n))\ntry:\n    bound.invoke(messages)\nexcept Exception as e:\n    print(type(e).__name__, str(e))\n    &#39;), (&#39;3. 写成循环，直到模型不再要工具&#39;, &#39;steps = 0\nwhile True:\n    ai = bound.invoke(messages)\n    messages.append(ai)\n    steps += 1\n    if not ai.tool_calls:\n        break\n    for call in ai.tool_calls:\n        messages.append(ToolMessage(\n            content=str(tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])),\n            tool_call_id=call[&quot;id&quot;],\n        ))\nprint(steps)\nprint(messages[-1].content)\n    &#39;), (&#39;4. 给循环装一个上限&#39;, &#39;def run_once(max_steps):\n    msgs = [HumanMessage(question)]\n    for _ in range(max_steps):\n        ai = bound.invoke(msgs)\n        msgs.append(ai)\n        if not ai.tool_calls:\n            return &quot;完成&quot;, ai.content\n        for call in ai.tool_calls:\n            msgs.append(ToolMessage(\n                content=str(tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])),\n                tool_call_id=call[&quot;id&quot;],\n            ))\n    return &quot;超上限&quot;, &quot;达到上限，未完成&quot;\n\nstatus, answer = run_once(max_steps)\nprint(status, answer)&#39;), (&#39;5. 封装成 `run_agent`&#39;, &#39;def run_agent(question: str, max_steps: int = 6) -&gt; str:\n    msgs = [HumanMessage(question)]\n    for _ in range(max_steps):\n        ai = bound.invoke(msgs)\n        msgs.append(ai)\n        if not ai.tool_calls:\n            return ai.content\n        for call in ai.tool_calls:\n            msgs.append(ToolMessage(\n                content=str(tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])),\n                tool_call_id=call[&quot;id&quot;],\n            ))\n    return f&quot;达到上限（{max_steps} 轮）仍未完成&quot;\n\nfor q in questions:\n    print(run_agent(q))&#39;)]</code></pre>
+<div class="am-md"><h3>09_docstring</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. docstring 变成 description&#39;, &#39;@tool\ndef celsius(f: float) -&gt; float:\n    &quot;&quot;&quot;摄氏转华氏。&quot;&quot;&quot;\n    return f * 9 / 5 + 32\nprint(celsius.name)\nprint(celsius.description)\nprint(celsius.description == celsius.func.__doc__.strip())&#39;), (&#39;2. 名字和说明可以被参数覆盖&#39;, &#39;multiply_numbers = tool(&quot;multiply_numbers&quot;, description=&quot;把两个整数相乘。&quot;)(mul)\nprint(multiply_numbers.name)\nprint(multiply_numbers.description)\nprint(mul.__doc__)&#39;), (&#39;3. parse_docstring 把 Args 段拆进 schema&#39;, &#39;unit_price_tool = tool(parse_docstring=True)(unit_price)\nprint(unit_price_tool.description)\nprint(unit_price_tool.args)&#39;), (&#39;4. 不是 Google 风格的 docstring&#39;, &#39;try:\n    tool(&quot;weighted&quot;, description=&quot;算加权分。&quot;, parse_docstring=True)(weighted)\nexcept ValueError as e:\n    print(type(e).__name__, e)\nt = tool(&quot;weighted&quot;, description=&quot;算加权分。&quot;, parse_docstring=True, error_on_invalid_docstring=False)(weighted)\nprint(t.description)\nprint(t.args)&#39;), (&#39;5. Args 里的参数名对不上&#39;, &#39;for flag in (True, False):\n    try:\n        tool(&quot;ratio&quot;, description=&quot;算占比。&quot;, parse_docstring=True, error_on_invalid_docstring=flag)(ratio)\n    except ValueError as e:\n        print(type(e).__name__, e)&#39;), (&#39;6. 说明的两个去处&#39;, &#39;spec = convert_to_openai_tool(discount)\nprint(spec[&quot;function&quot;][&quot;description&quot;])\nprint(spec[&quot;function&quot;][&quot;parameters&quot;][&quot;properties&quot;][&quot;rate&quot;][&quot;description&quot;])\nprint(render_text_description(tools))&#39;), (&#39;7. 真模型按说明选工具&#39;, &#39;from langchain.chat_models import init_chat_model\nname = os.environ.get(&quot;DEEPSEEK_MODEL&quot;, &quot;deepseek-v4-flash&quot;)\nai = init_chat_model(f&quot;deepseek:{name}&quot;).bind_tools(tools).invoke(&quot;6 乘 7 等于多少？&quot;)\nprint(ai.tool_calls)&#39;)]</code></pre>
+<div class="am-md"><h3>10_middleware</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 钩子挂在哪里&#39;, &#39;before_count = after_count = 0\n\n@before_model\ndef before_model_hook(state, runtime):\n    global before_count\n    before_count += 1\n    print(&quot;[before_model]&quot;, len(state[&quot;messages&quot;]))\n    return None\n\n同理写 after_model_hook；两钩子各会打两行，计数 2 / 2。&#39;), (&#39;2. 类式中间件与自定义 state&#39;, &#39;class MyState(AgentState):\n    calls: NotRequired[int] = 0\n\nclass MyMiddleware(AgentMiddleware):\n    state_schema = MyState\n\n    def before_model(self, state, runtime):\n        return {&quot;calls&quot;: state.get(&quot;calls&quot;, 0) + 1}\n\n建 agent 时 middleware=[MyMiddleware()]，最后 print(response[&quot;calls&quot;])。&#39;), (&#39;3. 改写进模型的请求&#39;, &#39;@wrap_model_call\ndef inject(request, handler):\n    print(&quot;字段:&quot;, list(request.__dataclass_fields__))\n    print(&quot;system_message:&quot;, request.system_message)\n    return handler(request.override(system_prompt=&quot;回答结尾补一句「已核对」&quot;))\n\nagent = create_agent(&quot;deepseek:deepseek-chat&quot;, tools=[add], middleware=[inject])\nprint(agent.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]})[&quot;messages&quot;][-1].content)&#39;), (&#39;4. 工具失败时的兜底&#39;, &#39;@wrap_tool_call\ndef catch(request, handler):\n    try:\n        return handler(request)\n    except Exception as e:\n        return ToolMessage(\n            content=f&quot;工具执行失败：{e}&quot;,\n            tool_call_id=request.tool_call[&quot;id&quot;],\n        )\n\n再换成 ToolRetryMiddleware(max_retries=2, initial_delay=0.1)，\n同一个问题各跑一次，对比返回的消息序列。&#39;), (&#39;5. 给 agent 装上限&#39;, &#39;for behavior in (&quot;end&quot;, &quot;error&quot;):\n    a = create_agent(\n        &quot;deepseek:deepseek-chat&quot;,\n        tools=[add],\n        middleware=[ModelCallLimitMiddleware(run_limit=1, exit_behavior=behavior)],\n    )\n    try:\n        r = a.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]})\n        print(behavior, &quot;-&gt;&quot;, r[&quot;messages&quot;][-1].content)\n    except Exception as e:\n        print(behavior, &quot;-&gt;&quot;, type(e).__name__, e)&#39;), (&#39;6. 历史太长自动摘要&#39;, &#39;summary = SummarizationMiddleware(\n    model=&quot;deepseek:deepseek-chat&quot;,\n    trigger=(&quot;messages&quot;, 4),\n    keep=(&quot;messages&quot;, 2),\n)\n\n@wrap_model_call\ndef spy(request, handler):\n    print(&quot;进模型:&quot;, len(request.messages), &quot;| 第一条:&quot;, str(request.messages[0].content)[:40])\n    return handler(request)\n\nagent = create_agent(&quot;deepseek:deepseek-chat&quot;, tools=[add], middleware=[summary, spy])&#39;), (&#39;7. 工具审批&#39;, &#39;agent = create_agent(\n    &quot;deepseek:deepseek-chat&quot;,\n    tools=[add],\n    middleware=[HumanInTheLoopMiddleware(interrupt_on={&quot;add&quot;: True})],\n    checkpointer=MemorySaver(),\n)\ncfg = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;t1&quot;}}\nr1 = agent.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]}, config=cfg)\nprint(r1[&quot;__interrupt__&quot;][0].value)          # action_requests + review_configs\nr2 = agent.invoke(Command(resume={&quot;decisions&quot;: [{&quot;type&quot;: &quot;approve&quot;}]}), config=cfg)\nprint(r2[&quot;messages&quot;][-1].content)&#39;), (&#39;8. 多个中间件的顺序&#39;, &#39;@wrap_model_call(name=&quot;A&quot;)\ndef hook_a(request, handler):\n    print(&quot;A:enter&quot;)\n    resp = handler(request)\n    print(&quot;A:exit&quot;)\n    return resp\n\n@wrap_model_call(name=&quot;B&quot;)\ndef hook_b(request, handler):\n    print(&quot;B:enter&quot;)\n    resp = handler(request)\n    print(&quot;B:exit&quot;)\n    return resp\n\nagent = create_agent(&quot;deepseek:deepseek-chat&quot;, middleware=[hook_a, hook_b])\nagent.invoke({&quot;messages&quot;: [HumanMessage(&quot;直接回答：1+1 等于几？不要用工具&quot;)]})&#39;)]</code></pre></div>
+</section>
+<section class="am-panel" id="panel-D">
+<header class="am-panel-head"><span class="am-panel-id">D</span><h2>常见坑</h2></header>
+<div class="am-panel-body"><div class="am-md"><ul>
+<li><code>bind_tools</code> 只是把 schema 交给模型，<strong>不会执行工具</strong>；执行、回填 <code>ToolMessage</code> 得自己写。漏掉把 <code>AIMessage</code> 追加回历史再追加 <code>ToolMessage</code>，下一轮会报消息顺序错。</li>
+<li><code>parse_docstring=True</code> 只认 <strong>Google 风格</strong>（<code>Args:</code> 段）。NumPy 的 <code>Parameters</code> 段、Sphinx 的 <code>:param:</code>、没有 <code>Args:</code> 段的 docstring 都算无效，直接 <code>ValueError: Found invalid Google-Style docstring.</code>；<code>error_on_invalid_docstring=False</code> 才放行，放行后 <code>description</code> 退回整段原始 docstring，参数一个说明都没有（显式给了 <code>description=</code> 则仍用你给的那句）。</li>
+<li><code>Args:</code> 里写了签名中不存在的参数名，不管 <code>error_on_invalid_docstring</code> 给什么，都会抛 <code>ValueError: Arg &lt;名字&gt; in docstring not found in function signature.</code>——这个开关只管「格式是不是 Google 风格」，管不了名字对不对。</li>
+<li>函数没有 docstring 又没给 <code>description=</code>：默认报 <code>ValueError: Function must have a docstring if description not provided.</code>；<code>parse_docstring=True</code> 时报的是上面那条「invalid Google-Style docstring」。</li>
+<li><code>ToolMessage.tool_call_id</code> 是必填，且必须等于对应 <code>tool_call[&quot;id&quot;]</code>；对不上模型会拒绝当前历史。</li>
+<li><code>init_chat_model</code> 写 <code>&quot;provider:model&quot;</code>，厂商包要装好（本项目用 <code>langchain-deepseek</code>）。没 key 时别硬调，先判 <code>os.environ.get(&quot;DEEPSEEK_API_KEY&quot;)</code>。</li>
+<li><code>ChatPromptTemplate.from_messages</code> 里想用变量就别塞 <code>HumanMessage(content=&quot;{x}&quot;)</code>，那是字面量；要用 <code>(&quot;human&quot;, &quot;{x}&quot;)</code> 或 <code>HumanMessagePromptTemplate.from_template</code>。</li>
+<li><code>prompt.invoke(...)</code> 返回的是 <code>ChatPromptValue</code>，不是 <code>list</code>；要消息列表用 <code>.to_messages()</code>，要字符串用 <code>.to_string()</code>。</li>
+<li><code>PromptTemplate.format</code> 出字符串，<code>ChatPromptTemplate</code> 想直接看消息用 <code>format_messages</code>；两者变量漏一个都会在格式化时报错。</li>
+<li>LCEL 里 <code>|</code> 右边可以直接写 dict（会自动变 <code>RunnableParallel</code>）和普通函数（会自动变 <code>RunnableLambda</code>）；但写函数时入参只有一个，别按多参写。</li>
+<li><code>RunnablePassthrough.assign</code> 只在 dict 输入上补键，输入不是 dict 会失败；<code>RunnableParallel</code> 各路拿到的是同一份输入，不会互相看见对方输出。</li>
+<li><code>RunnableBranch</code> 最后一个参数是默认分支，<strong>不带条件</strong>；忘了它、又没条件命中时直接抛错。</li>
+<li><code>TextSplitter</code> 的 <code>chunk_size=4000</code> / <code>chunk_overlap=200</code> 大得不像练习默认值，切短文本一定要显式写；<code>RecursiveCharacterTextSplitter</code> 把 <code>keep_separator</code> 默认改成了 <code>True</code>，和基类不同。</li>
+<li><code>split_documents</code> 保留 <code>metadata</code>，<code>split_text</code> 只给字符串，没有来源信息；要接向量库就用前者。</li>
+<li><code>InMemoryVectorStore.similarity_search</code> 的 <code>k</code> 默认是 <code>4</code>，不是 1；<code>similarity_search_with_score</code> 的 score 越小通常越相近，但它随实现不同，跨库别硬比。</li>
+<li><code>as_retriever(search_kwargs={&quot;k&quot;: 1})</code> 里 <code>k</code> 写在 <code>search_kwargs</code> 字典内；<code>search_type</code> 换个值就换策略。</li>
+<li><code>FakeListChatModel</code> / <code>DeterministicFakeEmbedding</code> 是测试替身，只用来离线跑通或写单测；正课一律用真模型 + 真 embedding。</li>
+<li><code>langchain</code> 主包只做重导出，报 <code>ImportError</code> 先确认路径：消息 / 提示 / 链基元在 <code>langchain_core.*</code>，切分器在 <code>langchain_text_splitters</code>，厂商模型在 <code>langchain_&lt;provider&gt;</code>。</li>
+<li>本机没装 <code>langchain-community</code>，<code>TextLoader</code> / <code>Chroma</code> 这些用不了；要用得先 <code>pip install langchain-community</code>（或对应集成包），而且签名以那个版本为准。</li>
+<li>middleware 自定义字段必须挂 <code>state_schema</code>（继承 <code>AgentState</code>）；否则 <code>return {&quot;calls&quot;: ...}</code> 会被<strong>静默丢弃</strong>，response 里没有这个键、也不报错。</li>
+<li><code>ModelRequest.messages</code> 不含 system；改系统指令用 <code>request.override(system_prompt=...)</code>，别往 <code>messages</code> 里硬塞。</li>
+<li><code>wrap_*</code> 是洋葱：<code>middleware=[A, B]</code> → A 进 → B 进 → B 出 → A 出；一次 invoke 里模型可能被调多次，这四行会重复。</li>
+<li><code>HumanInTheLoopMiddleware</code> 必须配 <code>checkpointer</code> + <code>thread_id</code>；<code>Command(resume={&quot;decisions&quot;: [...]})</code> 的列表长度要等于挂起的工具调用数，多一个少一个都 <code>ValueError</code>。</li>
+<li><code>ModelCallLimitMiddleware</code> 默认 <code>exit_behavior=&#39;end&#39;</code>，<code>ToolCallLimitMiddleware</code> 默认 <code>&#39;continue&#39;</code>，两者默认不一样；要硬失败都显式写 <code>&#39;error&#39;</code>。</li>
+</ul>
+</div></div>
+</section>
+</div>
+</div>
+</main>
+<footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-07 10:32</footer>
+<textarea id="am-source" hidden readonly aria-hidden="true">---
+title: LangChain API 速查
+
+template: doc
+theme: blueprint
+source: codes/langchain/cheat_api.md
+---
+
+## 速览
+按主题分组的常用 API。签名与默认值对照本机 `langchain 1.4.2` / `langchain-core 1.6.4`（配套 `langchain-text-splitters 1.1.2`、`langchain-deepseek 1.1.1`、`langchain-huggingface 1.2.2`、`langchain-openai 1.6.3`）核对，`=` 后面是默认值，没写默认值的表示必填。阶段练习见 `index.md`。
+
+约定：
+
+- **子模块** 一列用简写（见下表）。`langchain` 主包很薄，真正的东西大多在 `langchain_core`；厂商模型放在 `langchain-&lt;provider&gt;` 里。
+- **Runnable** 指实现了 `invoke` / `batch` / `stream` 的对象。表里凡是标成 Runnable 的，都通吃这三个方法，加 `a` 前缀（`ainvoke` / `astream`）是异步版。
+- 消息、文档这类对象的字段大多有默认值，下表只在有区别时重复。
+- 本机**没装** `langchain-community`，文档加载器 / 第三方向量库那一节标注了「需另装」，签名未核对。
+
+## API 速查
+### 子模块一览
+| 子模块 | 里面有什么 |
+| --- | --- |
+| `langchain` | 主包：`init_chat_model`、`create_agent` |
+| `messages` | 消息类型、`trim_messages` |
+| `language_models` | `BaseChatModel`、假模型 |
+| `prompts` | `PromptTemplate` / `ChatPromptTemplate` / 少样本模板 |
+| `output_parsers` | `StrOutputParser` / `JsonOutputParser` 等 |
+| `runnables` | LCEL 基元：`RunnableLambda` / `RunnablePassthrough` / `RunnableParallel` |
+| `tools` | `@tool`、`BaseTool`、`ToolException` |
+| `documents` | `Document` |
+| `document_loaders` | `BaseLoader` / `Blob`（具体加载器在 community） |
+| `embeddings` | `Embeddings` 接口、`DeterministicFakeEmbedding` |
+| `vectorstores` | `VectorStore`、`InMemoryVectorStore` |
+| `retrievers` | `BaseRetriever` |
+| `callbacks` | `BaseCallbackHandler` |
+| `chat_history` | `BaseChatMessageHistory`、`InMemoryChatMessageHistory` |
+| `splitters` | 文本切分器 |
+| `chat_models` | `init_chat_model` |
+| `agents` | `create_agent` |
+| `middleware` | Agent 中间件：钩子、`wrap_*`、限流、摘要、HITL |
+| `deepseek` / `openai` / `hf` | 厂商模型与 embedding 集成 |
+
+简写对照：`messages` = `langchain_core.messages`，`language_models` = `langchain_core.language_models`，`prompts` = `langchain_core.prompts`，`output_parsers` = `langchain_core.output_parsers`，`runnables` = `langchain_core.runnables`，`tools` = `langchain_core.tools`，`documents` = `langchain_core.documents`，`document_loaders` = `langchain_core.document_loaders`，`embeddings` = `langchain_core.embeddings`，`vectorstores` = `langchain_core.vectorstores`，`retrievers` = `langchain_core.retrievers`，`callbacks` = `langchain_core.callbacks`，`chat_history` = `langchain_core.chat_history`，`splitters` = `langchain_text_splitters`，`chat_models` = `langchain.chat_models`，`agents` = `langchain.agents`，`middleware` = `langchain.agents.middleware`，`deepseek` = `langchain_deepseek`，`openai` = `langchain_openai`，`hf` = `langchain_huggingface`，`runnables.history` = `langchain_core.runnables.history`，`function_calling` = `langchain_core.utils.function_calling`。
+
+### 消息
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `SystemMessage` / `HumanMessage` / `AIMessage` | `messages` | `content=None`、`name=None`、`id=None` | 三种角色消息；`content` 可以是字符串，也可以是内容块列表 |
+| `ToolMessage` | `messages` | `content=None`、`tool_call_id`、`artifact=None`、`status=&#39;success&#39;` | 工具结果，`tool_call_id` **必填**，要和发起调用的 id 对上 |
+| `AIMessage.tool_calls` | `messages` | — | 属性，模型要求调用的工具列表，每项是 `{&quot;name&quot;, &quot;args&quot;, &quot;id&quot;, &quot;type&quot;}` |
+| `AIMessage.invalid_tool_calls` / `usage_metadata` | `messages` | — | 属性，解析失败的调用 / token 用量 |
+| `AIMessageChunk` | `messages` | — | `stream()` 产出的增量块，可以 `+` 拼接 |
+| `trim_messages` | `messages` | `messages`、`max_tokens`、`token_counter`、`strategy=&#39;last&#39;`、`allow_partial=False`、`include_system=False`、`end_on=None`、`start_on=None`、`text_splitter=None` | 按 token 预算裁历史，超长对话必备 |
+| `get_buffer_string` | `messages` | `messages` | 把消息列表拼成一段纯文本 |
+
+消息的 `type` 属性是 `&#39;system&#39;` / `&#39;human&#39;` / `&#39;ai&#39;` / `&#39;tool&#39;`；想要类名就 `type(m).__name__`。
+
+### ChatModel：创建与调用
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `init_chat_model` | `chat_models` | `model=None`、`model_provider=None`、`configurable_fields=None`、`config_prefix=None`、`**kwargs` | 用 `&quot;provider:model&quot;` 字符串选模型（如 `&quot;deepseek:deepseek-v4-flash&quot;`）；就是按前缀去 import 对应集成包 |
+| `ChatDeepSeek` | `deepseek` | `model`、`temperature=None`、`api_key=None`、`base_url=None`、`max_retries=None`、`streaming=False` | 显式建 DeepSeek 模型；`init_chat_model` 底层就是它 |
+| `ChatOpenAI` | `openai` | `model=&#39;gpt-3.5-turbo&#39;`、`temperature=None`、`max_completion_tokens=None`、`timeout=None` | OpenAI 系；新接口用 `max_completion_tokens`，不是 `max_tokens` |
+| `invoke` | `language_models` | `input`、`config=None`、`stop=None` | 传消息列表或字符串，返回 `AIMessage` |
+| `stream` | `language_models` | `input`、`config=None`、`stop=None` | 逐块返回 `AIMessageChunk`，适合打字机输出 |
+| `batch` | `language_models` | `inputs`、`config=None`、`return_exceptions=False` | 一批输入一次跑，内部并发 |
+| `bind_tools` | `language_models` | `tools`、`tool_choice=None` | 把工具 schema 绑给模型；**只让模型吐出 `tool_calls`，不负责执行** |
+| `with_structured_output` | `language_models` | `schema`、`include_raw=False` | 让模型直接按 Pydantic 模型 / dict 结构返回，别和 `bind_tools` 混用 |
+| `bind` | `language_models` | `**kwargs` | 预绑参数（如 `stop`、`temperature`）返回新模型，不改原对象 |
+
+### 提示模板
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `PromptTemplate.from_template` | `prompts` | `template`、`template_format=&#39;f-string&#39;`、`partial_variables=None` | 最常用入口，`{var}` 占位 |
+| `PromptTemplate` | `prompts` | `template`、`input_variables`、`template_format=&#39;f-string&#39;`、`partial_variables={}` | 直接构造时 `input_variables` 要自己给全 |
+| `ChatPromptTemplate.from_messages` | `prompts` | `messages`、`template_format=&#39;f-string&#39;` | `messages` 里放 `(role, template)` 元组或消息模板 |
+| `ChatPromptTemplate.from_template` | `prompts` | `template`、`template_format=&#39;f-string&#39;` | 只写一条 human 消息的简写 |
+| `MessagesPlaceholder` | `prompts` | `variable_name`、`optional=False`、`n_messages=None` | 在固定提示里插一段历史消息列表 |
+| `HumanMessagePromptTemplate.from_template` | `prompts` | `template`、`template_format=&#39;f-string&#39;` | 需要把 `{question}` 当变量时必须用它，直接 `HumanMessage(content=&quot;{question}&quot;)` 会被当成字面量 |
+| `partial` | `prompts` | `**kwargs` | 预填一部分变量，返回新模板；可传常量或零参函数 |
+| `format` / `format_messages` | `prompts` | `**kwargs` | 前者出字符串，`ChatPromptTemplate` 用后者出消息列表 |
+| `invoke` | `prompts` | `input`（dict） | `PromptTemplate` 返回字符串值，`ChatPromptTemplate` 返回 `ChatPromptValue` |
+| `ChatPromptValue.to_messages` / `to_string` | `prompts` | — | `invoke` 结果的两种取法，别把 `ChatPromptValue` 直接当 list 用 |
+| `FewShotPromptTemplate` | `prompts` | `examples=None`、`example_prompt`、`suffix`、`prefix=&#39;&#39;`、`example_separator=&#39;\n\n&#39;`、`input_variables`、`example_selector=None` | 文本少样本 |
+| `FewShotChatMessagePromptTemplate` | `prompts` | `examples=None`、`example_prompt`、`example_selector=None` | 消息少样本，塞进 `ChatPromptTemplate` 用 |
+| `load_prompt` | `prompts` | `path`、`encoding=None`、`allow_dangerous_paths=False` | 从 JSON / YAML 文件读模板 |
+
+### 输出解析器
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `StrOutputParser` | `output_parsers` | — | 取 `AIMessage.content`，组链尾部几乎都挂它 |
+| `JsonOutputParser` | `output_parsers` | `diff=False`、`pydantic_object=None` | 解析 JSON，`pydantic_object` 一给就顺带校验 |
+| `PydanticOutputParser` | `output_parsers` | `pydantic_object` | 按 Pydantic 模型解析；`get_format_instructions()` 塞进提示 |
+| `CommaSeparatedListOutputParser` | `output_parsers` | — | 逗号分隔转 list |
+| `XMLOutputParser` | `output_parsers` | — | 解析 XML 输出 |
+| `parse` / `get_format_instructions` | `output_parsers` | `text` / — | 解析器也是 Runnable，能 `invoke`；`parse` 是底层同步入口 |
+
+### LCEL / Runnable
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `\|`（管道） | `runnables` | — | `a \| b \| c` 组 `RunnableSequence`；右边写 dict 会自动包成 `RunnableParallel` |
+| `invoke` | `runnables` | `input`、`config=None` | 跑一次 |
+| `batch` | `runnables` | `inputs`、`config=None`、`return_exceptions=False` | 一批，`return_exceptions=True` 时失败项以异常对象返回 |
+| `stream` / `astream` | `runnables` | `input`、`config=None` | 流式；只有链里每段都支持才真流式 |
+| `batch_as_completed` | `runnables` | `inputs`、`config=None`、`return_exceptions=False` | 产 `(下标, 结果)`，谁先好谁先出 |
+| `map` | `runnables` | — | 把单输入 Runnable 变成「列表进、列表出」 |
+| `RunnableLambda` | `runnables` | `func`、`afunc=None`、`name=None` | 把普通函数接进链里 |
+| `RunnablePassthrough` | `runnables` | — | 原样透传输入，常配 `.assign` |
+| `RunnablePassthrough.assign` | `runnables` | `**kwargs` | 在 dict 上补字段，键值可给 Runnable 或函数，返回 `RunnableAssign` |
+| `RunnableParallel` | `runnables` | `steps__=None`、`name=None` | 同一份输入并行跑多路，输出合并成 dict |
+| `RunnableBranch` | `runnables` | `*branches` | 每个参数是 `(条件, Runnable)`，**最后一个不带条件**，当默认分支 |
+| `with_retry` | `runnables` | `retry_if_exception_type=(Exception,)`、`wait_exponential_jitter=True`、`stop_after_attempt=3` | 失败重试，默认指数退避加抖动 |
+| `with_fallbacks` | `runnables` | `fallbacks`、`exceptions_to_handle=(Exception,)`、`exception_key=None` | 主链失败就换备用链 |
+| `with_config` / `with_types` | `runnables` | `config=None, **kwargs` / `input_type=None, output_type=None` | 预绑配置 / 标注类型 |
+| `with_listeners` / `with_alisteners` | `runnables` | `on_start=None`、`on_end=None`、`on_error=None` | 生命周期钩子，轻量埋点用 |
+| `RunnableConfig` | `runnables` | `tags`、`metadata`、`callbacks`、`run_name`、`max_concurrency`、`recursion_limit`、`configurable` | `invoke(..., config={...})` 传的就是它 |
+
+`RunnableParallel` 里每一路都会各自拿到同一份输入；RAG 要「同时交答案和来源」就靠它，两路都从 `question` 出发。
+
+### 工具
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `tool` | `tools` | `name_or_callable=None`、`description=None`、`return_direct=False`、`args_schema=None`、`infer_schema=True`、`response_format=&#39;content&#39;`、`parse_docstring=False` | 装饰器，三种写法：`@tool`、`@tool(&quot;名字&quot;)`、`@tool(description=...)` |
+| `name` / `description` / `args_schema` | `tools` | — | 工具属性；`description` 不写就取函数 docstring |
+| `args` | `tools` | — | 属性，参数名到字段的映射，`list(add.args.keys())` 常用来看 schema |
+| `invoke` | `tools` | `input`（str / dict / `ToolCall`）、`config=None` | 手工执行工具，传 `tool_call[&quot;args&quot;]` 即可 |
+| `StructuredTool.from_function` | `tools` | `func=None`、`coroutine=None`、`name=None`、`description=None`、`args_schema=None`、`infer_schema=True`、`response_format=&#39;content&#39;`、`parse_docstring=False`、`error_on_invalid_docstring=False` | 从函数建工具，要精细控制 schema 时用它 |
+| `parse_docstring` / `error_on_invalid_docstring` | `tools` | `parse_docstring=False`、`error_on_invalid_docstring=True`（`@tool`；`StructuredTool.from_function` 那侧默认 `False`） | 见下面「docstring 怎么进 schema」 |
+| `render_text_description` | `tools` | `tools`（`list[BaseTool]`） | 渲染成 `名字(签名) -&gt; 返回类型 - 摘要` 的多行文本，**只带摘要** |
+| `render_text_description_and_args` | `tools` | `tools` | 同上，每行末尾再拼 `args: {...}` |
+| `convert_to_openai_tool` | `function_calling` | `tool`、`strict=None` | 导出函数调用协议 schema（`{&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {...}}`），`bind_tools` 底层就是它 |
+| `ToolException` | `tools` | — | 工具内抛这个可交给 `handle_tool_error` 处理 |
+
+一次工具调用闭环：`bind_tools` → 模型返回 `AIMessage.tool_calls` → 按 `name` 查表执行 → 把结果包成 `ToolMessage(content=..., tool_call_id=那个 id)` 追加回消息 → 再调模型。
+
+### docstring 怎么进 schema
+
+说明文字优先取 `description=`，没给才取函数的 docstring（`__doc__` 去掉公共缩进和首尾空行）。名字同理，`@tool(&quot;score&quot;)` 覆盖函数名，否则用 `__name__`。所以 docstring 有两种读法：
+
+| 写法 | `description` | 参数字段说明 |
+| --- | --- | --- |
+| 默认 `parse_docstring=False` | **整段** docstring，`Args:` 段原样留在里面 | 只来自类型注解 / `Annotated`，`Args:` 那几句白写 |
+| `parse_docstring=True`（只认 **Google 风格**） | 摘要段，`Args:` 段被摘掉 | 来自 `Args:` 段每条，落进 `args_schema` |
+
+模型收到的就是这份：`bind_tools` 内部走 `convert_to_openai_tool`，`function.description` 和 `parameters.properties.&lt;参数&gt;.description` 直接来自上面两处。`render_text_description` 只是自己拼提示词用的多行文本，**只有摘要和签名**，要带参数说明得用 `render_text_description_and_args`。
+
+### Document 与加载
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `Document` | `documents` | `page_content`、`id=None`、`metadata={}`、`type=&#39;Document&#39;` | 检索的基本单位；`page_content` 是正文，`metadata` 放来源、页码 |
+| `BaseLoader` | `document_loaders` | — | 自定义加载器继承它；提供 `load` / `lazy_load` / `load_and_split` |
+| `load` / `lazy_load` | `document_loaders` | — | 一次全加载 / 惰性产 `Document` |
+| `load_and_split` | `document_loaders` | `text_splitter=None` | 读进来顺手切块 |
+| `Blob` | `document_loaders` | — | 原始字节 + 元信息，加载器的底层载体 |
+| `TextLoader` / `PyPDFLoader` / `DirectoryLoader` / `WebBaseLoader` | `langchain_community.document_loaders` | — | **需另装** `langchain-community`，本机未核对签名 |
+
+### 文本切分
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `TextSplitter` | `splitters` | `chunk_size=4000`、`chunk_overlap=200`、`length_function=len`、`keep_separator=False`、`add_start_index=False`、`strip_whitespace=True` | 所有切分器的基类，这两个默认值比直觉大得多，务必自己写 |
+| `RecursiveCharacterTextSplitter` | `splitters` | `separators=None`、`keep_separator=True`、`is_separator_regex=False` | 按 `[&quot;\n\n&quot;, &quot;\n&quot;, &quot; &quot;, &quot;&quot;]` 递归降级，最常用；注意它把 `keep_separator` 改成 `True` |
+| `CharacterTextSplitter` | `splitters` | `separator=&#39;\n\n&#39;`、`is_separator_regex=False` | 只按一个分隔符切，找不到分隔符时容易切不动 |
+| `split_text` | `splitters` | `text` | 切纯字符串，返回 `list[str]` |
+| `split_documents` | `splitters` | `documents` | 切 `Document` 并**保留 metadata**，RAG 走这条 |
+| `create_documents` | `splitters` | `texts`、`metadatas=None` | 从字符串列表直接建切好的 `Document` |
+| `RecursiveCharacterTextSplitter.from_language` | `splitters` | `language`、`**kwargs` | 按语言选分隔符，配 `Language` 枚举 |
+| `TokenTextSplitter` | `splitters` | `chunk_size`、`chunk_overlap` | 按 token 切，配 embedding 的 token 上限用 |
+| `MarkdownHeaderTextSplitter` | `splitters` | `headers_to_split_on` | 按标题层级切，顺带把标题写进 metadata |
+| `RecursiveJsonSplitter` | `splitters` | `max_chunk_size=2000` | 切 JSON，尽量保持结构完整 |
+
+### Embedding
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `Embeddings` | `embeddings` | — | 接口：实现 `embed_query(text)` 和 `embed_documents(texts)` 即可 |
+| `embed_query` | `embeddings` | `text` | 单条查询向量，返回 `list[float]` |
+| `embed_documents` | `embeddings` | `texts` | 批量文档向量，返回 `list[list[float]]` |
+| `DeterministicFakeEmbedding` | `embeddings` | `size` | 离线测试替身，同样文本永远同向量；只用来跑通流程 |
+| `HuggingFaceEmbeddings` | `hf` | `model=&#39;sentence-transformers/all-mpnet-base-v2&#39;`、`cache_folder=None`、`model_kwargs={}`、`encode_kwargs={}`、`query_encode_kwargs={}`、`multi_process=False`、`show_progress=False` | 本地跑 sentence-transformers，中文选 `BAAI/bge-small-zh-v1.5` |
+| `OpenAIEmbeddings` | `openai` | `model=&#39;text-embedding-ada-002&#39;`、`dimensions=None`、`chunk_size=1000`、`max_retries=2` | 走 API 的 embedding |
+
+### 向量库
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `InMemoryVectorStore` | `vectorstores` | `embedding` | 内存向量库，练习 / 测试够用 |
+| `from_documents` | `vectorstores` | `documents`、`embedding`、`**kwargs` | 文档列表 → 建库并写入，返回 store |
+| `from_texts` | `vectorstores` | `texts`、`embedding`、`metadatas=None` | 纯文本版，省得先包 `Document` |
+| `add_documents` | `vectorstores` | `documents`、`ids=None` | 追加文档，返回写入的 id 列表 |
+| `add_texts` | `vectorstores` | `texts`、`metadatas=None`、`ids=None` | 追加纯文本 |
+| `similarity_search` | `vectorstores` | `query`、`k=4` | 相似度检索，返回 `list[Document]`；**默认 `k` 是 4** |
+| `similarity_search_with_score` | `vectorstores` | `query`、`k=4` | 返回 `list[(Document, score)]`，score 的含义随实现变 |
+| `similarity_search_with_relevance_scores` | `vectorstores` | `query`、`k=4`、`score_threshold=None` | 归一到 `[0,1]` 的相关性分，能按阈值过滤 |
+| `max_marginal_relevance_search` | `vectorstores` | `query`、`k=4`、`fetch_k=20`、`lambda_mult=0.5` | MMR，牺牲一点相关换多样性 |
+| `as_retriever` | `vectorstores` | `search_type=&#39;similarity&#39;`、`search_kwargs={}` | 转成 `VectorStoreRetriever`，好接进链里 |
+| `delete` | `vectorstores` | `ids=None` | 按 id 删 |
+| `Chroma` / `FAISS` / `PGVector` | `langchain_community.vectorstores` 等 | — | **需另装** 对应集成包，本机未核对签名 |
+
+### Retriever 与 RAG
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `BaseRetriever` | `retrievers` | — | 自定义检索器继承它；实现 `_get_relevant_documents` |
+| `invoke` | `retrievers` | `query`、`config=None` | 检索入口，返回 `list[Document]`，能直接接进 LCEL |
+| `search_type` | `vectorstores` | `&#39;similarity&#39;` / `&#39;mmr&#39;` / `&#39;similarity_score_threshold&#39;` | `as_retriever` 的检索策略；阈值模式要在 `search_kwargs` 里给 `score_threshold` |
+| `RunnablePassthrough` + `RunnableParallel` | `runnables` | — | RAG 组链的标准件：一路检索拼上下文出答案，一路抽 `metadata[&quot;source&quot;]` |
+| `format_docs` | — | `docs` | 自己写的 `&quot;\n\n&quot;.join(d.page_content for d in docs)`，提示里当 `{context}` |
+
+典型组链：`retriever | format_docs` 拿到上下文，配 `RunnablePassthrough` 保住原问题，喂进带 `{context}` / `{question}` 的 `ChatPromptTemplate`，再 `| model | StrOutputParser()`。
+
+### 会话历史
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `InMemoryChatMessageHistory` | `chat_history` | `messages=[]` | 内存历史，进程结束就没了 |
+| `BaseChatMessageHistory` | `chat_history` | — | 接口：`add_message` / `add_messages` / `clear` / `messages` |
+| `RunnableWithMessageHistory` | `runnables.history` | `runnable`、`get_session_history`、`input_messages_key=None`、`output_messages_key=None`、`history_messages_key=None`、`history_factory_config=None` | 自动读写历史；链的输入要带 `session_id` |
+
+### Agent
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `create_agent` | `agents` | `model`、`tools=None`、`system_prompt=None`、`middleware=()`、`response_format=None`、`state_schema=None`、`checkpointer=None`、`store=None`、`debug=False`、`name=None` | 预置好的工具调用 Agent，返回编译后的图，`invoke({&quot;messages&quot;: [...]})`；挂中间件就传 `middleware=[...]` |
+| 手写闭环 | — | — | 「模型 → 有 `tool_calls` 就执行 → 回 `ToolMessage` → 再模型」，加 `max_steps` 兜底，见 `08_agents` |
+
+### Middleware（Agent 中间件）
+`create_agent` 在模型循环外包一层钩子。**一次 `invoke` ≠ 一次模型调用**：有工具往返时，`before_model` / `after_model` / `wrap_model_call` 会按模型调用次数触发。全部从 `langchain.agents.middleware` 导入。
+
+### 核心类型与钩子
+
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `AgentState` | `middleware` | `messages`、`jump_to`、`structured_response` | 默认 state；自定义字段要继承它再挂到 `state_schema` |
+| `AgentMiddleware` | `middleware` | `state_schema=AgentState`、`tools=None` | 类式中间件基类；重写 `before_model` / `after_model` / `wrap_model_call` / `wrap_tool_call`（及 `*_agent`、异步 `a*`） |
+| `ModelRequest` | `middleware` | `model`、`messages`、`system_message=None`、`tools`、`state`、`runtime`、`model_settings={}` | 进模型前的完整请求；`messages` **不含** system，system 在 `system_message` |
+| `ModelRequest.override` | `middleware` | `**overrides`（如 `system_prompt=...`） | 返回改写后的新请求，原对象不动 |
+| `ModelResponse` | `middleware` | `result`、`structured_response` | `wrap_model_call` 的 `handler` 返回值 |
+| `ToolCallRequest` | `middleware` | `tool_call`、`tool`、`state`、`runtime` | 工具执行前的请求；兜底时 `tool_call[&quot;id&quot;]` 用来造 `ToolMessage` |
+| `@before_model` / `@after_model` | `middleware` | `state_schema=None`、`tools=None`、`can_jump_to=None`、`name=None` | 模型调用前 / 后；签名 `(state, runtime) -&gt; dict \| None` |
+| `@before_agent` / `@after_agent` | `middleware` | 同上 | 整次 `invoke` 进 / 出各一次，不随工具往返重复 |
+| `@wrap_model_call` | `middleware` | `state_schema=None`、`tools=None`、`name=None` | `(request, handler) -&gt; ModelResponse \| AIMessage`；改请求后 `handler(request.override(...))` |
+| `@wrap_tool_call` | `middleware` | 同上 | `(request, handler) -&gt; ToolMessage \| Command`；可 try/except 吞异常并回 `ToolMessage` |
+| `@dynamic_prompt` | `middleware` | — | 便利写法：`(request) -&gt; str`，结果当 system prompt |
+
+自定义字段示例：`class MyState(AgentState): calls: NotRequired[int]`，再 `class M(AgentMiddleware): state_schema = MyState`，在钩子里 `return {&quot;calls&quot;: ...}`。**不写 `state_schema` 时自定义键会被静默丢弃**，不报错。
+
+### 内置中间件（本阶段常用）
+
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `ModelCallLimitMiddleware` | `middleware` | `thread_limit=None`、`run_limit=None`、`exit_behavior=&#39;end&#39;` | 卡「调模型」次数；`&#39;end&#39;` 体面结束，`&#39;error&#39;` 抛 `ModelCallLimitExceededError` |
+| `ToolCallLimitMiddleware` | `middleware` | `tool_name=None`、`thread_limit=None`、`run_limit=None`、`exit_behavior=&#39;continue&#39;` | 卡「执行工具」次数；默认 `&#39;continue&#39;`（换成提示 `ToolMessage`），也可 `&#39;error&#39;` |
+| `ToolRetryMiddleware` | `middleware` | `max_retries=2`、`tools=None`、`on_failure=&#39;continue&#39;`、`initial_delay=1.0`、`backoff_factor=2.0`、`jitter=True` | 工具失败重试；和自定义 `wrap_tool_call` 兜底不同：它是固定重试策略 |
+| `ModelRetryMiddleware` | `middleware` | `max_retries=2`、`on_failure=&#39;continue&#39;`、`initial_delay=1.0`、… | 模型调用失败重试 |
+| `ModelFallbackMiddleware` | `middleware` | `first_model`、`*additional_models` | 主模型挂了换备用模型 |
+| `SummarizationMiddleware` | `middleware` | `model`、`trigger=None`、`keep=(&#39;messages&#39;, 20)`、`token_counter=...` | 历史超阈值时压成摘要；摘要发生在**进模型前**，不永久改写你看到的全部语义 |
+| `HumanInTheLoopMiddleware` | `middleware` | `interrupt_on`（`dict[str, bool \| InterruptOnConfig]`）、`description_prefix=...` | 指定工具执行前中断；要配 `checkpointer` + `thread_id`，用 `Command(resume={&quot;decisions&quot;: [...]})` 继续 |
+| `ToolErrorMiddleware` | `middleware` | `on_error=None`、`tools=None` | 内置工具错误处理 |
+| `ContextEditingMiddleware` | `middleware` | `edits=None`、`token_count_method=&#39;approximate&#39;` | 按规则裁剪 / 编辑上下文 |
+| `TodoListMiddleware` | `middleware` | `system_prompt=...`、`tool_description=...` | 给 agent 挂 `write_todos` 规划工具 |
+| `LLMToolSelectorMiddleware` | `middleware` | `model=None`、`max_tools=None`、`always_include=None` | 先让小模型筛一批相关工具再交给主模型 |
+
+HITL 最小闭环：`create_agent(..., middleware=[HumanInTheLoopMiddleware(interrupt_on={&quot;add&quot;: True})], checkpointer=MemorySaver())` → `invoke(..., config={&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;t1&quot;}})` → 读 `response[&quot;__interrupt__&quot;]`（`action_requests` / `review_configs`）→ `invoke(Command(resume={&quot;decisions&quot;: [{&quot;type&quot;: &quot;approve&quot;}]}), config=同一 thread)`。`decisions` 长度必须等于挂起的工具调用数。
+
+### 执行顺序（洋葱）
+
+`middleware=[A, B]` 时，`wrap_*` 是 **A 进 → B 进 → B 出 → A 出**：列表越靠前越在外层。`before_*` 按列表顺序，`after_*` 反过来。
+
+### 回调与调试
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `BaseCallbackHandler` | `callbacks` | — | 继承它重写需要的钩子，`invoke(..., config={&quot;callbacks&quot;: [handler]})` 挂上 |
+| `on_llm_start` | `callbacks` | `serialized`、`prompts`、`run_id`、`parent_run_id=None`、`tags=None`、`metadata=None` | 模型调用开始 |
+| `on_llm_new_token` | `callbacks` | `token`、`chunk=None`、`run_id`、`parent_run_id=None` | 流式每个增量，做打字机输出 / 统计 |
+| `on_llm_end` | `callbacks` | `response`、`run_id`、`parent_run_id=None` | 模型调用结束，`response` 里有用量 |
+| `on_tool_start` | `callbacks` | `serialized`、`input_str`、`run_id`、`inputs=None`、`metadata=None` | 工具开始，打日志常用 |
+| `on_chain_start` / `on_chain_end` | `callbacks` | `serialized`、`inputs` / `outputs`、`run_id` | 链级生命周期 |
+| `set_debug` | `langchain_core.globals` | `value` | 全局开调试打印 |
+| `set_verbose` | `langchain_core.globals` | `value` | 全局啰嗦模式 |
+
+## 使用用例
+### 01_messages_model
+```python
+[(&#39;1. 三种消息&#39;, &#39;messages = [\n    SystemMessage(content=&quot;你是简洁的助手。&quot;),\n    HumanMessage(content=&quot;用一句话介绍你自己。&quot;),\n    AIMessage(content=&quot;我是助手。&quot;),\n]\nfor m in messages:\n    print(type(m).__name__, m.content)&#39;), (&#39;2. 假模型一轮对话&#39;, &#39;print(model.invoke([human]).content)&#39;), (&#39;3. 带系统提示的消息列表&#39;, &#39;msgs = [\n    SystemMessage(content=&quot;只回答一个词。&quot;),\n    HumanMessage(content=&quot;天空通常是什么颜色？&quot;),\n]\nprint(model.invoke(msgs).content)&#39;), (&#39;4. 连续两轮（假模型）&#39;, &#39;r1 = model.invoke([HumanMessage(content=&quot;第一问&quot;)])\nprint(r1.content)\nr2 = model.invoke([HumanMessage(content=&quot;第一问&quot;), r1, HumanMessage(content=&quot;第二问&quot;)])\nprint(r2.content)&#39;), (&#39;5. 真假模型二选一&#39;, &#39;def make_chat_model(model: str = &quot;deepseek:deepseek-v4-flash&quot;):\n    provider, _, _ = model.partition(&quot;:&quot;)\n    if provider == &quot;deepseek&quot; and not os.environ.get(&quot;DEEPSEEK_API_KEY&quot;):\n        return FakeListChatModel(responses=[&quot;（离线假回复）&quot;])\n    return init_chat_model(model)\nprint(make_chat_model().invoke([HumanMessage(content=&quot;ping&quot;)]).content)&#39;)]
+```
+
+### 02_prompts
+```python
+[(&#39;1. PromptTemplate 填空&#39;, &#39;prompt = PromptTemplate.from_template(&quot;城市 {city} 的别称是 {nick}。&quot;)\nprint(prompt.format(city=&quot;重庆&quot;, nick=&quot;山城&quot;))&#39;), (&#39;2. ChatPromptTemplate 两条消息&#39;, &#39;prompt = ChatPromptTemplate.from_messages([\n    (&quot;system&quot;, &quot;你是{role}。&quot;),\n    (&quot;human&quot;, &quot;请用一句话解释 {topic}。&quot;),\n])\nresult = prompt.invoke({&quot;role&quot;: &quot;老师&quot;, &quot;topic&quot;: &quot;引力&quot;})\nfor m in result.to_messages():\n    print(type(m).__name__, m.content)&#39;), (&#39;3. partial 预填一部分&#39;, &#39;print(prompt.partial(tone=&quot;正式&quot;).format(product=&quot;水壶&quot;))&#39;), (&#39;4. MessagesPlaceholder 插入历史&#39;, &#39;prompt = ChatPromptTemplate.from_messages([\n    (&quot;system&quot;, &quot;你是助手。&quot;),\n    MessagesPlaceholder(&quot;history&quot;),\n    (&quot;human&quot;, &quot;{question}&quot;),\n])\nmsgs = prompt.invoke({&quot;history&quot;: history, &quot;question&quot;: &quot;还要点什么？&quot;}).to_messages()\nprint(len(msgs))\nprint(msgs[-1].content)&#39;), (&#39;5. 模板接到假模型&#39;, &#39;msgs = prompt.invoke({&quot;name&quot;: &quot;小明&quot;})\nprint(model.invoke(msgs).content)&#39;)]
+```
+
+### 03_lcel_chains
+```python
+[(&#39;1. 用 `|` 串三条&#39;, &#39;chain = prompt | model | parser\nprint(chain.invoke({&quot;topic&quot;: &quot;咖啡&quot;}))&#39;), (&#39;2. RunnableLambda&#39;, &#39;print(RunnableLambda(lambda s: s.upper() + &quot;!&quot;).invoke(&quot;hello&quot;))&#39;), (&#39;3. Passthrough.assign 补字段&#39;, &#39;r = RunnablePassthrough.assign(len=lambda x: len(x[&quot;text&quot;]))\nprint(r.invoke({&quot;text&quot;: &quot;abcd&quot;}))&#39;), (&#39;4. batch 一批输入&#39;, &#39;print(chain.batch([{&quot;n&quot;: 1}, {&quot;n&quot;: 2}, {&quot;n&quot;: 3}]))&#39;), (&#39;5. 两段链再拼接&#39;, &#39;print((prep | tail).invoke({&quot;q&quot;: &quot;雨&quot;}))&#39;)]
+```
+
+### 04_tools
+```python
+[(&#39;1. 用 @tool 定义并调用&#39;, &#39;@tool\ndef mul(a: int, b: int) -&gt; int:\n    &quot;&quot;&quot;两数相乘。&quot;&quot;&quot;\n    return a * b\nprint(mul.invoke({&quot;a&quot;: 3, &quot;b&quot;: 4}))&#39;), (&#39;2. 看工具的名字、说明、参数&#39;, &#39;print(add.name)\nprint(add.description)\nprint(list(add.args.keys()))&#39;), (&#39;3. 从 tool_calls 跑工具并回 ToolMessage&#39;, &#39;call = ai.tool_calls[0]\nout = add.invoke(call[&quot;args&quot;])\nmsg = ToolMessage(content=str(out), tool_call_id=call[&quot;id&quot;])\nprint(msg.content, msg.tool_call_id)&#39;), (&#39;4. 按名字分发工具&#39;, &#39;tools_by_name = {t.name: t for t in tools}\nprint(tools_by_name[tool_call[&quot;name&quot;]].invoke(tool_call[&quot;args&quot;]))&#39;), (&#39;5. bind_tools + 真模型发起 tool_call&#39;, &#39;name = os.environ.get(&quot;DEEPSEEK_MODEL&quot;, &quot;deepseek-v4-flash&quot;)\nmodel = init_chat_model(f&quot;deepseek:{name}&quot;).bind_tools([add])\nai = model.invoke([HumanMessage(&quot;用工具计算 2+3&quot;)])\nprint(ai.tool_calls)&#39;)]
+```
+
+### 05_docs_split
+```python
+[(&#39;1. 构造 Document&#39;, &#39;doc = Document(\n    page_content=&quot;LangChain 用 Document 表示一段文本。&quot;,\n    metadata={&quot;source&quot;: &quot;memo&quot;, &quot;page&quot;: 1},\n)\nprint(doc.page_content)\nprint(doc.metadata)&#39;), (&#39;2. 从文件读成 Document&#39;, &#39;doc = Document(\n    page_content=note_path.read_text(encoding=&quot;utf-8&quot;),\n    metadata={&quot;source&quot;: str(note_path)},\n)\nprint(doc.page_content)\nprint(doc.metadata[&quot;source&quot;])&#39;), (&#39;3. RecursiveCharacterTextSplitter 切纯文本&#39;, &#39;splitter = RecursiveCharacterTextSplitter(chunk_size=40, chunk_overlap=10)\nchunks = splitter.split_text(text)\nprint(len(chunks))\nfor chunk in chunks:\n    print(len(chunk), chunk)&#39;), (&#39;4. split_documents 保留 metadata&#39;, &#39;splitter = RecursiveCharacterTextSplitter(chunk_size=20, chunk_overlap=4)\nfor doc in splitter.split_documents(docs):\n    print(doc.page_content)\n    print(doc.metadata)&#39;), (&#39;5. CharacterTextSplitter 按分隔符切&#39;, &#39;splitter = CharacterTextSplitter(\n    separator=&quot;\\n\\n&quot;, chunk_size=40, chunk_overlap=0\n)\nfor chunk in splitter.split_text(text):\n    print(chunk)&#39;), (&#39;6. create_documents&#39;, &#39;splitter = RecursiveCharacterTextSplitter(chunk_size=100, chunk_overlap=0)\ndocs = splitter.create_documents(texts, metadatas=metadatas)\nfor doc in docs:\n    print(doc.page_content)\n    print(doc.metadata)&#39;)]
+```
+
+### 06_embeddings_store
+```python
+[(&#39;1. embed_query / embed_documents&#39;, &#39;emb = DeterministicFakeEmbedding(size=16)\nprint(len(emb.embed_query(&quot;hello&quot;)))\ndocs_emb = emb.embed_documents([&quot;alpha&quot;, &quot;beta&quot;])\nprint(len(docs_emb), len(docs_emb[0]))&#39;), (&#39;2. from_documents 写入&#39;, &#39;store = InMemoryVectorStore.from_documents(docs, emb)\nhit = store.similarity_search(&quot;猫&quot;, k=1)[0]\nprint(hit.page_content)\nprint(hit.metadata)&#39;), (&#39;3. similarity_search_with_score&#39;, &#39;for doc, score in store.similarity_search_with_score(&quot;向量检索&quot;, k=2):\n    print(doc.page_content, score)&#39;), (&#39;4. add_documents 追加&#39;, &#39;ids = store.add_documents([\n    Document(page_content=&quot;新写入的 embedding 说明。&quot;, metadata={&quot;source&quot;: &quot;d.txt&quot;}),\n])\nprint(ids)\nprint(store.similarity_search(&quot;embedding&quot;, k=1)[0].page_content)&#39;), (&#39;5. add_texts&#39;, &#39;store = InMemoryVectorStore(embedding=emb)\nids = store.add_texts(\n    [&quot;苹果派&quot;, &quot;向量检索&quot;],\n    metadatas=[{&quot;tag&quot;: &quot;food&quot;}, {&quot;tag&quot;: &quot;rag&quot;}],\n)\nprint(ids)\nhit = store.similarity_search(&quot;检索&quot;, k=1)[0]\nprint(hit.page_content, hit.metadata)&#39;), (&#39;6. as_retriever&#39;, &#39;retriever = store.as_retriever(search_kwargs={&quot;k&quot;: 1})\ndocs = retriever.invoke(&quot;向量&quot;)\nprint(len(docs))\nprint(docs[0].page_content)&#39;)]
+```
+
+### 07_rag_chain
+```python
+[(&#39;1. 检索出上下文&#39;, &#39;retriever = store.as_retriever(search_kwargs={&quot;k&quot;: 2})\nhits = retriever.invoke(&quot;猫喜欢吃什么？&quot;)\nprint(len(hits))\nfor doc in hits:\n    print(doc.page_content, doc.metadata[&quot;source&quot;])&#39;), (&#39;2. 把检索结果拼成上下文&#39;, &#39;def format_docs(docs):\n    return &quot;\\n\\n&quot;.join(d.page_content for d in docs)\nprint(format_docs(docs))\nprint(len(docs))&#39;), (&#39;3. 建一个带 `{context}` 的提示&#39;, &#39;prompt = ChatPromptTemplate.from_messages([\n    (&quot;system&quot;, &quot;只根据下面的上下文回答，上下文没提到就说不知道。\\n\\n上下文：\\n{context}&quot;),\n    (&quot;human&quot;, &quot;{question}&quot;),\n])\nfor m in prompt.format_messages(context=&quot;猫喜欢吃鱼。&quot;, question=&quot;猫喜欢吃什么？&quot;):\n    print(m.content)&#39;), (&#39;4. 手动跑一遍 RAG&#39;, &#39;docs = retriever.invoke(question)\ncontext = format_docs(docs)\nmsgs = prompt.format_messages(context=context, question=question)\nprint(model.invoke(msgs).content)&#39;), (&#39;5. 用 LCEL 把链串起来&#39;, &#39;chain = (\n    {&quot;context&quot;: retriever | format_docs, &quot;question&quot;: RunnablePassthrough()}\n    | prompt\n    | model\n    | StrOutputParser()\n)\nprint(chain.invoke(&quot;猫喜欢吃什么？&quot;))&#39;), (&#39;6. 让链同时交出答案和来源&#39;, &#39;chain = RunnableParallel(\n    answer=(\n        {&quot;context&quot;: retriever | format_docs, &quot;question&quot;: RunnablePassthrough()}\n        | prompt | model | StrOutputParser()\n    ),\n    sources=retriever | (lambda ds: [d.metadata[&quot;source&quot;] for d in ds]),\n)\nres = chain.invoke(&quot;猫喜欢吃什么？&quot;)\nprint(res[&quot;answer&quot;])\nprint(res[&quot;sources&quot;])&#39;)]
+```
+
+### 08_agents
+```python
+[(&#39;1. 完成一轮闭环，拿到最终答案&#39;, &#39;ai = bound.invoke(messages)\nprint(ai.tool_calls)\nmessages.append(ai)\ncall = ai.tool_calls[0]\nmessages.append(ToolMessage(\n    content=str(tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])),\n    tool_call_id=call[&quot;id&quot;],\n))\nprint(bound.invoke(messages).content)&#39;), (&#39;2. 漏放 `AIMessage` 会怎样&#39;, &#39;messages.append(ToolMessage(\n    content=str(tools_by_name[tool_call[&quot;name&quot;]].invoke(tool_call[&quot;args&quot;])),\n    tool_call_id=tool_call[&quot;id&quot;],\n))\ntry:\n    bound.invoke(messages)\nexcept Exception as e:\n    print(type(e).__name__, str(e))\n    &#39;), (&#39;3. 写成循环，直到模型不再要工具&#39;, &#39;steps = 0\nwhile True:\n    ai = bound.invoke(messages)\n    messages.append(ai)\n    steps += 1\n    if not ai.tool_calls:\n        break\n    for call in ai.tool_calls:\n        messages.append(ToolMessage(\n            content=str(tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])),\n            tool_call_id=call[&quot;id&quot;],\n        ))\nprint(steps)\nprint(messages[-1].content)\n    &#39;), (&#39;4. 给循环装一个上限&#39;, &#39;def run_once(max_steps):\n    msgs = [HumanMessage(question)]\n    for _ in range(max_steps):\n        ai = bound.invoke(msgs)\n        msgs.append(ai)\n        if not ai.tool_calls:\n            return &quot;完成&quot;, ai.content\n        for call in ai.tool_calls:\n            msgs.append(ToolMessage(\n                content=str(tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])),\n                tool_call_id=call[&quot;id&quot;],\n            ))\n    return &quot;超上限&quot;, &quot;达到上限，未完成&quot;\n\nstatus, answer = run_once(max_steps)\nprint(status, answer)&#39;), (&#39;5. 封装成 `run_agent`&#39;, &#39;def run_agent(question: str, max_steps: int = 6) -&gt; str:\n    msgs = [HumanMessage(question)]\n    for _ in range(max_steps):\n        ai = bound.invoke(msgs)\n        msgs.append(ai)\n        if not ai.tool_calls:\n            return ai.content\n        for call in ai.tool_calls:\n            msgs.append(ToolMessage(\n                content=str(tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])),\n                tool_call_id=call[&quot;id&quot;],\n            ))\n    return f&quot;达到上限（{max_steps} 轮）仍未完成&quot;\n\nfor q in questions:\n    print(run_agent(q))&#39;)]
+```
+
+### 09_docstring
+```python
+[(&#39;1. docstring 变成 description&#39;, &#39;@tool\ndef celsius(f: float) -&gt; float:\n    &quot;&quot;&quot;摄氏转华氏。&quot;&quot;&quot;\n    return f * 9 / 5 + 32\nprint(celsius.name)\nprint(celsius.description)\nprint(celsius.description == celsius.func.__doc__.strip())&#39;), (&#39;2. 名字和说明可以被参数覆盖&#39;, &#39;multiply_numbers = tool(&quot;multiply_numbers&quot;, description=&quot;把两个整数相乘。&quot;)(mul)\nprint(multiply_numbers.name)\nprint(multiply_numbers.description)\nprint(mul.__doc__)&#39;), (&#39;3. parse_docstring 把 Args 段拆进 schema&#39;, &#39;unit_price_tool = tool(parse_docstring=True)(unit_price)\nprint(unit_price_tool.description)\nprint(unit_price_tool.args)&#39;), (&#39;4. 不是 Google 风格的 docstring&#39;, &#39;try:\n    tool(&quot;weighted&quot;, description=&quot;算加权分。&quot;, parse_docstring=True)(weighted)\nexcept ValueError as e:\n    print(type(e).__name__, e)\nt = tool(&quot;weighted&quot;, description=&quot;算加权分。&quot;, parse_docstring=True, error_on_invalid_docstring=False)(weighted)\nprint(t.description)\nprint(t.args)&#39;), (&#39;5. Args 里的参数名对不上&#39;, &#39;for flag in (True, False):\n    try:\n        tool(&quot;ratio&quot;, description=&quot;算占比。&quot;, parse_docstring=True, error_on_invalid_docstring=flag)(ratio)\n    except ValueError as e:\n        print(type(e).__name__, e)&#39;), (&#39;6. 说明的两个去处&#39;, &#39;spec = convert_to_openai_tool(discount)\nprint(spec[&quot;function&quot;][&quot;description&quot;])\nprint(spec[&quot;function&quot;][&quot;parameters&quot;][&quot;properties&quot;][&quot;rate&quot;][&quot;description&quot;])\nprint(render_text_description(tools))&#39;), (&#39;7. 真模型按说明选工具&#39;, &#39;from langchain.chat_models import init_chat_model\nname = os.environ.get(&quot;DEEPSEEK_MODEL&quot;, &quot;deepseek-v4-flash&quot;)\nai = init_chat_model(f&quot;deepseek:{name}&quot;).bind_tools(tools).invoke(&quot;6 乘 7 等于多少？&quot;)\nprint(ai.tool_calls)&#39;)]
+```
+
+### 10_middleware
+```python
+[(&#39;1. 钩子挂在哪里&#39;, &#39;before_count = after_count = 0\n\n@before_model\ndef before_model_hook(state, runtime):\n    global before_count\n    before_count += 1\n    print(&quot;[before_model]&quot;, len(state[&quot;messages&quot;]))\n    return None\n\n同理写 after_model_hook；两钩子各会打两行，计数 2 / 2。&#39;), (&#39;2. 类式中间件与自定义 state&#39;, &#39;class MyState(AgentState):\n    calls: NotRequired[int] = 0\n\nclass MyMiddleware(AgentMiddleware):\n    state_schema = MyState\n\n    def before_model(self, state, runtime):\n        return {&quot;calls&quot;: state.get(&quot;calls&quot;, 0) + 1}\n\n建 agent 时 middleware=[MyMiddleware()]，最后 print(response[&quot;calls&quot;])。&#39;), (&#39;3. 改写进模型的请求&#39;, &#39;@wrap_model_call\ndef inject(request, handler):\n    print(&quot;字段:&quot;, list(request.__dataclass_fields__))\n    print(&quot;system_message:&quot;, request.system_message)\n    return handler(request.override(system_prompt=&quot;回答结尾补一句「已核对」&quot;))\n\nagent = create_agent(&quot;deepseek:deepseek-chat&quot;, tools=[add], middleware=[inject])\nprint(agent.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]})[&quot;messages&quot;][-1].content)&#39;), (&#39;4. 工具失败时的兜底&#39;, &#39;@wrap_tool_call\ndef catch(request, handler):\n    try:\n        return handler(request)\n    except Exception as e:\n        return ToolMessage(\n            content=f&quot;工具执行失败：{e}&quot;,\n            tool_call_id=request.tool_call[&quot;id&quot;],\n        )\n\n再换成 ToolRetryMiddleware(max_retries=2, initial_delay=0.1)，\n同一个问题各跑一次，对比返回的消息序列。&#39;), (&#39;5. 给 agent 装上限&#39;, &#39;for behavior in (&quot;end&quot;, &quot;error&quot;):\n    a = create_agent(\n        &quot;deepseek:deepseek-chat&quot;,\n        tools=[add],\n        middleware=[ModelCallLimitMiddleware(run_limit=1, exit_behavior=behavior)],\n    )\n    try:\n        r = a.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]})\n        print(behavior, &quot;-&gt;&quot;, r[&quot;messages&quot;][-1].content)\n    except Exception as e:\n        print(behavior, &quot;-&gt;&quot;, type(e).__name__, e)&#39;), (&#39;6. 历史太长自动摘要&#39;, &#39;summary = SummarizationMiddleware(\n    model=&quot;deepseek:deepseek-chat&quot;,\n    trigger=(&quot;messages&quot;, 4),\n    keep=(&quot;messages&quot;, 2),\n)\n\n@wrap_model_call\ndef spy(request, handler):\n    print(&quot;进模型:&quot;, len(request.messages), &quot;| 第一条:&quot;, str(request.messages[0].content)[:40])\n    return handler(request)\n\nagent = create_agent(&quot;deepseek:deepseek-chat&quot;, tools=[add], middleware=[summary, spy])&#39;), (&#39;7. 工具审批&#39;, &#39;agent = create_agent(\n    &quot;deepseek:deepseek-chat&quot;,\n    tools=[add],\n    middleware=[HumanInTheLoopMiddleware(interrupt_on={&quot;add&quot;: True})],\n    checkpointer=MemorySaver(),\n)\ncfg = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;t1&quot;}}\nr1 = agent.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]}, config=cfg)\nprint(r1[&quot;__interrupt__&quot;][0].value)          # action_requests + review_configs\nr2 = agent.invoke(Command(resume={&quot;decisions&quot;: [{&quot;type&quot;: &quot;approve&quot;}]}), config=cfg)\nprint(r2[&quot;messages&quot;][-1].content)&#39;), (&#39;8. 多个中间件的顺序&#39;, &#39;@wrap_model_call(name=&quot;A&quot;)\ndef hook_a(request, handler):\n    print(&quot;A:enter&quot;)\n    resp = handler(request)\n    print(&quot;A:exit&quot;)\n    return resp\n\n@wrap_model_call(name=&quot;B&quot;)\ndef hook_b(request, handler):\n    print(&quot;B:enter&quot;)\n    resp = handler(request)\n    print(&quot;B:exit&quot;)\n    return resp\n\nagent = create_agent(&quot;deepseek:deepseek-chat&quot;, middleware=[hook_a, hook_b])\nagent.invoke({&quot;messages&quot;: [HumanMessage(&quot;直接回答：1+1 等于几？不要用工具&quot;)]})&#39;)]
+```
+
+## 常见坑
+- `bind_tools` 只是把 schema 交给模型，**不会执行工具**；执行、回填 `ToolMessage` 得自己写。漏掉把 `AIMessage` 追加回历史再追加 `ToolMessage`，下一轮会报消息顺序错。
+- `parse_docstring=True` 只认 **Google 风格**（`Args:` 段）。NumPy 的 `Parameters` 段、Sphinx 的 `:param:`、没有 `Args:` 段的 docstring 都算无效，直接 `ValueError: Found invalid Google-Style docstring.`；`error_on_invalid_docstring=False` 才放行，放行后 `description` 退回整段原始 docstring，参数一个说明都没有（显式给了 `description=` 则仍用你给的那句）。
+- `Args:` 里写了签名中不存在的参数名，不管 `error_on_invalid_docstring` 给什么，都会抛 `ValueError: Arg &lt;名字&gt; in docstring not found in function signature.`——这个开关只管「格式是不是 Google 风格」，管不了名字对不对。
+- 函数没有 docstring 又没给 `description=`：默认报 `ValueError: Function must have a docstring if description not provided.`；`parse_docstring=True` 时报的是上面那条「invalid Google-Style docstring」。
+- `ToolMessage.tool_call_id` 是必填，且必须等于对应 `tool_call[&quot;id&quot;]`；对不上模型会拒绝当前历史。
+- `init_chat_model` 写 `&quot;provider:model&quot;`，厂商包要装好（本项目用 `langchain-deepseek`）。没 key 时别硬调，先判 `os.environ.get(&quot;DEEPSEEK_API_KEY&quot;)`。
+- `ChatPromptTemplate.from_messages` 里想用变量就别塞 `HumanMessage(content=&quot;{x}&quot;)`，那是字面量；要用 `(&quot;human&quot;, &quot;{x}&quot;)` 或 `HumanMessagePromptTemplate.from_template`。
+- `prompt.invoke(...)` 返回的是 `ChatPromptValue`，不是 `list`；要消息列表用 `.to_messages()`，要字符串用 `.to_string()`。
+- `PromptTemplate.format` 出字符串，`ChatPromptTemplate` 想直接看消息用 `format_messages`；两者变量漏一个都会在格式化时报错。
+- LCEL 里 `|` 右边可以直接写 dict（会自动变 `RunnableParallel`）和普通函数（会自动变 `RunnableLambda`）；但写函数时入参只有一个，别按多参写。
+- `RunnablePassthrough.assign` 只在 dict 输入上补键，输入不是 dict 会失败；`RunnableParallel` 各路拿到的是同一份输入，不会互相看见对方输出。
+- `RunnableBranch` 最后一个参数是默认分支，**不带条件**；忘了它、又没条件命中时直接抛错。
+- `TextSplitter` 的 `chunk_size=4000` / `chunk_overlap=200` 大得不像练习默认值，切短文本一定要显式写；`RecursiveCharacterTextSplitter` 把 `keep_separator` 默认改成了 `True`，和基类不同。
+- `split_documents` 保留 `metadata`，`split_text` 只给字符串，没有来源信息；要接向量库就用前者。
+- `InMemoryVectorStore.similarity_search` 的 `k` 默认是 `4`，不是 1；`similarity_search_with_score` 的 score 越小通常越相近，但它随实现不同，跨库别硬比。
+- `as_retriever(search_kwargs={&quot;k&quot;: 1})` 里 `k` 写在 `search_kwargs` 字典内；`search_type` 换个值就换策略。
+- `FakeListChatModel` / `DeterministicFakeEmbedding` 是测试替身，只用来离线跑通或写单测；正课一律用真模型 + 真 embedding。
+- `langchain` 主包只做重导出，报 `ImportError` 先确认路径：消息 / 提示 / 链基元在 `langchain_core.*`，切分器在 `langchain_text_splitters`，厂商模型在 `langchain_&lt;provider&gt;`。
+- 本机没装 `langchain-community`，`TextLoader` / `Chroma` 这些用不了；要用得先 `pip install langchain-community`（或对应集成包），而且签名以那个版本为准。
+- middleware 自定义字段必须挂 `state_schema`（继承 `AgentState`）；否则 `return {&quot;calls&quot;: ...}` 会被**静默丢弃**，response 里没有这个键、也不报错。
+- `ModelRequest.messages` 不含 system；改系统指令用 `request.override(system_prompt=...)`，别往 `messages` 里硬塞。
+- `wrap_*` 是洋葱：`middleware=[A, B]` → A 进 → B 进 → B 出 → A 出；一次 invoke 里模型可能被调多次，这四行会重复。
+- `HumanInTheLoopMiddleware` 必须配 `checkpointer` + `thread_id`；`Command(resume={&quot;decisions&quot;: [...]})` 的列表长度要等于挂起的工具调用数，多一个少一个都 `ValueError`。
+- `ModelCallLimitMiddleware` 默认 `exit_behavior=&#39;end&#39;`，`ToolCallLimitMiddleware` 默认 `&#39;continue&#39;`，两者默认不一样；要硬失败都显式写 `&#39;error&#39;`。
+</textarea>
+<script>
+(() => {
+  const root = document.documentElement;
+  const cycle = (list, cur) => list[(list.indexOf(cur) + 1) % list.length];
+  const label = (btn, value) => {
+    const map = JSON.parse(btn.dataset.labels || '{}');
+    btn.textContent = map[value] || value;
+  };
+  const bind = (name, attr, values) => {
+    const btn = document.querySelector(`[data-am="${name}"]`);
+    if (!btn) return;
+    label(btn, root.getAttribute(attr));
+    btn.addEventListener('click', () => {
+      const next = cycle(values, root.getAttribute(attr));
+      root.setAttribute(attr, next);
+      label(btn, next);
+    });
+  };
+  bind('theme', 'data-theme', ['blueprint', 'shadcn']);
+  bind('mode', 'data-mode', ['auto', 'light', 'dark']);
+
+  const copyBtn = document.querySelector('[data-am="copy"]');
+  copyBtn?.addEventListener('click', async () => {
+    const nodes = document.querySelectorAll('#am-source');
+    const text = nodes[nodes.length - 1]?.value ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      document.body.append(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    const original = copyBtn.textContent;
+    copyBtn.textContent = copyBtn.dataset.done;
+    setTimeout(() => { copyBtn.textContent = original; }, 1400);
+  });
+})();
+(() => {
+// Pure planner for justified ("photo wall") rows on sheet pages. No DOM access.
+//
+// This file must stay inlinable into the page script: top-level declarations only, no imports, and the exports are
+// `planLayout` and the constants the DOM adapter shares (STEP, MAX_SCALE, MIN_SCALE). The page build strips the `export ` keyword,
+// and test/layout-plan.test.js checks that this still works.
+//
+// planLayout({ width, gap, cols, panels }) -> { rows: [{ columns: [{ panels: [index, ...], width }], height }] }
+//
+// Input (all lengths in px):
+//   width   container width
+//   gap     space between columns, and between two panels stacked in one column
+//   cols    most columns in one row (the planner never uses more than MAX_COLUMNS, but spans stay shares of `cols`)
+//   panels  one entry per panel, in reading order:
+//     samples   [{ w, h }] panel height at sampled widths, ascending by w (heights between samples are interpolated)
+//     minWidth  narrowest feasible width (clamped to `width`)
+//     maxWidth  widest useful width; beyond it the panel only gains empty space (default: no limit)
+//     natural   natural diagram width for a diagram-only panel (default: none)
+//     pad       panel width not used by the diagram (padding and border; default 0)
+//     span      the author's width hint in grid columns (default 1); span >= cols keeps the panel alone in its row
+//
+// Output: { rows, maxScale }. Rows are in reading order; a row is a list of columns (at most `cols`); a column holds one panel or two
+// consecutive panels, stacked. For integer inputs the column widths plus the gaps between them equal `width`.
+// Rows are chosen by dynamic programming over break points; widths by a search in STEP px steps. Cost per row:
+//   H = tallest column; waste = sum((H - columnHeight) * columnWidth) + sum over diagrams wider than maxWidth of (w - maxWidth) * h
+//   dev = sum(((w - preferred) / oneColumn)^2) + SCALE_WEIGHT * sum over diagrams of (ln(scale) / ln(MAX_SCALE))^2
+//   cost = waste / 1000 + PREF_WEIGHT * dev * H
+// Scale band: diagrams on one page stay at similar sizes. With the result's `maxScale` as the diagram size limit, a diagram is
+// shown at scale min(maxScale, (width - pad) / natural). The planner tries a few bands [lo, lo * BAND_RATIO] (lo in BAND_LOS) and
+// keeps the cheapest plan in which no diagram is narrower than scale lo and none is shown above the band's top, so the largest and
+// smallest diagram scale on the page differ by at most BAND_RATIO. A panel wider than its diagram's top size keeps the diagram at
+// that size, and the page script must set the diagram's max-width to natural * maxScale. The band starts no higher than the
+// largest scale the page allows the least roomy diagram, so one wide diagram lowers the band for the others.
+// If no band is feasible the plan is made without a band (maxScale = MAX_SCALE); if no plan fits (or the input is unusable) the
+// result is a single column: one panel per row at the full width.
+
+const STEP = 10;
+const MAX_SCALE = 1.25;
+const MIN_SCALE = 0.75; // the narrowest a diagram is shown, as a share of its natural width
+const MAX_COLUMNS = 6; // rows with more columns are unreadable, and the search grows steeply with the column count
+const BAND_RATIO = 1.25; // the largest and smallest diagram scale on a page differ by at most this
+const BAND_LOS = [MIN_SCALE, 0.85, 0.95, 1]; // lower ends tried for the band; lo * BAND_RATIO is the upper end (1.25 means no upper limit)
+const SCALE_WEIGHT = 3;
+const PREF_WEIGHT = 0.15;
+
+function heightAt(samples, w) {
+  const i = samples.findIndex((s) => s.w >= w);
+  if (i === -1) return samples[samples.length - 1].h;
+  if (i === 0) return samples[0].h;
+  const a = samples[i - 1];
+  const b = samples[i];
+  return a.h + ((b.h - a.h) * (w - a.w)) / (b.w - a.w);
+}
+
+// Every way to split `len` consecutive panels into columns of 1 or 2 panels, as lists of column sizes.
+function splits(len) {
+  if (len === 0) return [[]];
+  return [1, 2].filter((k) => k <= len).flatMap((k) => splits(len - k).map((rest) => [k, ...rest]));
+}
+
+function singleColumn(width, panels) {
+  return { rows: panels.map((_, i) => ({ columns: [{ panels: [i], width }], height: 0 })) };
+}
+
+function planLayout({ width, gap = 0, cols = 3, panels }) {
+  const usable = Number.isFinite(width) && width > 0 && panels.every((p) => Array.isArray(p.samples) && p.samples.length > 0);
+  if (!usable) return singleColumn(width, panels);
+
+  // `cols` stays the unit of the author's spans; no row gets more than MAX_COLUMNS columns however large `cols` is.
+  const maxColumns = Math.min(cols, MAX_COLUMNS);
+  const oneColumn = Math.max(1, (width - gap * (cols - 1)) / cols);
+  // Per-panel limits. With a band [lo, lo * BAND_RATIO], a diagram is no narrower than scale lo and shown at most at the top of the
+  // band: a wider panel keeps it at that size and gains empty space, which the cost counts as waste.
+  const prepare = (lo) => panels.map((p) => {
+    const pad = p.pad ?? 0;
+    const diagram = lo > 0 && p.natural > 0;
+    const scaleCap = diagram ? Math.min(MAX_SCALE, lo * BAND_RATIO) : MAX_SCALE;
+    return {
+      ...p,
+      minWidth: Math.min(width, Math.max(Math.ceil(p.minWidth || 0), diagram ? Math.ceil(p.natural * lo + pad) : 0)),
+      maxWidth: Math.min(p.maxWidth ?? Infinity, diagram ? p.natural * scaleCap + pad : Infinity),
+      scaleCap,
+      pad,
+      preferred: Math.min(width, (p.span ?? 1) * oneColumn + ((p.span ?? 1) - 1) * gap),
+      alone: (p.span ?? 1) >= cols,
+    };
+  });
+  let info = prepare(0);
+  // Beyond its maxWidth a panel only gains empty space, so its height stops changing there (matters when a band lowers maxWidth).
+  const heightOf = (p, w) => heightAt(p.samples, Math.min(w, p.maxWidth));
+  const columnHeight = (col, w) => col.reduce((h, k) => h + heightOf(info[k], w), 0) + gap * (col.length - 1);
+
+  function bestColumns(columns) {
+    const avail = width - gap * (columns.length - 1);
+    const mins = columns.map((c) => Math.max(...c.map((k) => info[k].minWidth)));
+    const minsFrom = mins.map((_, n) => mins.slice(n).reduce((s, w) => s + w, 0));
+    if (minsFrom[0] > avail) return null;
+    let best = null;
+    const evaluate = (ws) => {
+      const hs = ws.map((w, n) => columnHeight(columns[n], w));
+      const H = Math.max(...hs);
+      let waste = 0;
+      let dev = 0;
+      ws.forEach((w, n) => {
+        waste += (H - hs[n]) * w;
+        for (const k of columns[n]) {
+          const p = info[k];
+          if (w > p.maxWidth) waste += (w - p.maxWidth) * heightOf(p, w);
+          dev += ((w - p.preferred) / oneColumn) ** 2;
+          if (p.natural > 0) {
+            const scale = Math.min(p.scaleCap, Math.max(w - p.pad, 1) / p.natural);
+            dev += SCALE_WEIGHT * (Math.log(scale) / Math.log(MAX_SCALE)) ** 2;
+          }
+        }
+      });
+      const cost = waste / 1000 + PREF_WEIGHT * dev * H;
+      if (!best || cost < best.cost) best = { cost, ws, height: H, columns };
+    };
+    const choose = (n, used, ws) => {
+      if (n === columns.length - 1) {
+        const w = avail - used;
+        if (w >= mins[n]) evaluate([...ws, w]);
+        return;
+      }
+      for (let w = mins[n]; used + w + minsFrom[n + 1] <= avail; w += STEP) choose(n + 1, used + w, [...ws, w]);
+    };
+    choose(0, 0, []);
+    return best;
+  }
+
+  // Best columns for one row of panels i..j.
+  function bestRow(i, j) {
+    if (j > i && info.slice(i, j + 1).some((p) => p.alone)) return null;
+    let best = null;
+    for (const split of splits(j - i + 1)) {
+      if (split.length > maxColumns) continue;
+      let next = i;
+      const columns = split.map((size) => Array.from({ length: size }, () => next++));
+      const r = bestColumns(columns);
+      if (r && (!best || r.cost < best.cost)) best = r;
+    }
+    return best;
+  }
+
+  // Row breaks in reading order, for the band set up in `info`. A row holds at most 2 * maxColumns panels. Null if nothing fits.
+  function solve() {
+    const n = panels.length;
+    const total = Array(n + 1).fill(Infinity);
+    const from = Array(n + 1).fill(-1);
+    const chosen = Array(n + 1).fill(null);
+    total[0] = 0;
+    for (let j = 1; j <= n; j++) {
+      for (let i = Math.max(0, j - 2 * maxColumns); i < j; i++) {
+        if (total[i] === Infinity) continue;
+        const r = bestRow(i, j - 1);
+        if (r && total[i] + r.cost < total[j]) {
+          total[j] = total[i] + r.cost;
+          from[j] = i;
+          chosen[j] = r;
+        }
+      }
+    }
+    if (total[n] === Infinity) return null;
+    const rows = [];
+    for (let j = n; j > 0; j = from[j]) {
+      const r = chosen[j];
+      rows.unshift({ columns: r.columns.map((panelsInColumn, c) => ({ panels: panelsInColumn, width: r.ws[c] })), height: r.height });
+    }
+    return { rows, cost: total[n] };
+  }
+
+  let best = null;
+  const diagrams = panels.filter((p) => p.natural > 0);
+  if (diagrams.length > 1) {
+    // No diagram can be shown larger than the page allows, so the band cannot start above the smallest of those limits.
+    const reach = Math.min(...diagrams.map((p) => Math.min(MAX_SCALE, Math.max(width - (p.pad ?? 0), 1) / p.natural)));
+    for (const lo of new Set([...BAND_LOS.filter((x) => x < reach), reach])) {
+      info = prepare(lo);
+      const r = solve();
+      if (r && (!best || r.cost < best.cost)) best = { ...r, maxScale: Math.min(MAX_SCALE, lo * BAND_RATIO) };
+    }
+    info = prepare(0);
+  }
+  best ??= solve();
+  return best ? { rows: best.rows, maxScale: best.maxScale ?? MAX_SCALE } : singleColumn(width, panels);
+}
+
+// DOM adapter for the sheet's justified ("photo wall") layout. Not a module: compose.js puts it after src/runtime/layout-plan.js
+// (which defines planLayout and the shared STEP, MAX_SCALE, MIN_SCALE) inside one function scope of the page script.
+//
+// It measures every panel at sampled widths, asks planLayout for rows and column widths, and applies them with flexbox.
+// The rendered HTML keeps the plain CSS grid: with JavaScript off, at the single-column breakpoint, or while printing, the grid is what
+// shows (the planned widths belong to the screen width, so print never gets a mix of the two); after printing the layout comes back.
+
+const grid = document.querySelector('.am-grid');
+const panels = grid ? [...grid.children].filter((el) => el.classList.contains('am-panel')) : [];
+
+if (panels.length > 1) {
+  const SINGLE_COLUMN = '(max-width: 760px)'; // the single-column breakpoint in src/themes/base.css
+  const TWO_COLUMNS = '(max-width: 1100px)'; // below this the CSS grid has two columns
+  const SAMPLE_STEP = 20; // width sampling step, px; the planner interpolates between samples
+  const TEXT_MIN = 260; // text keeps at least about 16 CJK characters per line
+  const TABLE_COL_MIN = 96; // per table column, px
+  const DIAGRAM_MIN = 160;
+  const RESIZE_DELAY = 150;
+  const OVERFLOWING = '.am-table-wrap, .am-diagram, .am-annot-scroll, pre';
+
+  const original = new Map([grid, ...panels, ...grid.querySelectorAll('.am-diagram > svg')].map((el) => [el, el.getAttribute('style')]));
+  const restoreStyle = (el) => (original.get(el) === null ? el.removeAttribute('style') : el.setAttribute('style', original.get(el)));
+
+  // Back to the plain grid markup and styles.
+  const restore = () => {
+    for (const box of grid.querySelectorAll(':scope > .am-col')) box.replaceWith(...box.children);
+    for (const el of original.keys()) restoreStyle(el);
+  };
+
+  // The author's width hint, rendered as data-span only when the author wrote one. The inline grid-column is the no-JavaScript fallback
+  // and may hold spans the server added, so it is never read here.
+  const spanHint = (el) => Number(el.dataset.span) || 1;
+  const diagramOnly = (el) => {
+    const body = el.querySelector(':scope > .am-panel-body');
+    return body && body.children.length === 1 ? body.querySelector(':scope > .am-diagram > svg') : null;
+  };
+  const naturalWidth = (svg) => Number(svg.getAttribute('width')) || 0;
+
+  // Height (and, for panels with tables or code, the narrowest width without sideways scrolling) at sampled widths.
+  // Only one panel is displayed while it is measured, so each width change lays out that panel alone.
+  function measure(width) {
+    grid.style.display = 'block';
+    for (const el of panels) {
+      el.style.display = 'none';
+      el.style.boxSizing = 'border-box';
+      for (const svg of el.querySelectorAll('.am-diagram > svg')) {
+        svg.style.width = '100%';
+        svg.style.maxWidth = `${naturalWidth(svg) * MAX_SCALE}px`;
+      }
+    }
+    const info = panels.map((el) => {
+      const svg = diagramOnly(el);
+      const svgs = [...el.querySelectorAll('.am-diagram > svg')];
+      const scrollers = el.querySelectorAll(OVERFLOWING);
+      const tableCols = Math.max(0, ...[...el.querySelectorAll('table tr:first-child')].map((tr) => tr.children.length));
+      el.style.display = '';
+      el.style.width = `${width}px`;
+      const pad = svg ? el.offsetWidth - svg.parentElement.clientWidth : 0;
+      const natural = svg ? naturalWidth(svg) : 0;
+      const shrunk = Math.max(0, ...svgs.map((s) => naturalWidth(s) * MIN_SCALE)) + (svg ? pad : 34);
+      const floor = svg ? Math.max(DIAGRAM_MIN, natural * MIN_SCALE + pad) : Math.max(TEXT_MIN, shrunk, tableCols * TABLE_COL_MIN + 34);
+      const from = Math.min(width, Math.floor(floor / STEP) * STEP);
+      const samples = [];
+      let fits = null;
+      for (let w = from; ; w += SAMPLE_STEP) {
+        w = Math.min(w, width);
+        el.style.width = `${w}px`;
+        if (fits === null && !svg && scrollers.length && ![...scrollers].some((s) => s.scrollWidth > s.clientWidth + 1)) fits = w;
+        samples.push({ w, h: el.offsetHeight });
+        if (w === width) break;
+      }
+      el.style.display = 'none';
+      return {
+        samples,
+        minWidth: svg ? floor : Math.max(floor, fits ?? (scrollers.length ? width : 0)),
+        maxWidth: svg ? natural * MAX_SCALE + pad : Infinity,
+        natural,
+        pad,
+        span: spanHint(el),
+      };
+    });
+    for (const el of panels) {
+      el.style.display = '';
+      el.style.width = '';
+    }
+    return info;
+  }
+
+  // Each column gets a fixed width. A row adds up to the full width, so flex-wrap breaks rows by itself.
+  // Stacked panels go into a column wrapper whose last panel absorbs the extra height.
+  function apply(plan, gap) {
+    grid.style.display = 'flex';
+    grid.style.flexWrap = 'wrap';
+    grid.style.alignItems = 'stretch';
+    grid.style.gap = `${gap}px`;
+    for (const el of panels) {
+      el.style.gridColumn = '';
+      el.style.gridRow = '';
+      el.style.flex = '0 0 auto';
+    }
+    for (const row of plan.rows) {
+      for (const col of row.columns) {
+        const width = `${col.width}px`;
+        if (col.panels.length === 1) {
+          panels[col.panels[0]].style.width = width;
+          continue;
+        }
+        const box = document.createElement('div');
+        box.className = 'am-col';
+        box.style.cssText = `width:${width};flex:0 0 auto;display:flex;flex-direction:column;gap:${gap}px`;
+        panels[col.panels[0]].before(box);
+        for (const k of col.panels) {
+          panels[k].style.width = '';
+          box.append(panels[k]);
+        }
+        panels[col.panels[col.panels.length - 1]].style.flex = '1 1 auto';
+      }
+    }
+  }
+
+  // Diagram-only panels show their diagram at most at the top of the page's scale band; a wider panel gains empty space instead.
+  function capDiagrams(maxScale) {
+    for (const el of panels) {
+      const svg = diagramOnly(el);
+      if (svg) svg.style.maxWidth = `${naturalWidth(svg) * maxScale}px`;
+    }
+  }
+
+  const containerWidth = () => Math.floor(grid.getBoundingClientRect().width);
+
+  function justify() {
+    if (printing || printQuery.matches) return;
+    try {
+      // A vertical scrollbar can appear or vanish once the rows change height; plan again if the width moved.
+      let planned = -1;
+      for (let pass = 0; pass < 3 && planned !== containerWidth(); pass++) {
+        restore();
+        if (matchMedia(SINGLE_COLUMN).matches) return;
+        planned = containerWidth();
+        const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+        const cols = Math.max(1, Number(getComputedStyle(grid).getPropertyValue('--cols')) || 3);
+        const plan = planLayout({ width: planned, gap, cols: matchMedia(TWO_COLUMNS).matches ? Math.min(cols, 2) : cols, panels: measure(planned) });
+        apply(plan, gap);
+        capDiagrams(plan.maxScale);
+      }
+      // The width never settled: columns planned for another width would overflow or leave gaps, so show the plain grid.
+      if (planned !== containerWidth()) restore();
+    } catch {
+      restore();
+    }
+  }
+
+  // Printing: back to the plain grid (spans and all), and the layout again afterwards. Browsers disagree on which of the
+  // `beforeprint` event and the print media query change fires first, or at all, so listen to both; both are idempotent.
+  // While `printing` is set (beforeprint to afterprint) justify() does nothing, so a late resize cannot bring flex widths into the print layout.
+  let printing = false;
+  const printQuery = matchMedia('print');
+  let timer = 0;
+  const later = () => {
+    clearTimeout(timer);
+    timer = setTimeout(justify, RESIZE_DELAY);
+  };
+  const toPrint = () => {
+    clearTimeout(timer);
+    restore();
+  };
+  justify();
+  addEventListener('resize', later);
+  addEventListener('beforeprint', () => {
+    printing = true;
+    toPrint();
+  });
+  addEventListener('afterprint', () => {
+    printing = false;
+    later();
+  });
+  printQuery.addEventListener('change', (e) => (e.matches ? toPrint() : later()));
+  // Late changes to panel heights: web fonts arriving, and images inside the grid finishing their load (load does not bubble, so capture it).
+  document.fonts?.ready.then(later);
+  grid.addEventListener('load', later, true);
+  // Switching theme changes paddings and fonts, hence panel heights.
+  document.querySelector('[data-am="theme"]')?.addEventListener('click', later);
+}
+})();
+</script>
+</body>
+</html>

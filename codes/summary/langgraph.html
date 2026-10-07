@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="en" data-theme="blueprint" data-mode="auto" data-style="80">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Answer me with HTML 0.4.9">
+<title>LangGraph API 速查</title>
+<style>
+html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 0px;
+  --shadow: none;
+  --bw: 1.5px;
+  --head-font: var(--font-sans);
+  --bg: #f6f6f3;
+  --paper: #ffffff;
+  --ink: #16181d;
+  --ink-2: #4b5260;
+  --ink-3: #8b929e;
+  --line: #1d2026;
+  --line-2: #d6dae1;
+  --fill: #f3f5f8;
+  --accent: #1d5fbf;
+  --accent-bg: #e4ecf8;
+  --ok: #1d5fbf;
+  --ok-bg: #e4ecf8;
+  --err: #c62828;
+  --err-bg: #fbeaea;
+  --warn: #a8620a;
+  --warn-bg: #fdf3e2;
+  --head-bg: #16181d;
+  --head-fg: #ffffff;
+}
+html[data-theme="blueprint"][data-mode="dark"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="blueprint"][data-mode="auto"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+}
+
+html[data-theme="shadcn"], html[data-theme="shadcn"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 8px;
+  --shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --bw: 1px;
+  --head-font: var(--font-sans);
+  --bg: #fafafa;
+  --paper: #ffffff;
+  --ink: #09090b;
+  --ink-2: #71717a;
+  --ink-3: #a1a1aa;
+  --line: #e4e4e7;
+  --line-2: #f0f0f2;
+  --fill: #f4f4f5;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --ok: #16a34a;
+  --ok-bg: #f0fdf4;
+  --err: #dc2626;
+  --err-bg: #fef2f2;
+  --warn: #d97706;
+  --warn-bg: #fffbeb;
+  --head-bg: #18181b;
+  --head-fg: #fafafa;
+}
+html[data-theme="shadcn"][data-mode="dark"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="shadcn"][data-mode="auto"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+}
+
+html[lang="ja"][data-theme][data-mode] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", "PingFang SC", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+html[lang="ja"][data-theme="3b1b"][data-mode] {
+  --v-title-font: "CMU Serif", "Latin Modern Roman", "Iowan Old Style", "Palatino", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Serif JP", "Songti SC", serif;
+}
+
+/* Answer me with HTML base — uses theme variables only, never hard-coded colors (theme tokens: themes/index.js). Exception: the var() fallbacks of diagrams (flow / sequence) equal the blueprint light tokens, guarded by a test. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* ── Toolbar ─────────────────────────────── */
+.am-toolbar {
+  position: fixed; top: 12px; right: 12px; z-index: 10; display: flex; gap: 6px;
+}
+.am-btn {
+  font: 12px/1 var(--font-sans); color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); padding: 7px 10px; cursor: pointer;
+}
+.am-btn:hover { border-color: var(--ink-3); }
+.am-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Header ───────────────────────────────── */
+.am-head { margin: 0 0 20px; padding-right: 260px; }
+.am-head h1 { margin: 0; font-size: 24px; line-height: 1.25; letter-spacing: -0.01em; }
+.am-sub { margin: 4px 0 0; color: var(--ink-2); }
+.am-head-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+.am-head-meta b { font-family: var(--font-mono); font-weight: 400; color: var(--ink-3); margin-right: 6px; }
+.am-intro { margin-top: 12px; max-width: 80ch; }
+
+/* ── sheet template ────────────────────────── */
+.am-sheet { max-width: 1680px; margin: 0 auto; padding: 32px 28px 40px; }
+.am-frame { position: relative; }
+.am-grid {
+  display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 20px; align-items: start;
+}
+.am-ruler { display: none; }
+html[data-theme="blueprint"] .am-frame { border: 1px solid var(--line); padding: 30px; }
+html[data-theme="blueprint"] .am-frame::before {
+  content: ""; position: absolute; inset: 18px; border: 1px solid var(--line); pointer-events: none;
+}
+html[data-theme="blueprint"] .am-ruler {
+  display: flex; position: absolute; font: 10px/1 var(--font-mono); color: var(--ink-3);
+}
+.am-ruler span { flex: 1; display: flex; align-items: center; justify-content: center; }
+.am-ruler--top, .am-ruler--bottom { left: 18px; right: 18px; height: 18px; }
+.am-ruler--top { top: 0; }
+.am-ruler--bottom { bottom: 0; }
+.am-ruler--left, .am-ruler--right { top: 18px; bottom: 18px; width: 18px; flex-direction: column; }
+.am-ruler--left { left: 0; }
+.am-ruler--right { right: 0; }
+.am-ruler--top span + span, .am-ruler--bottom span + span { border-left: 1px solid var(--line); }
+.am-ruler--left span + span, .am-ruler--right span + span { border-top: 1px solid var(--line); }
+
+/* ── Panels ───────────────────────────────── */
+.am-panel {
+  background: var(--paper); border: var(--bw) solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); min-width: 0; overflow: hidden;
+}
+.am-panel-head {
+  display: flex; align-items: stretch; gap: 0; border-bottom: var(--bw) solid var(--line); min-height: 34px;
+}
+.am-panel-id {
+  display: flex; align-items: center; justify-content: center; min-width: 34px; padding: 0 8px;
+  background: var(--head-bg); color: var(--head-fg); font-weight: 600; font-size: 14px;
+}
+html[data-theme="shadcn"] .am-panel-id { border-radius: 6px; min-width: 24px; height: 24px; margin: 9px 0 9px 14px; font-size: 12px; }
+html[data-theme="shadcn"] .am-panel-head { border-bottom-width: 1px; }
+.am-panel-head h2 { margin: 0; padding: 7px 12px; font-size: 15px; font-weight: 600; flex: 1; display: flex; align-items: center; }
+.am-panel-meta { align-self: center; padding: 0 12px; font: 11px/1.3 var(--font-mono); color: var(--ink-2); text-align: right; }
+.am-panel-body { padding: 14px 16px 16px; }
+.am-panel-body > * + * { margin-top: 12px; }
+
+/* ── Markdown body ───────────────────────── */
+.am-md > :first-child { margin-top: 0; }
+.am-md > :last-child { margin-bottom: 0; }
+.am-md p { margin: 0 0 8px; }
+.am-md ul, .am-md ol { margin: 0 0 8px; padding-left: 20px; }
+.am-md li + li { margin-top: 3px; }
+.am-md h3, .am-md h4 { margin: 14px 0 6px; font-size: 13px; }
+.am-md a { color: var(--accent); }
+.am-md blockquote { margin: 0 0 8px; padding: 2px 12px; border-left: 3px solid var(--line-2); color: var(--ink-2); }
+.am-md :not(pre) > code { font-size: 0.9em; background: var(--fill); padding: 1px 5px; border-radius: 4px; }
+.am-md hr { border: 0; border-top: 1px solid var(--line-2); margin: 12px 0; }
+.am-md table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.am-md th {
+  text-align: left; font: 11px/1.3 var(--font-mono); color: var(--ink-2); font-weight: 400;
+  padding: 6px 10px; border-bottom: 1px solid var(--line-2);
+}
+/* th { text-align: left } outranks the align attribute from Markdown alignment, so restore right and center columns explicitly. */
+.am-md th[align="right"] { text-align: right; }
+.am-md th[align="center"] { text-align: center; }
+.am-md td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.am-md tbody tr:nth-child(even) td { background: var(--fill); }
+.am-table-wrap { overflow-x: auto; }
+.am-code {
+  margin: 0; padding: 12px 14px; background: var(--fill); border: 1px solid var(--line-2);
+  border-radius: var(--radius); overflow-x: auto; font-size: 12.5px; line-height: 1.5;
+}
+
+/* ── Status badges ok / no / warn ──────────────── */
+.am-status { white-space: nowrap; font-weight: 500; }
+.am-status--ok { color: var(--ok); }
+.am-status--no { color: var(--err); }
+.am-status--warn { color: var(--warn); }
+.am-status-icon { display: inline-block; width: 1.1em; font-weight: 700; }
+
+/* ── callout ─────────────────────────────── */
+.am-callout {
+  border: 1px solid var(--line-2); border-left: 3px solid var(--accent); background: var(--accent-bg);
+  padding: 10px 14px; border-radius: var(--radius);
+}
+.am-callout--ok { border-left-color: var(--ok); background: var(--ok-bg); }
+.am-callout--warn { border-left-color: var(--warn); background: var(--warn-bg); }
+.am-callout--err { border-left-color: var(--err); background: var(--err-bg); }
+.am-callout-title { font-weight: 600; margin-bottom: 4px; }
+
+/* ── kv title block ─────────────────────────── */
+.am-kv {
+  display: grid; grid-template-columns: repeat(var(--kv-cols, 2), minmax(0, 1fr)); margin: 0;
+  border-top: var(--bw) solid var(--line); border-left: var(--bw) solid var(--line);
+}
+.am-kv-cell { border-right: var(--bw) solid var(--line); border-bottom: var(--bw) solid var(--line); padding: 6px 10px 8px; min-width: 0; }
+.am-kv-cell--wide { grid-column: 1 / -1; }
+.am-kv dt { font: 11px/1.4 var(--font-mono); color: var(--ink-2); }
+.am-kv dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.am-kv-cell--wide dd { font-size: 17px; font-weight: 600; }
+html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var(--radius); overflow: hidden; }
+
+/* ── timeline ────────────────────────────── */
+.am-timeline { list-style: none; margin: 0; padding: 0; }
+.am-timeline--h { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); padding-top: 4px; }
+.am-timeline--h li { position: relative; text-align: center; padding: 0 6px; }
+.am-timeline--h li::before {
+  content: ""; position: absolute; top: 31px; left: 0; right: 0; border-top: var(--bw) solid var(--line);
+}
+.am-timeline--h li:first-child::before { left: 50%; }
+.am-timeline--h li:last-child::before { right: 50%; }
+.am-tl-when { display: block; font-size: 15px; font-weight: 500; height: 24px; }
+.am-tl-dot {
+  position: relative; display: block; width: 11px; height: 11px; margin: 2px auto 8px;
+  border: var(--bw) solid var(--line); border-radius: 50%; background: var(--paper);
+}
+.am-tl-item--hi .am-tl-dot { background: var(--accent); border-color: var(--accent); }
+.am-tl-title { display: block; font-size: 12.5px; font-weight: 500; }
+.am-tl-text { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+.am-timeline--v li { position: relative; padding: 0 0 14px 22px; }
+.am-timeline--v li::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: -6px; border-left: var(--bw) solid var(--line-2); }
+.am-timeline--v li:last-child::before { display: none; }
+.am-timeline--v .am-tl-dot { position: absolute; left: 0; top: 4px; margin: 0; }
+.am-timeline--v .am-tl-when { display: inline; height: auto; font: 12px var(--font-mono); color: var(--ink-2); margin-right: 8px; }
+.am-timeline--v .am-tl-title { display: inline; font-size: 14px; }
+.am-timeline--v .am-tl-text { margin-top: 2px; }
+
+/* ── annot sentence notes ──────────────────────── */
+.am-annot + .am-annot { border-top: 1px solid var(--line-2); padding-top: 12px; }
+.am-annot-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.am-annot-meta { font: 11px var(--font-mono); font-weight: 400; color: var(--ink-2); }
+.am-annot-scroll { overflow-x: auto; }
+.am-annot-line {
+  position: relative; display: inline-block; white-space: pre; font: 14px/1.6 var(--font-mono);
+  padding-bottom: calc(var(--rows, 0) * 17px + 14px);
+}
+.am-annot-line--wrap { display: block; white-space: normal; padding-bottom: 10px; }
+.am-annot-line--wrap .am-seg { white-space: nowrap; }
+.am-seg { position: relative; }
+.am-seg::after {
+  content: ""; position: absolute; left: 1px; right: 1px; top: calc(100% + 1px); height: 5px;
+  border: 1px solid var(--accent); border-top: 0;
+}
+.am-seg-n {
+  position: absolute; left: 0; top: calc(100% + 8px + var(--row, 0) * 17px);
+  font: 11px/16px var(--font-sans); color: var(--accent); white-space: nowrap;
+}
+.am-seg--err { color: var(--err); }
+.am-seg--err::after { border-color: var(--err); }
+.am-seg--err .am-seg-n { color: var(--err); }
+.am-annot-caption { font-size: 12px; color: var(--ink-2); }
+
+/* ── limits bars ───────────────────────── */
+.am-lim + .am-lim { margin-top: 14px; }
+.am-lim-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 4px; }
+.am-lim-val { font: 12px var(--font-mono); color: var(--accent); white-space: nowrap; }
+.am-lim-track { position: relative; height: 12px; border: 1px solid var(--line-2); background: var(--fill); border-radius: calc(var(--radius) / 2); }
+.am-lim-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent-bg); border-right: 1px solid var(--accent); }
+.am-lim-mark { position: absolute; top: -4px; bottom: -4px; border-left: 2px solid var(--accent); }
+.am-lim.is-over .am-lim-fill { background: var(--err-bg); border-right-color: var(--err); }
+.am-lim.is-over .am-lim-val { color: var(--err); }
+.am-lim-ticks { position: relative; height: 16px; font: 10px/16px var(--font-mono); color: var(--ink-3); }
+.am-lim-ticks span { position: absolute; transform: translateX(-50%); }
+.am-lim-ticks span:first-child { transform: none; }
+.am-lim-note { font-size: 11px; color: var(--ink-2); margin-left: 6px; }
+
+/* ── tree ─────────────────────────── */
+.am-tree { font-size: 13px; }
+.am-tree-root { display: flex; justify-content: center; position: relative; padding-bottom: 18px; }
+.am-tree-root::after { content: ""; position: absolute; bottom: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-root--solo { padding-bottom: 12px; }
+.am-tree-root--solo::after { display: none; }
+.am-tree-box {
+  border: var(--bw) solid var(--line); background: var(--paper); padding: 6px 14px; text-align: center;
+  border-radius: var(--radius); font-weight: 600;
+}
+.am-tree-box small { display: block; font-weight: 400; color: var(--ink-2); font-size: 12px; }
+.am-tree-box--root { background: var(--accent-bg); font-size: 15px; padding: 8px 28px; }
+.am-tree-cols { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
+.am-tree-col { position: relative; padding: 18px 8px 0; min-width: 0; }
+.am-tree-col::before { content: ""; position: absolute; top: 0; left: 0; right: 0; border-top: var(--bw) solid var(--line); }
+.am-tree-col:first-child::before { left: 50%; }
+.am-tree-col:last-child::before { right: 50%; }
+.am-tree-col::after { content: ""; position: absolute; top: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-list, .am-tree-list ul { list-style: none; margin: 0; padding: 0; }
+.am-tree-col > .am-tree-list { margin: 8px 0 0 14px; }
+.am-tree-list ul { margin-left: 16px; }
+.am-tree-list li { position: relative; padding: 3px 0 3px 18px; }
+.am-tree-list li::before { content: ""; position: absolute; left: 0; top: 0.95em; width: 12px; border-top: 1px solid var(--ink-3); }
+.am-tree-list li::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--ink-3); }
+.am-tree-list li:last-child::after { bottom: auto; height: 0.95em; }
+.am-tree-tag { font: 11px var(--font-mono); color: var(--ink-3); margin-right: 4px; }
+.am-tree code { font: 12px var(--font-mono); }
+.am-tree-sub { display: block; font-size: 11.5px; color: var(--ink-2); }
+.am-tree-hi > .am-tree-label { color: var(--accent); font-weight: 600; }
+
+/* ── Diagrams (flow / sequence) ───────────────── */
+.am-diagram { margin: 0; overflow-x: auto; text-align: center; }
+/* Embedded previews can lose html[data-theme]; the fallbacks keep diagrams readable, and defined theme variables still win. */
+.am-diagram svg { max-width: 100%; height: auto; font-family: var(--font-sans, sans-serif); }
+.am-diagram text { fill: var(--ink, #16181d); font-size: 13px; }
+.am-node-shape { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-node--hi .am-node-shape { fill: var(--accent-bg, #e4ecf8); stroke: var(--accent, #1d5fbf); }
+.am-node--hi text { fill: var(--accent, #1d5fbf); font-weight: 600; }
+.am-edge { fill: none; stroke: var(--ink-2, #4b5260); stroke-width: 1.3; }
+.am-edge--dashed { stroke-dasharray: 5 4; }
+.am-arrow { fill: var(--ink-2, #4b5260); }
+.am-edge-label rect { fill: var(--paper, #ffffff); }
+.am-diagram .am-edge-label text { fill: var(--accent, #1d5fbf); font-size: 11.5px; }
+.am-cluster { fill: var(--fill, #f3f5f8); stroke: var(--line-2, #d6dae1); stroke-width: 1; stroke-dasharray: 4 3; }
+.am-diagram .am-cluster-label { fill: var(--ink-2, #4b5260); font: 11px var(--font-mono, monospace); }
+.am-lifeline { stroke: var(--ink-3, #8b929e); stroke-width: 1; stroke-dasharray: 4 4; }
+.am-actor { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-note { fill: var(--warn-bg, #fdf3e2); stroke: var(--warn, #a8620a); stroke-width: 1; }
+.am-diagram .am-step { fill: var(--ink-3, #8b929e); font: 10px var(--font-mono, monospace); }
+
+/* ── doc template ────────────────────────── */
+.am-doc { max-width: 1120px; margin: 0 auto; padding: 40px 28px 64px; }
+.am-doc-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+.am-doc-layout--notoc { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.am-toc { position: sticky; top: 24px; font-size: 13px; }
+.am-toc a { display: block; color: var(--ink-2); text-decoration: none; padding: 4px 0 4px 10px; border-left: 2px solid var(--line-2); }
+.am-toc a:hover { color: var(--ink); border-left-color: var(--accent); }
+.am-doc-body > .am-panel + .am-panel { margin-top: 20px; }
+
+/* ── Responsive and print ─────────────────────────── */
+@media (max-width: 1100px) {
+  .am-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .am-grid > .am-panel { grid-column: auto !important; }
+  .am-grid > .am-panel.am-span-wide { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 760px) {
+  .am-sheet, .am-doc { padding: 56px 12px 24px; }
+  .am-head { padding-right: 0; }
+  .am-grid { grid-template-columns: minmax(0, 1fr); }
+  .am-grid > .am-panel.am-span-wide { grid-column: auto !important; }
+  html[data-theme="blueprint"] .am-frame { padding: 0; border: 0; }
+  html[data-theme="blueprint"] .am-frame::before, html[data-theme="blueprint"] .am-ruler { display: none; }
+  .am-doc-layout { grid-template-columns: minmax(0, 1fr); }
+  .am-toc { position: static; }
+  .am-timeline--h { grid-template-columns: minmax(0, 1fr); }
+  .am-tree-cols { grid-template-columns: minmax(0, 1fr); }
+  /* Tables and diagrams keep their size: the wrapper scrolls horizontally when they overflow. */
+  .am-md th, .am-md td { min-width: 6em; }
+  .am-diagram svg { max-width: none; }
+}
+.am-colophon { text-align: center; padding: 0 0 28px; font: 11px var(--font-mono); color: var(--ink-3); }
+
+@media print {
+  .am-toolbar { display: none; }
+  body { background: var(--paper); }
+  .am-panel { break-inside: avoid; box-shadow: none; }
+}
+.am-panel--bare { border: 0; background: transparent; box-shadow: none; }
+.am-panel--bare > .am-panel-body { padding: 0; }
+.am-panel--bare .am-kv { background: var(--paper); }
+
+</style>
+</head>
+<body>
+<div class="am-toolbar">
+<button class="am-btn" type="button" data-am="theme" data-labels="{&quot;blueprint&quot;:&quot;Theme: Blueprint&quot;,&quot;shadcn&quot;:&quot;Theme: Cards&quot;}">Theme: Blueprint</button>
+<button class="am-btn" type="button" data-am="mode" data-labels="{&quot;auto&quot;:&quot;Mode: Auto&quot;,&quot;light&quot;:&quot;Mode: Light&quot;,&quot;dark&quot;:&quot;Mode: Dark&quot;}">Mode: Auto</button>
+<button class="am-btn" type="button" data-am="copy" data-done="Copied ✓">Copy source</button>
+</div>
+<main class="am-doc">
+<header class="am-head"><h1>LangGraph API 速查</h1><div class="am-head-meta"><span><b>source</b>codes/langgraph/cheat_api.md</span></div></header>
+<div class="am-doc-layout">
+<nav class="am-toc" aria-label="Contents"><a href="#panel-A">A · 速览</a><a href="#panel-B">B · API 速查</a><a href="#panel-C">C · 使用用例</a><a href="#panel-D">D · 常见坑</a></nav><div class="am-doc-body">
+<section class="am-panel" id="panel-A">
+<header class="am-panel-head"><span class="am-panel-id">A</span><h2>速览</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>按主题分组的常用 API。签名与默认值对照本机 <code>langgraph 1.2.12</code> / <code>langgraph-checkpoint 4.2.0</code> / <code>langgraph-prebuilt 1.1.0</code>（配套 <code>langchain 1.4.2</code> / <code>langchain-core 1.6.4</code>）核对，<code>=</code> 后面是默认值，没写默认值的表示必填。阶段练习见 <code>index.md</code>。</p>
+<p>约定：</p>
+<ul>
+<li><strong>「编译后的图」= <code>StateGraph(...).compile()</code> 的返回值</strong>。<code>StateGraph</code> 本身只是画布，没有 <code>invoke</code>。</li>
+<li><strong>节点是普通函数</strong>：入参是整份 state，返回<strong>部分 state</strong>（<code>{&quot;字段&quot;: 新值}</code>）；返回 <code>None</code> 表示这一步不改任何字段。</li>
+<li><code>config</code> 就是 <code>RunnableConfig</code>：<code>{&quot;configurable&quot;: {&quot;thread_id&quot;: ...}, &quot;recursion_limit&quot;: ...}</code>。<code>thread_id</code> 住在 <code>configurable</code> 里，<code>recursion_limit</code> 在顶层。</li>
+<li>同名的 <code>a</code> 前缀（<code>ainvoke</code> / <code>astream</code> / <code>aget_state</code>）都是异步版，签名与同步版一致。</li>
+<li>本模块模型统一 <code>init_chat_model(&quot;deepseek:deepseek-v4-flash&quot;)</code>，密钥读 <code>DEEPSEEK_API_KEY</code>（放 <code>codes/langgraph/local.env</code>）。</li>
+</ul>
+</div></div>
+</section>
+<section class="am-panel" id="panel-B">
+<header class="am-panel-head"><span class="am-panel-id">B</span><h2>API 速查</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>子模块一览</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>子模块</th>
+<th>里面有什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>graph</code></td>
+<td><code>StateGraph</code>、<code>START</code> / <code>END</code>、<code>MessagesState</code>、<code>add_messages</code></td>
+</tr>
+<tr>
+<td><code>graph.message</code></td>
+<td><code>add_messages</code>、<code>MessagesState</code></td>
+</tr>
+<tr>
+<td><code>types</code></td>
+<td><code>Command</code>、<code>interrupt</code>、<code>Send</code>、<code>RetryPolicy</code>、<code>CachePolicy</code>、<code>StateSnapshot</code>、<code>StreamMode</code>、<code>Durability</code></td>
+</tr>
+<tr>
+<td><code>checkpoint.memory</code></td>
+<td><code>MemorySaver</code>（= <code>InMemorySaver</code>，同一物）</td>
+</tr>
+<tr>
+<td><code>prebuilt</code></td>
+<td><code>ToolNode</code>、<code>tools_condition</code>、<code>create_react_agent</code>（已弃用，改用下面的 <code>create_agent</code>）</td>
+</tr>
+<tr>
+<td><code>config</code></td>
+<td><code>get_config</code>、<code>get_store</code>、<code>get_stream_writer</code></td>
+</tr>
+<tr>
+<td><code>errors</code></td>
+<td><code>GraphRecursionError</code>、<code>GraphInterrupt</code>、<code>InvalidUpdateError</code>、<code>EmptyInputError</code></td>
+</tr>
+<tr>
+<td><code>langchain.agents</code></td>
+<td><code>create_agent</code>（预置 ReAct 图，在 langchain 包里，不在 langgraph）</td>
+</tr>
+</tbody></table></div>
+<p>简写对照：<code>graph</code> = <code>langgraph.graph</code>，<code>graph.message</code> = <code>langgraph.graph.message</code>，<code>types</code> = <code>langgraph.types</code>，<code>checkpoint.memory</code> = <code>langgraph.checkpoint.memory</code>，<code>prebuilt</code> = <code>langgraph.prebuilt</code>，<code>config</code> = <code>langgraph.config</code>，<code>errors</code> = <code>langgraph.errors</code>。</p>
+<h3>图骨架：State / 节点 / 边</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>StateGraph</code></td>
+<td><code>graph</code></td>
+<td><code>state_schema</code>、<code>context_schema=None</code>、<code>input_schema=None</code>、<code>output_schema=None</code></td>
+<td>建画布。<code>state_schema</code> 常用 <code>TypedDict</code>；<code>input_schema</code> / <code>output_schema</code> 想收窄入口 / 出口时才给</td>
+</tr>
+<tr>
+<td><code>START</code> / <code>END</code></td>
+<td><code>graph</code></td>
+<td>—</td>
+<td>两个哨兵常量，实际值就是字符串 <code>&#39;__start__&#39;</code> / <code>&#39;__end__&#39;</code>，所以能直接当 <code>path_map</code> 的键</td>
+</tr>
+<tr>
+<td><code>add_node</code></td>
+<td><code>graph</code></td>
+<td><code>node</code>、<code>action=None</code>、<code>defer=False</code>、<code>input_schema=None</code>、<code>retry_policy=None</code>、<code>cache_policy=None</code>、<code>destinations=None</code></td>
+<td>注册节点；<code>add_node(&quot;agent&quot;, fn)</code>，或 <code>add_node(fn)</code> 直接拿函数名当节点名</td>
+</tr>
+<tr>
+<td><code>add_edge</code></td>
+<td><code>graph</code></td>
+<td><code>start_key</code>、<code>end_key</code></td>
+<td>静态边，写死去向；<code>start_key</code> 可以传 list 做 fan-in</td>
+</tr>
+<tr>
+<td><code>add_conditional_edges</code></td>
+<td><code>graph</code></td>
+<td><code>source</code>、<code>path</code>、<code>path_map=None</code></td>
+<td><code>path</code> 是 router 函数，读 state 返回节点名或 <code>END</code>；<code>path_map</code> 可给 dict 或 list，不给时要求 router 的返回值本身就是节点名</td>
+</tr>
+<tr>
+<td><code>set_entry_point</code> / <code>set_finish_point</code></td>
+<td><code>graph</code></td>
+<td><code>key</code></td>
+<td>就是 <code>add_edge(START, key)</code> / <code>add_edge(key, END)</code> 的简写</td>
+</tr>
+<tr>
+<td><code>compile</code></td>
+<td><code>graph</code></td>
+<td><code>checkpointer=None</code>、<code>cache=None</code>、<code>store=None</code>、<code>interrupt_before=None</code>、<code>interrupt_after=None</code>、<code>debug=False</code>、<code>name=None</code></td>
+<td>出可跑的图。<code>interrupt_before/after</code> 收节点名列表，也可以直接给 <code>&quot;*&quot;</code></td>
+</tr>
+<tr>
+<td><code>get_graph</code></td>
+<td>编译后的图</td>
+<td><code>config=None</code>、<code>xray=False</code></td>
+<td>拿结构；<code>app.get_graph().nodes.keys()</code> 看节点名，<code>draw_mermaid()</code> 出文本（<code>draw_mermaid_png()</code> 要联网）</td>
+</tr>
+</tbody></table></div>
+<p>router 不是节点：只 <code>add_conditional_edges(..., router, ...)</code>，<strong>别</strong> <code>add_node(&quot;router&quot;, router)</code>。</p>
+<h3>State 与 reducer</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TypedDict</code></td>
+<td><code>typing</code></td>
+<td>—</td>
+<td>声明 state 字段；<code>class S(TypedDict): text: str</code></td>
+</tr>
+<tr>
+<td><code>Annotated</code></td>
+<td><code>typing</code></td>
+<td><code>type</code>、<code>reducer</code></td>
+<td>给字段挂 reducer：<code>items: Annotated[list, add_messages]</code></td>
+</tr>
+<tr>
+<td><code>add_messages</code></td>
+<td><code>graph.message</code></td>
+<td><code>left=None</code>、<code>right=None</code></td>
+<td>官方的消息 reducer：追加；<strong>同 <code>id</code> 的消息是替换而不是新增</strong>；<code>RemoveMessage(id=...)</code> 可删，但 id 必须已存在</td>
+</tr>
+<tr>
+<td><code>MessagesState</code></td>
+<td><code>graph</code></td>
+<td>—</td>
+<td>预置 state，只有一个 <code>messages</code> 字段且已配好 <code>add_messages</code>，等价于 <code>Annotated[list[AnyMessage], add_messages]</code></td>
+</tr>
+</tbody></table></div>
+<p>字段不写 reducer 默认是<strong>覆盖</strong>：新值直接换掉旧值。所以「历史累加」一定要 <code>Annotated[..., add_messages]</code> 或直接用 <code>MessagesState</code>。</p>
+<h3>运行</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>invoke</code></td>
+<td>编译后的图</td>
+<td><code>input</code>、<code>config=None</code>、<code>context=None</code>、<code>stream_mode=&#39;values&#39;</code>、<code>output_keys=None</code>、<code>interrupt_before=None</code>、<code>interrupt_after=None</code>、<code>durability=None</code></td>
+<td>跑到底，返回最终 state（dict）。断点续跑时 <code>input</code> 传 <code>None</code></td>
+</tr>
+<tr>
+<td><code>stream</code></td>
+<td>编译后的图</td>
+<td><code>input</code>、<code>config=None</code>、<code>stream_mode=None</code>、<code>output_keys=None</code>、<code>subgraphs=False</code>、<code>debug=None</code>、<code>durability=None</code></td>
+<td>返回<strong>迭代器</strong>，每推进一步 yield 一块</td>
+</tr>
+<tr>
+<td><code>astream</code></td>
+<td>编译后的图</td>
+<td>同 <code>stream</code></td>
+<td>异步迭代器，配 <code>async for</code>；节点是同步 <code>def</code> 也能流，LangGraph 会丢进线程跑</td>
+</tr>
+<tr>
+<td><code>GraphRecursionError</code></td>
+<td><code>errors</code></td>
+<td>—</td>
+<td>步数超 <code>recursion_limit</code> 抛它（<code>RecursionError</code> 的子类），被中断的重放相关的是 <code>GraphInterrupt</code></td>
+</tr>
+</tbody></table></div>
+<p><code>stream_mode</code> 取值（<code>StreamMode</code>）：<code>&#39;values&#39;</code>（全量 state）、<code>&#39;updates&#39;</code>（只含刚写回的部分，key 是节点名）、<code>&#39;messages&#39;</code>（逐 token，<code>(AIMessageChunk, metadata)</code>，<code>metadata[&quot;langgraph_node&quot;]</code> 是出处）、<code>&#39;custom&#39;</code>（配 <code>get_stream_writer()</code> 自己吐）、<code>&#39;checkpoints&#39;</code>、<code>&#39;tasks&#39;</code>、<code>&#39;debug&#39;</code>。</p>
+<p><code>stream_mode</code> 传<strong>列表</strong>时同时吐多种，每块变成 <code>(mode, data)</code> 元组；单模式时直接是 data。</p>
+<p><code>durability</code>（<code>&#39;sync&#39;</code> / <code>&#39;async&#39;</code> / <code>&#39;exit&#39;</code>）控制 checkpoint 落盘时机，默认随 checkpointer 走。</p>
+<h3>持久化与线程</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MemorySaver</code></td>
+<td><code>checkpoint.memory</code></td>
+<td>—</td>
+<td>内存 checkpointer，<code>compile(checkpointer=...)</code> 装上；等于 <code>InMemorySaver</code>，进程退出即失</td>
+</tr>
+<tr>
+<td><code>config</code></td>
+<td>—</td>
+<td><code>{&quot;configurable&quot;: {&quot;thread_id&quot;: ...}}</code></td>
+<td>线程 id 决定 state 分桶；换一个 <code>thread_id</code> 就是另一个互不可见的会话</td>
+</tr>
+<tr>
+<td><code>get_state</code></td>
+<td>编译后的图</td>
+<td><code>config</code>、<code>subgraphs=False</code></td>
+<td>取当前快照，返回 <code>StateSnapshot</code></td>
+</tr>
+<tr>
+<td><code>get_state_history</code></td>
+<td>编译后的图</td>
+<td><code>config</code>、<code>filter=None</code>、<code>before=None</code>、<code>limit=None</code></td>
+<td><strong>从新到旧</strong>产快照的迭代器，<code>list(...)</code> 后再数</td>
+</tr>
+<tr>
+<td><code>update_state</code></td>
+<td>编译后的图</td>
+<td><code>config</code>、<code>values</code>、<code>as_node=None</code>、<code>task_id=None</code></td>
+<td>把 <code>values</code> 当成 <code>as_node</code> 的输出合并进 state；<strong>只改 state，不推进图</strong>，要接着跑还得 <code>invoke(None, config)</code>。返回带 <code>checkpoint_id</code> 的新 config</td>
+</tr>
+</tbody></table></div>
+<p><code>StateSnapshot</code> 常用属性：<code>values</code>（完整 state）、<code>next</code>（下一步要执行的节点元组，跑完是 <code>()</code>）、<code>config</code>（带 <code>thread_id</code> / <code>checkpoint_id</code>）、<code>metadata</code>、<code>created_at</code>、<code>parent_config</code>、<code>tasks</code>、<code>interrupts</code>。</p>
+<p><code>next == (&#39;agent&#39;,)</code> 表示停在该节点<strong>即将执行</strong>的位置，是后面做中断 / 时光倒流的锚点。</p>
+<h3>人机协同（HITL）</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>interrupt_before</code> / <code>interrupt_after</code></td>
+<td><code>compile</code></td>
+<td><code>[&quot;writer&quot;]</code> 或 <code>&quot;*&quot;</code></td>
+<td>静态断点，钉在节点边界。<code>after 上一个</code> 与 <code>before 下一个</code> 是同一位置；钉在最后一个节点之后的收尾断点，<code>next</code> 退化成 <code>()</code></td>
+</tr>
+<tr>
+<td><code>get_state(config).next</code></td>
+<td>编译后的图</td>
+<td>—</td>
+<td>静态断点停在哪儿<strong>只能</strong>从这儿看：返回结果里<strong>没有</strong> <code>__interrupt__</code>，keys 就是 <code>[&#39;messages&#39;]</code></td>
+</tr>
+<tr>
+<td><code>invoke(None, config)</code></td>
+<td>编译后的图</td>
+<td>—</td>
+<td>从静态断点续跑</td>
+</tr>
+<tr>
+<td><code>interrupt</code></td>
+<td><code>types</code></td>
+<td><code>value</code>、<code>response_schema=None</code></td>
+<td>在节点<strong>内部</strong>暂停，<code>value</code> 是给人看的 payload；续跑时这个调用直接返回人的答复</td>
+</tr>
+<tr>
+<td><code>Command</code></td>
+<td><code>types</code></td>
+<td><code>graph=None</code>、<code>update=None</code>、<code>resume=None</code>、<code>goto=()</code></td>
+<td><code>Command(resume=人的答复)</code> 续跑动态中断；也可用 <code>update</code> / <code>goto</code> 改状态或跳转</td>
+</tr>
+<tr>
+<td><code>__interrupt__</code></td>
+<td>—</td>
+<td>—</td>
+<td>触发动态中断那次 <code>invoke</code> 的返回里多出的键，取 <code>result[&quot;__interrupt__&quot;][0].value</code> 就是 payload</td>
+</tr>
+</tbody></table></div>
+<p>静态和动态的分界：<strong>静态断点看 <code>next</code>，动态 <code>interrupt()</code> 看 <code>__interrupt__</code></strong>。</p>
+<h3>预置零件</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ToolNode</code></td>
+<td><code>prebuilt</code></td>
+<td><code>tools</code>、<code>name=&#39;tools&#39;</code>、<code>handle_tool_errors=_default_handle_tool_errors</code>、<code>messages_key=&#39;messages&#39;</code>、<code>wrap_tool_call=None</code></td>
+<td>现成节点：读最后一条 <code>AIMessage</code> 的 <code>tool_calls</code>，逐个执行并包成 <code>ToolMessage</code> 写回。取代手写 <code>run_tools</code></td>
+</tr>
+<tr>
+<td><code>tools_condition</code></td>
+<td><code>prebuilt</code></td>
+<td><code>state</code>、<code>messages_key=&#39;messages&#39;</code></td>
+<td>官方版 <code>should_continue</code>：有 <code>tool_calls</code> 返回 <code>&#39;tools&#39;</code>，否则返回 <code>&#39;__end__&#39;</code>。可以不传 <code>path_map</code></td>
+</tr>
+<tr>
+<td><code>create_agent</code></td>
+<td><code>langchain.agents</code></td>
+<td><code>model</code>、<code>tools=None</code>、<code>system_prompt=None</code>、<code>middleware=()</code>、<code>response_format=None</code>、<code>state_schema=None</code>、<code>checkpointer=None</code>、<code>store=None</code>、<code>interrupt_before=None</code>、<code>interrupt_after=None</code>、<code>debug=False</code>、<code>name=None</code>、<code>cache=None</code></td>
+<td>一行建好整张 <code>agent ↔ tools</code> 图，返回<strong>已编译</strong>的图，照样能 <code>stream</code> / 接 checkpointer / 下断点</td>
+</tr>
+<tr>
+<td><code>create_react_agent</code></td>
+<td><code>prebuilt</code></td>
+<td>旧签名（<code>prompt=</code> 而非 <code>system_prompt=</code>）</td>
+<td><strong>已弃用</strong>，会提示改用 <code>langchain.agents.create_agent</code></td>
+</tr>
+</tbody></table></div>
+<p>节点名对比（<code>interrupt_before</code> / <code>as_node</code> 都按节点名匹配，写错会静默失效）：</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>节点名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>预置 <code>create_agent(model, tools)</code></td>
+<td><code>__start__</code> / <code>model</code> / <code>tools</code> / <code>__end__</code></td>
+</tr>
+<tr>
+<td>手写 <code>agent</code> + <code>ToolNode</code> + <code>tools_condition</code></td>
+<td><code>__start__</code> / <code>agent</code> / <code>tools</code> / <code>__end__</code></td>
+</tr>
+</tbody></table></div>
+<p>差异只在模型节点叫 <code>model</code> 还是 <code>agent</code>。建完图先 <code>sorted(app.get_graph().nodes.keys())</code> 看一眼是好习惯。</p>
+<p><code>ToolNode</code> 的默认容错范围比多数人以为的小：默认的 <code>_default_handle_tool_errors</code> <strong>只把 <code>ToolInvocationError</code></strong>（工具名 / 参数不合规这类「真正调用工具之前」的失败）转成 <code>ToolMessage</code>；工具函数体自己抛的 <code>ValueError</code> 之类会<strong>原样重抛</strong>把图炸掉。要兜住就显式 <code>ToolNode(tools, handle_tool_errors=True)</code>。</p>
+<h3>重试与缓存</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>RetryPolicy</code></td>
+<td><code>types</code></td>
+<td><code>initial_interval=0.5</code>、<code>backoff_factor=2.0</code>、<code>max_interval=128.0</code>、<code>max_attempts=3</code>、<code>jitter=True</code>、<code>retry_on=&lt;default_retry_on&gt;</code></td>
+<td>挂给 <code>add_node(..., retry_policy=...)</code>；默认只重试连接类错误和 5xx</td>
+</tr>
+<tr>
+<td><code>CachePolicy</code></td>
+<td><code>types</code></td>
+<td><code>key_func=&lt;default_cache_key&gt;</code>、<code>ttl=None</code></td>
+<td>节点级缓存，配 <code>compile(cache=...)</code> 用</td>
+</tr>
+<tr>
+<td><code>Send</code></td>
+<td><code>types</code></td>
+<td><code>node</code>、<code>arg</code>、<code>timeout=None</code></td>
+<td>map-reduce fanout 的载体，本模块暂未练</td>
+</tr>
+</tbody></table></div>
+<h3>步数限制与错误</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>子模块</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>recursion_limit</code></td>
+<td>config 顶层键</td>
+<td><strong>执行步数的硬上限</strong>，不是「最多几轮对话」。本机默认 <code>10007</code>，可用环境变量 <code>LANGGRAPH_DEFAULT_RECURSION_LIMIT</code> 改</td>
+</tr>
+<tr>
+<td><code>GraphRecursionError</code></td>
+<td><code>errors</code></td>
+<td>步数超上限时抛（<code>RecursionError</code> 子类），消息里带 <code>Recursion limit of N reached</code></td>
+</tr>
+<tr>
+<td><code>GraphInterrupt</code> / <code>InvalidUpdateError</code> / <code>EmptyInputError</code></td>
+<td><code>errors</code></td>
+<td>中断 / 更新非法 / 空输入</td>
+</tr>
+</tbody></table></div>
+<p>正常图也要给 <code>recursion_limit</code> 留余量，设小了会直接 <code>GraphRecursionError</code>，不是图写错了。</p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-C">
+<header class="am-panel-head"><span class="am-panel-id">C</span><h2>使用用例</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>01_state_graph</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 最小图：一个节点&#39;, &#39;graph = StateGraph(Counter)\ngraph.add_node(&quot;increment&quot;, increment)\ngraph.add_edge(START, &quot;increment&quot;)\ngraph.add_edge(&quot;increment&quot;, END)\napp = graph.compile()\nprint(app.invoke({&quot;count&quot;: 0}))&#39;), (&#39;2. 默认 reducer 是覆盖，`add_messages` 才是追加&#39;, &#39;class OverwriteState(TypedDict):\n    items: list\n\nclass AppendState(TypedDict):\n    items: Annotated[list, add_messages]\n\nfor State, label in [(OverwriteState, &quot;覆盖&quot;), (AppendState, &quot;追加&quot;)]:\n    g = StateGraph(State)\n    g.add_node(&quot;add_reply&quot;, add_reply)\n    g.add_edge(START, &quot;add_reply&quot;)\n    g.add_edge(&quot;add_reply&quot;, END)\n    out = g.compile().invoke({&quot;items&quot;: [AIMessage(&quot;旧消息&quot;)]})[&quot;items&quot;]\n    print(label, len(out), [m.content for m in out])&#39;), (&#39;3. 用预置的 `MessagesState` 累积两轮&#39;, &#39;response = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;第一问&quot;)]})\nresponse = app.invoke({&quot;messages&quot;: response[&quot;messages&quot;] + [HumanMessage(&quot;第二问&quot;)]})\nprint(len(response[&quot;messages&quot;]))\nfor m in response[&quot;messages&quot;]:\n    print(type(m).__name__, m.content)&#39;), (&#39;4. 真实模型节点&#39;, &#39;def agent(state: MessagesState) -&gt; dict:\n    return {&quot;messages&quot;: [model.invoke(state[&quot;messages&quot;])]}\n\ngraph = StateGraph(MessagesState)\ngraph.add_node(&quot;agent&quot;, agent)\ngraph.add_edge(START, &quot;agent&quot;)\ngraph.add_edge(&quot;agent&quot;, END)\nout = graph.compile().invoke({&quot;messages&quot;: [HumanMessage(&quot;用一句话介绍 LangGraph。&quot;)]})\nprint(out[&quot;messages&quot;][-1].content)&#39;), (&#39;5. 两个节点串成流水线&#39;, &#39;graph = StateGraph(Doc)\ngraph.add_node(&quot;draft&quot;, draft)\ngraph.add_node(&quot;polish&quot;, polish)\ngraph.add_edge(START, &quot;draft&quot;)\ngraph.add_edge(&quot;draft&quot;, &quot;polish&quot;)\ngraph.add_edge(&quot;polish&quot;, END)\nprint(graph.compile().invoke({&quot;text&quot;: &quot;LangGraph&quot;})[&quot;text&quot;])&#39;)]</code></pre>
+<div class="am-md"><h3>02_conditional_edges</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 第一条条件边&#39;, &#39;def router(state: Route) -&gt; str:\n    return &quot;big&quot; if state[&quot;value&quot;] &gt;= 10 else &quot;small&quot;\n\ngraph = StateGraph(Route)\ngraph.add_node(&quot;big&quot;, big)\ngraph.add_node(&quot;small&quot;, small)\ngraph.add_conditional_edges(START, router, {&quot;big&quot;: &quot;big&quot;, &quot;small&quot;: &quot;small&quot;})\ngraph.add_edge(&quot;big&quot;, END)\ngraph.add_edge(&quot;small&quot;, END)\napp = graph.compile()\nprint(app.invoke({&quot;value&quot;: 42})[&quot;label&quot;])\nprint(app.invoke({&quot;value&quot;: 3})[&quot;label&quot;])&#39;), (&#39;2. 用 `END` 让自环停下来&#39;, &#39;def router(state: Count) -&gt; str:\n    return &quot;tick&quot; if state[&quot;count&quot;] &lt; 3 else END\n\ngraph = StateGraph(Count)\ngraph.add_node(&quot;tick&quot;, tick)\ngraph.add_edge(START, &quot;tick&quot;)\ngraph.add_conditional_edges(&quot;tick&quot;, router, {&quot;tick&quot;: &quot;tick&quot;, END: END})\nprint(graph.compile().invoke({&quot;count&quot;: 0})[&quot;count&quot;])&#39;), (&#39;3. 一个 router 分三路&#39;, &#39;def router(state: Mood) -&gt; str:\n    if &quot;好棒&quot; in state[&quot;text&quot;]:\n        return &quot;happy&quot;\n    if &quot;太差&quot; in state[&quot;text&quot;]:\n        return &quot;sad&quot;\n    return &quot;neutral&quot;\n\ngraph = StateGraph(Mood)\nfor name, fn in [(&quot;happy&quot;, happy), (&quot;sad&quot;, sad), (&quot;neutral&quot;, neutral)]:\n    graph.add_node(name, fn)\n    graph.add_edge(name, END)\ngraph.add_conditional_edges(START, router, {&quot;happy&quot;: &quot;happy&quot;, &quot;sad&quot;: &quot;sad&quot;, &quot;neutral&quot;: &quot;neutral&quot;})\napp = graph.compile()\nfor text in [&quot;今天好棒&quot;, &quot;太差了&quot;, &quot;就这样吧&quot;]:\n    print(app.invoke({&quot;text&quot;: text})[&quot;mood&quot;])&#39;), (&#39;4. 手写 ReAct 图（本阶段主菜）&#39;, &#39;def agent(state: MessagesState) -&gt; dict:\n    return {&quot;messages&quot;: [bound.invoke(state[&quot;messages&quot;])]}\n\ndef should_continue(state: MessagesState) -&gt; str:\n    return &quot;tools&quot; if state[&quot;messages&quot;][-1].tool_calls else END\n\ndef run_tools(state: MessagesState) -&gt; dict:\n    msgs = []\n    for call in state[&quot;messages&quot;][-1].tool_calls:\n        result = tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])\n        msgs.append(ToolMessage(content=str(result), tool_call_id=call[&quot;id&quot;]))\n    return {&quot;messages&quot;: msgs}\n\ngraph = StateGraph(MessagesState)\ngraph.add_node(&quot;agent&quot;, agent)\ngraph.add_node(&quot;tools&quot;, run_tools)\ngraph.add_edge(START, &quot;agent&quot;)\ngraph.add_conditional_edges(&quot;agent&quot;, should_continue, {&quot;tools&quot;: &quot;tools&quot;, END: END})\ngraph.add_edge(&quot;tools&quot;, &quot;agent&quot;)\nout = graph.compile().invoke({&quot;messages&quot;: [HumanMessage(&quot;先算 2+3，再把结果乘以 4。必须用工具。&quot;)]})\nprint(len(out[&quot;messages&quot;]))\nfor m in out[&quot;messages&quot;]:\n    print(type(m).__name__, m.content)&#39;), (&#39;5. 给循环装两道保险&#39;, &#39;def router_ok(state: Loopy) -&gt; str:\n    return &quot;tick&quot; if state[&quot;count&quot;] &lt; 3 else END\n\ng = StateGraph(Loopy)\ng.add_node(&quot;tick&quot;, tick)\ng.add_edge(START, &quot;tick&quot;)\ng.add_conditional_edges(&quot;tick&quot;, router_ok, {&quot;tick&quot;: &quot;tick&quot;, END: END})\nok = g.compile()\nprint(ok.invoke({&quot;count&quot;: 0}))                    # 正常跑通 -&gt; {\&#39;count\&#39;: 3}\ntry:\n    ok.invoke({&quot;count&quot;: 0}, {&quot;recursion_limit&quot;: 2})\nexcept Exception as e:\n    print(type(e).__name__, str(e))               # 同一个 GraphRecursionError&#39;)]</code></pre>
+<div class="am-md"><h3>03_checkpointer_threads</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. 装上 MemorySaver，让它记住上一轮&#39;, &#39;from langgraph.checkpoint.memory import MemorySaver\n\napp = graph.compile(checkpointer=MemorySaver())\nconfig = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_id}}\n\nr1 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, config)\nprint(len(r1[&quot;messages&quot;]))\nr2 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, config)\nprint(len(r2[&quot;messages&quot;]), r2[&quot;messages&quot;][-1].content)&#39;), (&#39;2. 换一个 `thread_id` 就是另一个会话&#39;, &#39;config_a = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_a}}\nconfig_b = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_b}}\n\napp.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, config_a)\nra = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, config_a)\nrb = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, config_b)\nprint(len(ra[&quot;messages&quot;]), ra[&quot;messages&quot;][-1].content)\nprint(len(rb[&quot;messages&quot;]), rb[&quot;messages&quot;][-1].content)&#39;), (&#39;3. `get_state`：直接读当前快照&#39;, &#39;snap = app.get_state(config)\nprint(len(snap.values[&quot;messages&quot;]))\nprint(snap.next)\nprint(snap.values[&quot;messages&quot;][-1].content)&#39;), (&#39;4. `get_state_history`：把整条 checkpoint 链列出来&#39;, &#39;history = list(app.get_state_history(config))\nprint(len(history))\nfor i, snap in enumerate(history):\n    msgs = snap.values.get(&quot;messages&quot;) or []\n    last = type(msgs[-1]).__name__ if msgs else None\n    print(i, snap.next, last)&#39;), (&#39;5. 对照：没有 checkpointer 会怎样&#39;, &#39;plain = graph.compile()\nmem = graph.compile(checkpointer=MemorySaver())\ncp = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_plain}}\ncm = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_mem}}\n\nplain.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, cp)\nrp = plain.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, cp)\nprint(len(rp[&quot;messages&quot;]), rp[&quot;messages&quot;][-1].content)\n\nmem.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, cm)\nrm = mem.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, cm)\nprint(len(rm[&quot;messages&quot;]), rm[&quot;messages&quot;][-1].content)&#39;)]</code></pre>
+<div class="am-md"><h3>04_interrupts_hitl</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. `interrupt_before`：把人放进来审一眼&#39;, &#39;app = graph.compile(checkpointer=MemorySaver(), interrupt_before=[&quot;writer&quot;])\nresult = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, config)\nprint(len(result[&quot;messages&quot;]), list(result.keys()))    # 2 [\&#39;messages\&#39;]，没有 __interrupt__\nprint(app.get_state(config).next)                      # (\&#39;writer\&#39;,)\nfinal = app.invoke(None, config)\nprint(len(final[&quot;messages&quot;]), final[&quot;messages&quot;][-1].content)&#39;), (&#39;2. `interrupt_after`：在节点后面停&#39;, &#39;config_edge = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_edge}}\nconfig_tail = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_tail}}\napp_edge = graph.compile(checkpointer=MemorySaver(), interrupt_after=[&quot;researcher&quot;])\napp_edge.invoke({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, config_edge)\nsnap = app_edge.get_state(config_edge)\nprint(len(snap.values[&quot;messages&quot;]), snap.next)\napp_tail = graph.compile(checkpointer=MemorySaver(), interrupt_after=[&quot;writer&quot;])\napp_tail.invoke({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, config_tail)\nsnap = app_tail.get_state(config_tail)\nprint(len(snap.values[&quot;messages&quot;]), snap.next)&#39;), (&#39;3. `update_state`：在断点处替人改写 state&#39;, &#39;app.update_state(config, {&quot;messages&quot;: [AIMessage(&quot;人类补充：必须提到标准大气压。&quot;)]}, as_node=&quot;researcher&quot;)\nsnap = app.get_state(config)\nprint(len(snap.values[&quot;messages&quot;]), snap.next, snap.values[&quot;messages&quot;][-1].content)\nfinal = app.invoke(None, config)\nprint(final[&quot;messages&quot;][-1].content)&#39;), (&#39;4. 动态 `interrupt()` + `Command(resume=...)`&#39;, &#39;result = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;草稿：水的沸点是 100 度。&quot;)]}, config)\nprint(result[&quot;__interrupt__&quot;][0].value)      # {\&#39;question\&#39;: ..., \&#39;draft\&#39;: ...}\nprint(app.get_state(config).next)            # (\&#39;ask\&#39;,)\nfinal = app.invoke(Command(resume=&quot;批准&quot;), config)\nprint(final[&quot;messages&quot;][-1].content)         # 人的答复是：批准&#39;), (&#39;5. 综合：审批通过 / 打回&#39;, &#39;cfg_ok = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_ok}}\ncfg_reject = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_reject}}\napp.invoke({&quot;messages&quot;: [HumanMessage(&quot;草稿：水的沸点是 100 度。&quot;)]}, cfg_ok)\nok = app.invoke(Command(resume=&quot;ok&quot;), cfg_ok)\nprint(ok[&quot;messages&quot;][-1].content)      # 已批准并发布。\napp.invoke({&quot;messages&quot;: [HumanMessage(&quot;草稿：水的沸点是 100 度。&quot;)]}, cfg_reject)\nrej = app.invoke(Command(resume=&quot;打回，改成标准大气压&quot;), cfg_reject)\nprint(rej[&quot;messages&quot;][-1].content)     # 已打回，原因：打回，改成标准大气压&#39;)]</code></pre>
+<div class="am-md"><h3>05_streaming</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. `stream_mode=&quot;updates&quot;`：一步一块，只给增量&#39;, &#39;n = 0\nfor chunk in app.stream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=&quot;updates&quot;):\n    n += 1\n    node = next(iter(chunk))\n    print(node, len(chunk[node][&quot;messages&quot;]))\nprint(&quot;chunks:&quot;, n)        # researcher 1 / writer 1 / chunks: 2&#39;), (&#39;2. `stream_mode=&quot;values&quot;`：一步一块，给全量 state&#39;, &#39;for chunk in app.stream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=&quot;values&quot;):\n    print(len(chunk[&quot;messages&quot;]))        # 1 / 2 / 3&#39;), (&#39;3. `stream_mode=&quot;messages&quot;`：逐 token 流&#39;, &#39;buffers = {}\nfor chunk, meta in app.stream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=&quot;messages&quot;):\n    if chunk.content:\n        node = meta[&quot;langgraph_node&quot;]\n        buffers[node] = buffers.get(node, &quot;&quot;) + chunk.content\nfor node, text in buffers.items():\n    print(node, len(text), text)&#39;), (&#39;4. 多模式：`stream_mode=[&quot;updates&quot;, &quot;messages&quot;]`&#39;, &#39;counts, node_order = {}, []\nfor mode, data in app.stream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=[&quot;updates&quot;, &quot;messages&quot;]):\n    counts[mode] = counts.get(mode, 0) + 1\n    if mode == &quot;updates&quot;:\n        node_order.extend(data.keys())\nprint(counts, node_order)     # {\&#39;messages\&#39;: ..., \&#39;updates\&#39;: 2} [\&#39;researcher\&#39;, \&#39;writer\&#39;]&#39;), (&#39;5. `astream`：异步版 `stream`&#39;, &#39;async for chunk in app.astream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=&quot;values&quot;):\n    print(len(chunk[&quot;messages&quot;]))        # 1 / 2 / 3\n\ntext = &quot;&quot;\nasync for chunk, meta in app.astream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=&quot;messages&quot;):\n    if chunk.content:\n        text += chunk.content\nprint(len(text), text[:20], text.endswith(&quot;。&quot;))&#39;)]</code></pre>
+<div class="am-md"><h3>06_prebuilt_react</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. `ToolNode`：把 `run_tools` 那一段删掉&#39;, &#39;from langgraph.prebuilt import ToolNode\n\ngraph.add_node(&quot;tools&quot;, ToolNode(tools))\ngraph.add_edge(START, &quot;agent&quot;)\ngraph.add_conditional_edges(&quot;agent&quot;, should_continue, {&quot;tools&quot;: &quot;tools&quot;, END: END})\ngraph.add_edge(&quot;tools&quot;, &quot;agent&quot;)\napp = graph.compile()\n\nresult = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;先算 12 加 30，再把结果乘以 2。&quot;)]})\nprint(len(result[&quot;messages&quot;]))          # 6\nfor m in result[&quot;messages&quot;]:\n    print(type(m).__name__, getattr(m, &quot;tool_calls&quot;, None) or m.content)&#39;), (&#39;2. `tools_condition`：连路由函数也不用写了&#39;, &#39;from langgraph.prebuilt import ToolNode, tools_condition\n\nprint(tools_condition({&quot;messages&quot;: [HumanMessage(&quot;你好&quot;)]}))              # __end__\nprint(tools_condition({&quot;messages&quot;: [AIMessage(&quot;&quot;, tool_calls=[{&quot;name&quot;: &quot;add&quot;, &quot;args&quot;: {&quot;a&quot;: 1, &quot;b&quot;: 2}, &quot;id&quot;: &quot;c1&quot;}])]}))  # tools\nprint(repr(END))                                                        # \&#39;__end__\&#39;\n\ng = StateGraph(MessagesState)\ng.add_node(&quot;agent&quot;, agent)\ng.add_node(&quot;tools&quot;, ToolNode(tools))\ng.add_edge(START, &quot;agent&quot;)\ng.add_conditional_edges(&quot;agent&quot;, tools_condition)      # 不传 path_map\ng.add_edge(&quot;tools&quot;, &quot;agent&quot;)\nr = g.compile().invoke({&quot;messages&quot;: [HumanMessage(&quot;先算 12 加 30，再把结果乘以 2。&quot;)]})\nprint(len(r[&quot;messages&quot;]))                              # 6&#39;), (&#39;3. 工具报错时 `ToolNode` 怎么办&#39;, &#39;app_default = tools_only_app(ToolNode([boom]))\ntry:\n    app_default.invoke({&quot;messages&quot;: [HumanMessage(&quot;go&quot;), call]})\nexcept Exception as e:\n    print(type(e).__name__, e)          # ValueError 炸了\n\napp_soft = tools_only_app(ToolNode([boom], handle_tool_errors=True))\ntm = app_soft.invoke({&quot;messages&quot;: [HumanMessage(&quot;go&quot;), call]})[&quot;messages&quot;][-1]\nprint(type(tm).__name__, tm.content, tm.status)      # ToolMessage ... error\n\ncall_unknown = AIMessage(&quot;&quot;, tool_calls=[{&quot;name&quot;: &quot;nope&quot;, &quot;args&quot;: {}, &quot;id&quot;: &quot;c2&quot;}])\ntm = app_default.invoke({&quot;messages&quot;: [HumanMessage(&quot;go&quot;), call_unknown]})[&quot;messages&quot;][-1]\nprint(type(tm).__name__, tm.content, tm.status)      # ToolMessage Error: nope is not a valid tool ... error&#39;), (&#39;4. `create_agent`：整张图一行建好&#39;, &#39;from langchain.agents import create_agent\napp_pre = create_agent(model, [add, mul])\nprint(sorted(app_pre.get_graph().nodes.keys()))     # [\&#39;__end__\&#39;, \&#39;__start__\&#39;, \&#39;model\&#39;, \&#39;tools\&#39;]\n\nfrom langgraph.prebuilt import ToolNode, tools_condition\ng = StateGraph(MessagesState)\ng.add_node(&quot;agent&quot;, agent)\ng.add_node(&quot;tools&quot;, ToolNode(tools))\ng.add_edge(START, &quot;agent&quot;)\ng.add_conditional_edges(&quot;agent&quot;, tools_condition)\ng.add_edge(&quot;tools&quot;, &quot;agent&quot;)\nprint(sorted(g.compile().get_graph().nodes.keys()))  # [\&#39;__end__\&#39;, \&#39;__start__\&#39;, \&#39;agent\&#39;, \&#39;tools\&#39;]&#39;), (&#39;5. 综合：预置图照样接 checkpointer、system prompt、断点&#39;, &#39;cfg = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;pb-1&quot;}}\nr1 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, cfg)\nprint(len(r1[&quot;messages&quot;]), r1[&quot;messages&quot;][-1].content)      # 2 ...\nr2 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;3 加 4 是多少？&quot;)]}, cfg)\nprint(len(r2[&quot;messages&quot;]), r2[&quot;messages&quot;][-1].content)      # 6 ...\n\ncfg2 = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;pb-2&quot;}}\nr = app2.invoke({&quot;messages&quot;: [HumanMessage(&quot;3 加 4 是多少？&quot;)]}, cfg2)\nprint(list(r.keys()), app2.get_state(cfg2).next)            # [\&#39;messages\&#39;] (\&#39;tools\&#39;,)\nr = app2.invoke(None, cfg2)\nprint(len(r[&quot;messages&quot;]))                                  # 4&#39;)]</code></pre>
+<div class="am-md"><h3>07_persistence_send_subgraph</h3>
+</div>
+<pre class="am-code"><code data-lang="python">[(&#39;1. `SqliteSaver`：把 checkpoint 写进文件&#39;, &#39;from langgraph.checkpoint.sqlite import SqliteSaver\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:\n    app = graph.compile(checkpointer=saver)\n    r1 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, config)\n    print(len(r1[&quot;messages&quot;]))                                  # 2\n    r2 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, config)\n    print(len(r2[&quot;messages&quot;]), r2[&quot;messages&quot;][-1].content)      # 4 你叫小明\n\nprint(DB.is_file(), DB.stat().st_size)&#39;), (&#39;2. 关掉连接、换新连接：证明它是真的持久&#39;, &#39;cfg_s = configs[thread_sqlite]\ncfg_m = configs[thread_mem]\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:\n    app = graph.compile(checkpointer=saver)\n    r = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, cfg_s)\n    print(len(r[&quot;messages&quot;]))                                   # 2\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:            # 换新连接\n    app = graph.compile(checkpointer=saver)                     # 换新 app 对象\n    print(&quot;读回:&quot;, len(app.get_state(cfg_s).values[&quot;messages&quot;])) # 2\n    r = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, cfg_s)\n    print(len(r[&quot;messages&quot;]), r[&quot;messages&quot;][-1].content)        # 4 你叫小明\n\nmem1 = graph.compile(checkpointer=MemorySaver())\nprint(len(mem1.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, cfg_m)[&quot;messages&quot;]))\nmem2 = graph.compile(checkpointer=MemorySaver())                # 换新实例\nrm = mem2.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, cfg_m)\nprint(len(rm[&quot;messages&quot;]), rm[&quot;messages&quot;][-1].content)          # 2 答不出名字&#39;), (&#39;3. `Send`：一次派发多条分支（map）&#39;, &#39;from langgraph.types import Send\n\ndef dispatch(state: Fan):\n    return [Send(&quot;write_line&quot;, {&quot;topic&quot;: t}) for t in state[&quot;topics&quot;]]\n\ngraph.add_conditional_edges(START, dispatch, [&quot;write_line&quot;])\ngraph.add_edge(&quot;write_line&quot;, END)\napp = graph.compile()\n\nout = app.invoke({&quot;topics&quot;: [&quot;缓存&quot;, &quot;限流&quot;, &quot;重试&quot;]})\nprint(len(out[&quot;lines&quot;]), sorted(out[&quot;lines&quot;]))       # 3 [\&#39;[limiting]\&#39; ...]\nout = app.invoke({&quot;topics&quot;: list(&quot;abcde&quot;)})\nprint(out[&quot;lines&quot;], sorted(out[&quot;lines&quot;]))            # 5 条，顺序不保证&#39;), (&#39;4. 子图当节点：把一条流水线打包成一块积木&#39;, &#39;sg.add_edge(START, &quot;draft&quot;)\nsg.add_edge(&quot;draft&quot;, &quot;polish&quot;)\nsg.add_edge(&quot;polish&quot;, END)\nsub = sg.compile()\n\npg = StateGraph(Doc)\npg.add_node(&quot;pipeline&quot;, sub)\npg.add_edge(START, &quot;pipeline&quot;)\npg.add_edge(&quot;pipeline&quot;, END)\napp = pg.compile()\n\nprint(app.invoke({&quot;text&quot;: &quot;LangGraph&quot;})[&quot;text&quot;])             # 草稿：LangGraph！\nprint(sorted(sub.get_graph().nodes.keys()))\nprint(sorted(app.get_graph().nodes.keys()))\nprint(sorted(app.get_graph(xray=True).nodes.keys()))&#39;), (&#39;5. durable execution：节点炸了，从 checkpoint 接着跑&#39;, &#39;from langgraph.checkpoint.sqlite import SqliteSaver\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:\n    app = graph.compile(checkpointer=saver)\n    try:\n        app.invoke({&quot;value&quot;: 1}, config)\n    except Exception as e:\n        print(type(e).__name__, e)                            # RuntimeError 第一次故意失败\n\n    snap = app.get_state(config)\n    print(snap.next, snap.values[&quot;value&quot;])                    # (\&#39;flaky\&#39;,) 2\n\n    out = app.invoke(None, config)\n    print(out[&quot;value&quot;], app.get_state(config).next)            # 24 ()\n    print(len(list(app.get_state_history(config))))            # 5&#39;), (&#39;6. 综合：fanout 到子图，结果落盘&#39;, &#39;from langgraph.types import Send\nfrom langgraph.checkpoint.sqlite import SqliteSaver\n\ndef dispatch(state: Report):\n    return [Send(&quot;section&quot;, {&quot;topic&quot;: t}) for t in state[&quot;topics&quot;]]\n\ngraph.add_conditional_edges(START, dispatch, [&quot;section&quot;])\ngraph.add_edge(&quot;section&quot;, &quot;summary&quot;)\ngraph.add_edge(&quot;summary&quot;, END)\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:\n    app = graph.compile(checkpointer=saver)\n    out = app.invoke({&quot;topics&quot;: [&quot;缓存&quot;, &quot;限流&quot;, &quot;重试&quot;]}, config)\n    print(len(out[&quot;lines&quot;]), out[&quot;lines&quot;][-1])                # 4 汇总段\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:           # 新连接，不重跑\n    app2 = graph.compile(checkpointer=saver)\n    snap = app2.get_state(config)\n    print(len(snap.values[&quot;lines&quot;]), snap.values[&quot;lines&quot;] == out[&quot;lines&quot;])   # 4 True&#39;)]</code></pre></div>
+</section>
+<section class="am-panel" id="panel-D">
+<header class="am-panel-head"><span class="am-panel-id">D</span><h2>常见坑</h2></header>
+<div class="am-panel-body"><div class="am-md"><ul>
+<li><strong>字段名三处必须逐字一致</strong>：State 定义、节点返回的键、<code>invoke</code> 传入的键。对不上时 LangGraph <strong>不报错</strong>，只静默丢掉更新——轻则 <code>None</code>，重则整份 state 为空。</li>
+<li>节点必须返回部分 state（dict），不是整份；返回 <code>{&quot;messages&quot;: [msg]}</code> 而不是 <code>{&quot;messages&quot;: msg}</code>，多套一层列表是把 <code>list</code> 塞进了消息列表里。</li>
+<li>默认 reducer 是覆盖，不是追加。要在 <code>MessagesState</code> 之外自己收消息，必须 <code>Annotated[list, add_messages]</code>。</li>
+<li><code>tool_calls</code> 每一项是 <code>{&quot;name&quot;, &quot;args&quot;, &quot;id&quot;, &quot;type&quot;}</code> 的 <strong>dict</strong>，取值用中括号：<code>call[&quot;name&quot;]</code> / <code>call[&quot;args&quot;]</code> / <code>call[&quot;id&quot;]</code>；执行工具用 <code>tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])</code>，<code>StructuredTool</code> 不能直接当函数调，<code>*call.args</code> 也会把字典键当位置参数展开。</li>
+<li>回填工具结果用 <code>ToolMessage(content=str(result), tool_call_id=call[&quot;id&quot;])</code>——<code>tool_call_id</code> 必填且要和发起的 id 对上；<code>ToolMessage</code> 没有 <code>args</code> / <code>observation</code> 字段，结果放 <code>content</code>。</li>
+<li>router 是路由函数不是节点，别 <code>add_node</code>；循环（条件边指回自己）<strong>必须留出口</strong>，有分支就 <code>return END</code> 才停得下来。返回 <code>END</code> 和返回字符串 <code>&quot;__end__&quot;</code> 等价。</li>
+<li><code>recursion_limit</code> 是执行步数上限，正常图也要留余量；设小了会 <code>GraphRecursionError</code>，不是图写错了。</li>
+<li>静态断点（<code>interrupt_before</code> / <code>interrupt_after</code>）的返回里<strong>没有</strong> <code>__interrupt__</code>，停在哪儿看 <code>get_state(config).next</code>；只有动态 <code>interrupt()</code> 才给 <code>__interrupt__</code>。</li>
+<li><code>Command(resume=...)</code> 会让被中断的节点<strong>从头再跑一遍</strong>（只是这次 <code>interrupt()</code> 直接返回你给的值），所以 <code>interrupt()</code> 之前的代码必须幂等——写文件、发请求这类副作用要自己兜。</li>
+<li><code>update_state</code> 只写 state，<strong>不推进图</strong>；<code>next</code> 不变说明它没往前走，还得 <code>invoke(None, config)</code> 才继续。</li>
+<li><code>config</code> 要写成 <code>{&quot;configurable&quot;: {&quot;thread_id&quot;: ...}}</code>。写成扁平的 <code>{&quot;thread_id&quot;: ...}</code> 时 <code>invoke</code> 能跑（<code>ensure_config</code> 会把顶层不认识的键悄悄塞进 <code>configurable</code>），但 <code>get_state</code> 直接读 <code>config[&quot;configurable&quot;]</code>，会 <code>KeyError: &#39;configurable&#39;</code>。别依赖这个隐式转换。</li>
+<li>没有 checkpointer 时每次 <code>invoke</code> 都是全新的 state，第二轮只看到新消息、答不出上一轮的事；<code>MemorySaver</code> 只在内存里，进程退出就没了——落盘（<code>SqliteSaver</code> / Postgres）是第 7 阶段的内容，本机<strong>没装</strong> <code>langgraph-checkpoint-sqlite</code> / <code>langgraph-checkpoint-postgres</code>。</li>
+<li><code>messages</code> 流里混着大量 <code>content == &quot;&quot;</code> 的空块（工具调用 / 用量信息），拼接时跳过即可；两个节点都会吐 token，想只截「说给人看」的那段得按 <code>metadata[&quot;langgraph_node&quot;]</code> 挑。</li>
+<li>笔记本里直接顶层 <code>await</code> / <code>async for</code>——<code>ipykernel</code> 已经在跑事件循环，再调 <code>asyncio.run(main())</code> 会报 <code>RuntimeError: asyncio.run() cannot be called from a running event loop</code>；<code>.py</code> 脚本里才需要 <code>async def main()</code> + <code>asyncio.run(main())</code>。</li>
+<li>节点里用 <code>model</code> 还是 <code>bound = model.bind_tools(tools)</code> 差别很大：用没绑工具的 <code>model</code>，模型永远不会返回 <code>tool_calls</code>，条件边第一次就走向 <code>END</code>，循环一步都不进。</li>
+</ul>
+</div></div>
+</section>
+</div>
+</div>
+</main>
+<footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-07 10:32</footer>
+<textarea id="am-source" hidden readonly aria-hidden="true">---
+title: LangGraph API 速查
+
+template: doc
+theme: blueprint
+source: codes/langgraph/cheat_api.md
+---
+
+## 速览
+按主题分组的常用 API。签名与默认值对照本机 `langgraph 1.2.12` / `langgraph-checkpoint 4.2.0` / `langgraph-prebuilt 1.1.0`（配套 `langchain 1.4.2` / `langchain-core 1.6.4`）核对，`=` 后面是默认值，没写默认值的表示必填。阶段练习见 `index.md`。
+
+约定：
+
+- **「编译后的图」= `StateGraph(...).compile()` 的返回值**。`StateGraph` 本身只是画布，没有 `invoke`。
+- **节点是普通函数**：入参是整份 state，返回**部分 state**（`{&quot;字段&quot;: 新值}`）；返回 `None` 表示这一步不改任何字段。
+- `config` 就是 `RunnableConfig`：`{&quot;configurable&quot;: {&quot;thread_id&quot;: ...}, &quot;recursion_limit&quot;: ...}`。`thread_id` 住在 `configurable` 里，`recursion_limit` 在顶层。
+- 同名的 `a` 前缀（`ainvoke` / `astream` / `aget_state`）都是异步版，签名与同步版一致。
+- 本模块模型统一 `init_chat_model(&quot;deepseek:deepseek-v4-flash&quot;)`，密钥读 `DEEPSEEK_API_KEY`（放 `codes/langgraph/local.env`）。
+
+## API 速查
+### 子模块一览
+| 子模块 | 里面有什么 |
+| --- | --- |
+| `graph` | `StateGraph`、`START` / `END`、`MessagesState`、`add_messages` |
+| `graph.message` | `add_messages`、`MessagesState` |
+| `types` | `Command`、`interrupt`、`Send`、`RetryPolicy`、`CachePolicy`、`StateSnapshot`、`StreamMode`、`Durability` |
+| `checkpoint.memory` | `MemorySaver`（= `InMemorySaver`，同一物） |
+| `prebuilt` | `ToolNode`、`tools_condition`、`create_react_agent`（已弃用，改用下面的 `create_agent`） |
+| `config` | `get_config`、`get_store`、`get_stream_writer` |
+| `errors` | `GraphRecursionError`、`GraphInterrupt`、`InvalidUpdateError`、`EmptyInputError` |
+| `langchain.agents` | `create_agent`（预置 ReAct 图，在 langchain 包里，不在 langgraph） |
+
+简写对照：`graph` = `langgraph.graph`，`graph.message` = `langgraph.graph.message`，`types` = `langgraph.types`，`checkpoint.memory` = `langgraph.checkpoint.memory`，`prebuilt` = `langgraph.prebuilt`，`config` = `langgraph.config`，`errors` = `langgraph.errors`。
+
+### 图骨架：State / 节点 / 边
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `StateGraph` | `graph` | `state_schema`、`context_schema=None`、`input_schema=None`、`output_schema=None` | 建画布。`state_schema` 常用 `TypedDict`；`input_schema` / `output_schema` 想收窄入口 / 出口时才给 |
+| `START` / `END` | `graph` | — | 两个哨兵常量，实际值就是字符串 `&#39;__start__&#39;` / `&#39;__end__&#39;`，所以能直接当 `path_map` 的键 |
+| `add_node` | `graph` | `node`、`action=None`、`defer=False`、`input_schema=None`、`retry_policy=None`、`cache_policy=None`、`destinations=None` | 注册节点；`add_node(&quot;agent&quot;, fn)`，或 `add_node(fn)` 直接拿函数名当节点名 |
+| `add_edge` | `graph` | `start_key`、`end_key` | 静态边，写死去向；`start_key` 可以传 list 做 fan-in |
+| `add_conditional_edges` | `graph` | `source`、`path`、`path_map=None` | `path` 是 router 函数，读 state 返回节点名或 `END`；`path_map` 可给 dict 或 list，不给时要求 router 的返回值本身就是节点名 |
+| `set_entry_point` / `set_finish_point` | `graph` | `key` | 就是 `add_edge(START, key)` / `add_edge(key, END)` 的简写 |
+| `compile` | `graph` | `checkpointer=None`、`cache=None`、`store=None`、`interrupt_before=None`、`interrupt_after=None`、`debug=False`、`name=None` | 出可跑的图。`interrupt_before/after` 收节点名列表，也可以直接给 `&quot;*&quot;` |
+| `get_graph` | 编译后的图 | `config=None`、`xray=False` | 拿结构；`app.get_graph().nodes.keys()` 看节点名，`draw_mermaid()` 出文本（`draw_mermaid_png()` 要联网） |
+
+router 不是节点：只 `add_conditional_edges(..., router, ...)`，**别** `add_node(&quot;router&quot;, router)`。
+
+### State 与 reducer
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `TypedDict` | `typing` | — | 声明 state 字段；`class S(TypedDict): text: str` |
+| `Annotated` | `typing` | `type`、`reducer` | 给字段挂 reducer：`items: Annotated[list, add_messages]` |
+| `add_messages` | `graph.message` | `left=None`、`right=None` | 官方的消息 reducer：追加；**同 `id` 的消息是替换而不是新增**；`RemoveMessage(id=...)` 可删，但 id 必须已存在 |
+| `MessagesState` | `graph` | — | 预置 state，只有一个 `messages` 字段且已配好 `add_messages`，等价于 `Annotated[list[AnyMessage], add_messages]` |
+
+字段不写 reducer 默认是**覆盖**：新值直接换掉旧值。所以「历史累加」一定要 `Annotated[..., add_messages]` 或直接用 `MessagesState`。
+
+### 运行
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `invoke` | 编译后的图 | `input`、`config=None`、`context=None`、`stream_mode=&#39;values&#39;`、`output_keys=None`、`interrupt_before=None`、`interrupt_after=None`、`durability=None` | 跑到底，返回最终 state（dict）。断点续跑时 `input` 传 `None` |
+| `stream` | 编译后的图 | `input`、`config=None`、`stream_mode=None`、`output_keys=None`、`subgraphs=False`、`debug=None`、`durability=None` | 返回**迭代器**，每推进一步 yield 一块 |
+| `astream` | 编译后的图 | 同 `stream` | 异步迭代器，配 `async for`；节点是同步 `def` 也能流，LangGraph 会丢进线程跑 |
+| `GraphRecursionError` | `errors` | — | 步数超 `recursion_limit` 抛它（`RecursionError` 的子类），被中断的重放相关的是 `GraphInterrupt` |
+
+`stream_mode` 取值（`StreamMode`）：`&#39;values&#39;`（全量 state）、`&#39;updates&#39;`（只含刚写回的部分，key 是节点名）、`&#39;messages&#39;`（逐 token，`(AIMessageChunk, metadata)`，`metadata[&quot;langgraph_node&quot;]` 是出处）、`&#39;custom&#39;`（配 `get_stream_writer()` 自己吐）、`&#39;checkpoints&#39;`、`&#39;tasks&#39;`、`&#39;debug&#39;`。
+
+`stream_mode` 传**列表**时同时吐多种，每块变成 `(mode, data)` 元组；单模式时直接是 data。
+
+`durability`（`&#39;sync&#39;` / `&#39;async&#39;` / `&#39;exit&#39;`）控制 checkpoint 落盘时机，默认随 checkpointer 走。
+
+### 持久化与线程
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `MemorySaver` | `checkpoint.memory` | — | 内存 checkpointer，`compile(checkpointer=...)` 装上；等于 `InMemorySaver`，进程退出即失 |
+| `config` | — | `{&quot;configurable&quot;: {&quot;thread_id&quot;: ...}}` | 线程 id 决定 state 分桶；换一个 `thread_id` 就是另一个互不可见的会话 |
+| `get_state` | 编译后的图 | `config`、`subgraphs=False` | 取当前快照，返回 `StateSnapshot` |
+| `get_state_history` | 编译后的图 | `config`、`filter=None`、`before=None`、`limit=None` | **从新到旧**产快照的迭代器，`list(...)` 后再数 |
+| `update_state` | 编译后的图 | `config`、`values`、`as_node=None`、`task_id=None` | 把 `values` 当成 `as_node` 的输出合并进 state；**只改 state，不推进图**，要接着跑还得 `invoke(None, config)`。返回带 `checkpoint_id` 的新 config |
+
+`StateSnapshot` 常用属性：`values`（完整 state）、`next`（下一步要执行的节点元组，跑完是 `()`）、`config`（带 `thread_id` / `checkpoint_id`）、`metadata`、`created_at`、`parent_config`、`tasks`、`interrupts`。
+
+`next == (&#39;agent&#39;,)` 表示停在该节点**即将执行**的位置，是后面做中断 / 时光倒流的锚点。
+
+### 人机协同（HITL）
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `interrupt_before` / `interrupt_after` | `compile` | `[&quot;writer&quot;]` 或 `&quot;*&quot;` | 静态断点，钉在节点边界。`after 上一个` 与 `before 下一个` 是同一位置；钉在最后一个节点之后的收尾断点，`next` 退化成 `()` |
+| `get_state(config).next` | 编译后的图 | — | 静态断点停在哪儿**只能**从这儿看：返回结果里**没有** `__interrupt__`，keys 就是 `[&#39;messages&#39;]` |
+| `invoke(None, config)` | 编译后的图 | — | 从静态断点续跑 |
+| `interrupt` | `types` | `value`、`response_schema=None` | 在节点**内部**暂停，`value` 是给人看的 payload；续跑时这个调用直接返回人的答复 |
+| `Command` | `types` | `graph=None`、`update=None`、`resume=None`、`goto=()` | `Command(resume=人的答复)` 续跑动态中断；也可用 `update` / `goto` 改状态或跳转 |
+| `__interrupt__` | — | — | 触发动态中断那次 `invoke` 的返回里多出的键，取 `result[&quot;__interrupt__&quot;][0].value` 就是 payload |
+
+静态和动态的分界：**静态断点看 `next`，动态 `interrupt()` 看 `__interrupt__`**。
+
+### 预置零件
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `ToolNode` | `prebuilt` | `tools`、`name=&#39;tools&#39;`、`handle_tool_errors=_default_handle_tool_errors`、`messages_key=&#39;messages&#39;`、`wrap_tool_call=None` | 现成节点：读最后一条 `AIMessage` 的 `tool_calls`，逐个执行并包成 `ToolMessage` 写回。取代手写 `run_tools` |
+| `tools_condition` | `prebuilt` | `state`、`messages_key=&#39;messages&#39;` | 官方版 `should_continue`：有 `tool_calls` 返回 `&#39;tools&#39;`，否则返回 `&#39;__end__&#39;`。可以不传 `path_map` |
+| `create_agent` | `langchain.agents` | `model`、`tools=None`、`system_prompt=None`、`middleware=()`、`response_format=None`、`state_schema=None`、`checkpointer=None`、`store=None`、`interrupt_before=None`、`interrupt_after=None`、`debug=False`、`name=None`、`cache=None` | 一行建好整张 `agent ↔ tools` 图，返回**已编译**的图，照样能 `stream` / 接 checkpointer / 下断点 |
+| `create_react_agent` | `prebuilt` | 旧签名（`prompt=` 而非 `system_prompt=`） | **已弃用**，会提示改用 `langchain.agents.create_agent` |
+
+节点名对比（`interrupt_before` / `as_node` 都按节点名匹配，写错会静默失效）：
+
+| | 节点名 |
+| --- | --- |
+| 预置 `create_agent(model, tools)` | `__start__` / `model` / `tools` / `__end__` |
+| 手写 `agent` + `ToolNode` + `tools_condition` | `__start__` / `agent` / `tools` / `__end__` |
+
+差异只在模型节点叫 `model` 还是 `agent`。建完图先 `sorted(app.get_graph().nodes.keys())` 看一眼是好习惯。
+
+`ToolNode` 的默认容错范围比多数人以为的小：默认的 `_default_handle_tool_errors` **只把 `ToolInvocationError`**（工具名 / 参数不合规这类「真正调用工具之前」的失败）转成 `ToolMessage`；工具函数体自己抛的 `ValueError` 之类会**原样重抛**把图炸掉。要兜住就显式 `ToolNode(tools, handle_tool_errors=True)`。
+
+### 重试与缓存
+| 名称 | 子模块 | 常用关键字参数 | 说明 |
+| --- | --- | --- | --- |
+| `RetryPolicy` | `types` | `initial_interval=0.5`、`backoff_factor=2.0`、`max_interval=128.0`、`max_attempts=3`、`jitter=True`、`retry_on=&lt;default_retry_on&gt;` | 挂给 `add_node(..., retry_policy=...)`；默认只重试连接类错误和 5xx |
+| `CachePolicy` | `types` | `key_func=&lt;default_cache_key&gt;`、`ttl=None` | 节点级缓存，配 `compile(cache=...)` 用 |
+| `Send` | `types` | `node`、`arg`、`timeout=None` | map-reduce fanout 的载体，本模块暂未练 |
+
+### 步数限制与错误
+| 名称 | 子模块 | 说明 |
+| --- | --- | --- |
+| `recursion_limit` | config 顶层键 | **执行步数的硬上限**，不是「最多几轮对话」。本机默认 `10007`，可用环境变量 `LANGGRAPH_DEFAULT_RECURSION_LIMIT` 改 |
+| `GraphRecursionError` | `errors` | 步数超上限时抛（`RecursionError` 子类），消息里带 `Recursion limit of N reached` |
+| `GraphInterrupt` / `InvalidUpdateError` / `EmptyInputError` | `errors` | 中断 / 更新非法 / 空输入 |
+
+正常图也要给 `recursion_limit` 留余量，设小了会直接 `GraphRecursionError`，不是图写错了。
+
+## 使用用例
+### 01_state_graph
+```python
+[(&#39;1. 最小图：一个节点&#39;, &#39;graph = StateGraph(Counter)\ngraph.add_node(&quot;increment&quot;, increment)\ngraph.add_edge(START, &quot;increment&quot;)\ngraph.add_edge(&quot;increment&quot;, END)\napp = graph.compile()\nprint(app.invoke({&quot;count&quot;: 0}))&#39;), (&#39;2. 默认 reducer 是覆盖，`add_messages` 才是追加&#39;, &#39;class OverwriteState(TypedDict):\n    items: list\n\nclass AppendState(TypedDict):\n    items: Annotated[list, add_messages]\n\nfor State, label in [(OverwriteState, &quot;覆盖&quot;), (AppendState, &quot;追加&quot;)]:\n    g = StateGraph(State)\n    g.add_node(&quot;add_reply&quot;, add_reply)\n    g.add_edge(START, &quot;add_reply&quot;)\n    g.add_edge(&quot;add_reply&quot;, END)\n    out = g.compile().invoke({&quot;items&quot;: [AIMessage(&quot;旧消息&quot;)]})[&quot;items&quot;]\n    print(label, len(out), [m.content for m in out])&#39;), (&#39;3. 用预置的 `MessagesState` 累积两轮&#39;, &#39;response = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;第一问&quot;)]})\nresponse = app.invoke({&quot;messages&quot;: response[&quot;messages&quot;] + [HumanMessage(&quot;第二问&quot;)]})\nprint(len(response[&quot;messages&quot;]))\nfor m in response[&quot;messages&quot;]:\n    print(type(m).__name__, m.content)&#39;), (&#39;4. 真实模型节点&#39;, &#39;def agent(state: MessagesState) -&gt; dict:\n    return {&quot;messages&quot;: [model.invoke(state[&quot;messages&quot;])]}\n\ngraph = StateGraph(MessagesState)\ngraph.add_node(&quot;agent&quot;, agent)\ngraph.add_edge(START, &quot;agent&quot;)\ngraph.add_edge(&quot;agent&quot;, END)\nout = graph.compile().invoke({&quot;messages&quot;: [HumanMessage(&quot;用一句话介绍 LangGraph。&quot;)]})\nprint(out[&quot;messages&quot;][-1].content)&#39;), (&#39;5. 两个节点串成流水线&#39;, &#39;graph = StateGraph(Doc)\ngraph.add_node(&quot;draft&quot;, draft)\ngraph.add_node(&quot;polish&quot;, polish)\ngraph.add_edge(START, &quot;draft&quot;)\ngraph.add_edge(&quot;draft&quot;, &quot;polish&quot;)\ngraph.add_edge(&quot;polish&quot;, END)\nprint(graph.compile().invoke({&quot;text&quot;: &quot;LangGraph&quot;})[&quot;text&quot;])&#39;)]
+```
+
+### 02_conditional_edges
+```python
+[(&#39;1. 第一条条件边&#39;, &#39;def router(state: Route) -&gt; str:\n    return &quot;big&quot; if state[&quot;value&quot;] &gt;= 10 else &quot;small&quot;\n\ngraph = StateGraph(Route)\ngraph.add_node(&quot;big&quot;, big)\ngraph.add_node(&quot;small&quot;, small)\ngraph.add_conditional_edges(START, router, {&quot;big&quot;: &quot;big&quot;, &quot;small&quot;: &quot;small&quot;})\ngraph.add_edge(&quot;big&quot;, END)\ngraph.add_edge(&quot;small&quot;, END)\napp = graph.compile()\nprint(app.invoke({&quot;value&quot;: 42})[&quot;label&quot;])\nprint(app.invoke({&quot;value&quot;: 3})[&quot;label&quot;])&#39;), (&#39;2. 用 `END` 让自环停下来&#39;, &#39;def router(state: Count) -&gt; str:\n    return &quot;tick&quot; if state[&quot;count&quot;] &lt; 3 else END\n\ngraph = StateGraph(Count)\ngraph.add_node(&quot;tick&quot;, tick)\ngraph.add_edge(START, &quot;tick&quot;)\ngraph.add_conditional_edges(&quot;tick&quot;, router, {&quot;tick&quot;: &quot;tick&quot;, END: END})\nprint(graph.compile().invoke({&quot;count&quot;: 0})[&quot;count&quot;])&#39;), (&#39;3. 一个 router 分三路&#39;, &#39;def router(state: Mood) -&gt; str:\n    if &quot;好棒&quot; in state[&quot;text&quot;]:\n        return &quot;happy&quot;\n    if &quot;太差&quot; in state[&quot;text&quot;]:\n        return &quot;sad&quot;\n    return &quot;neutral&quot;\n\ngraph = StateGraph(Mood)\nfor name, fn in [(&quot;happy&quot;, happy), (&quot;sad&quot;, sad), (&quot;neutral&quot;, neutral)]:\n    graph.add_node(name, fn)\n    graph.add_edge(name, END)\ngraph.add_conditional_edges(START, router, {&quot;happy&quot;: &quot;happy&quot;, &quot;sad&quot;: &quot;sad&quot;, &quot;neutral&quot;: &quot;neutral&quot;})\napp = graph.compile()\nfor text in [&quot;今天好棒&quot;, &quot;太差了&quot;, &quot;就这样吧&quot;]:\n    print(app.invoke({&quot;text&quot;: text})[&quot;mood&quot;])&#39;), (&#39;4. 手写 ReAct 图（本阶段主菜）&#39;, &#39;def agent(state: MessagesState) -&gt; dict:\n    return {&quot;messages&quot;: [bound.invoke(state[&quot;messages&quot;])]}\n\ndef should_continue(state: MessagesState) -&gt; str:\n    return &quot;tools&quot; if state[&quot;messages&quot;][-1].tool_calls else END\n\ndef run_tools(state: MessagesState) -&gt; dict:\n    msgs = []\n    for call in state[&quot;messages&quot;][-1].tool_calls:\n        result = tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])\n        msgs.append(ToolMessage(content=str(result), tool_call_id=call[&quot;id&quot;]))\n    return {&quot;messages&quot;: msgs}\n\ngraph = StateGraph(MessagesState)\ngraph.add_node(&quot;agent&quot;, agent)\ngraph.add_node(&quot;tools&quot;, run_tools)\ngraph.add_edge(START, &quot;agent&quot;)\ngraph.add_conditional_edges(&quot;agent&quot;, should_continue, {&quot;tools&quot;: &quot;tools&quot;, END: END})\ngraph.add_edge(&quot;tools&quot;, &quot;agent&quot;)\nout = graph.compile().invoke({&quot;messages&quot;: [HumanMessage(&quot;先算 2+3，再把结果乘以 4。必须用工具。&quot;)]})\nprint(len(out[&quot;messages&quot;]))\nfor m in out[&quot;messages&quot;]:\n    print(type(m).__name__, m.content)&#39;), (&#39;5. 给循环装两道保险&#39;, &#39;def router_ok(state: Loopy) -&gt; str:\n    return &quot;tick&quot; if state[&quot;count&quot;] &lt; 3 else END\n\ng = StateGraph(Loopy)\ng.add_node(&quot;tick&quot;, tick)\ng.add_edge(START, &quot;tick&quot;)\ng.add_conditional_edges(&quot;tick&quot;, router_ok, {&quot;tick&quot;: &quot;tick&quot;, END: END})\nok = g.compile()\nprint(ok.invoke({&quot;count&quot;: 0}))                    # 正常跑通 -&gt; {\&#39;count\&#39;: 3}\ntry:\n    ok.invoke({&quot;count&quot;: 0}, {&quot;recursion_limit&quot;: 2})\nexcept Exception as e:\n    print(type(e).__name__, str(e))               # 同一个 GraphRecursionError&#39;)]
+```
+
+### 03_checkpointer_threads
+```python
+[(&#39;1. 装上 MemorySaver，让它记住上一轮&#39;, &#39;from langgraph.checkpoint.memory import MemorySaver\n\napp = graph.compile(checkpointer=MemorySaver())\nconfig = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_id}}\n\nr1 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, config)\nprint(len(r1[&quot;messages&quot;]))\nr2 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, config)\nprint(len(r2[&quot;messages&quot;]), r2[&quot;messages&quot;][-1].content)&#39;), (&#39;2. 换一个 `thread_id` 就是另一个会话&#39;, &#39;config_a = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_a}}\nconfig_b = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_b}}\n\napp.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, config_a)\nra = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, config_a)\nrb = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, config_b)\nprint(len(ra[&quot;messages&quot;]), ra[&quot;messages&quot;][-1].content)\nprint(len(rb[&quot;messages&quot;]), rb[&quot;messages&quot;][-1].content)&#39;), (&#39;3. `get_state`：直接读当前快照&#39;, &#39;snap = app.get_state(config)\nprint(len(snap.values[&quot;messages&quot;]))\nprint(snap.next)\nprint(snap.values[&quot;messages&quot;][-1].content)&#39;), (&#39;4. `get_state_history`：把整条 checkpoint 链列出来&#39;, &#39;history = list(app.get_state_history(config))\nprint(len(history))\nfor i, snap in enumerate(history):\n    msgs = snap.values.get(&quot;messages&quot;) or []\n    last = type(msgs[-1]).__name__ if msgs else None\n    print(i, snap.next, last)&#39;), (&#39;5. 对照：没有 checkpointer 会怎样&#39;, &#39;plain = graph.compile()\nmem = graph.compile(checkpointer=MemorySaver())\ncp = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_plain}}\ncm = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_mem}}\n\nplain.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, cp)\nrp = plain.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, cp)\nprint(len(rp[&quot;messages&quot;]), rp[&quot;messages&quot;][-1].content)\n\nmem.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, cm)\nrm = mem.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, cm)\nprint(len(rm[&quot;messages&quot;]), rm[&quot;messages&quot;][-1].content)&#39;)]
+```
+
+### 04_interrupts_hitl
+```python
+[(&#39;1. `interrupt_before`：把人放进来审一眼&#39;, &#39;app = graph.compile(checkpointer=MemorySaver(), interrupt_before=[&quot;writer&quot;])\nresult = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, config)\nprint(len(result[&quot;messages&quot;]), list(result.keys()))    # 2 [\&#39;messages\&#39;]，没有 __interrupt__\nprint(app.get_state(config).next)                      # (\&#39;writer\&#39;,)\nfinal = app.invoke(None, config)\nprint(len(final[&quot;messages&quot;]), final[&quot;messages&quot;][-1].content)&#39;), (&#39;2. `interrupt_after`：在节点后面停&#39;, &#39;config_edge = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_edge}}\nconfig_tail = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_tail}}\napp_edge = graph.compile(checkpointer=MemorySaver(), interrupt_after=[&quot;researcher&quot;])\napp_edge.invoke({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, config_edge)\nsnap = app_edge.get_state(config_edge)\nprint(len(snap.values[&quot;messages&quot;]), snap.next)\napp_tail = graph.compile(checkpointer=MemorySaver(), interrupt_after=[&quot;writer&quot;])\napp_tail.invoke({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, config_tail)\nsnap = app_tail.get_state(config_tail)\nprint(len(snap.values[&quot;messages&quot;]), snap.next)&#39;), (&#39;3. `update_state`：在断点处替人改写 state&#39;, &#39;app.update_state(config, {&quot;messages&quot;: [AIMessage(&quot;人类补充：必须提到标准大气压。&quot;)]}, as_node=&quot;researcher&quot;)\nsnap = app.get_state(config)\nprint(len(snap.values[&quot;messages&quot;]), snap.next, snap.values[&quot;messages&quot;][-1].content)\nfinal = app.invoke(None, config)\nprint(final[&quot;messages&quot;][-1].content)&#39;), (&#39;4. 动态 `interrupt()` + `Command(resume=...)`&#39;, &#39;result = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;草稿：水的沸点是 100 度。&quot;)]}, config)\nprint(result[&quot;__interrupt__&quot;][0].value)      # {\&#39;question\&#39;: ..., \&#39;draft\&#39;: ...}\nprint(app.get_state(config).next)            # (\&#39;ask\&#39;,)\nfinal = app.invoke(Command(resume=&quot;批准&quot;), config)\nprint(final[&quot;messages&quot;][-1].content)         # 人的答复是：批准&#39;), (&#39;5. 综合：审批通过 / 打回&#39;, &#39;cfg_ok = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_ok}}\ncfg_reject = {&quot;configurable&quot;: {&quot;thread_id&quot;: thread_reject}}\napp.invoke({&quot;messages&quot;: [HumanMessage(&quot;草稿：水的沸点是 100 度。&quot;)]}, cfg_ok)\nok = app.invoke(Command(resume=&quot;ok&quot;), cfg_ok)\nprint(ok[&quot;messages&quot;][-1].content)      # 已批准并发布。\napp.invoke({&quot;messages&quot;: [HumanMessage(&quot;草稿：水的沸点是 100 度。&quot;)]}, cfg_reject)\nrej = app.invoke(Command(resume=&quot;打回，改成标准大气压&quot;), cfg_reject)\nprint(rej[&quot;messages&quot;][-1].content)     # 已打回，原因：打回，改成标准大气压&#39;)]
+```
+
+### 05_streaming
+```python
+[(&#39;1. `stream_mode=&quot;updates&quot;`：一步一块，只给增量&#39;, &#39;n = 0\nfor chunk in app.stream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=&quot;updates&quot;):\n    n += 1\n    node = next(iter(chunk))\n    print(node, len(chunk[node][&quot;messages&quot;]))\nprint(&quot;chunks:&quot;, n)        # researcher 1 / writer 1 / chunks: 2&#39;), (&#39;2. `stream_mode=&quot;values&quot;`：一步一块，给全量 state&#39;, &#39;for chunk in app.stream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=&quot;values&quot;):\n    print(len(chunk[&quot;messages&quot;]))        # 1 / 2 / 3&#39;), (&#39;3. `stream_mode=&quot;messages&quot;`：逐 token 流&#39;, &#39;buffers = {}\nfor chunk, meta in app.stream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=&quot;messages&quot;):\n    if chunk.content:\n        node = meta[&quot;langgraph_node&quot;]\n        buffers[node] = buffers.get(node, &quot;&quot;) + chunk.content\nfor node, text in buffers.items():\n    print(node, len(text), text)&#39;), (&#39;4. 多模式：`stream_mode=[&quot;updates&quot;, &quot;messages&quot;]`&#39;, &#39;counts, node_order = {}, []\nfor mode, data in app.stream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=[&quot;updates&quot;, &quot;messages&quot;]):\n    counts[mode] = counts.get(mode, 0) + 1\n    if mode == &quot;updates&quot;:\n        node_order.extend(data.keys())\nprint(counts, node_order)     # {\&#39;messages\&#39;: ..., \&#39;updates\&#39;: 2} [\&#39;researcher\&#39;, \&#39;writer\&#39;]&#39;), (&#39;5. `astream`：异步版 `stream`&#39;, &#39;async for chunk in app.astream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=&quot;values&quot;):\n    print(len(chunk[&quot;messages&quot;]))        # 1 / 2 / 3\n\ntext = &quot;&quot;\nasync for chunk, meta in app.astream({&quot;messages&quot;: [HumanMessage(&quot;开始&quot;)]}, stream_mode=&quot;messages&quot;):\n    if chunk.content:\n        text += chunk.content\nprint(len(text), text[:20], text.endswith(&quot;。&quot;))&#39;)]
+```
+
+### 06_prebuilt_react
+```python
+[(&#39;1. `ToolNode`：把 `run_tools` 那一段删掉&#39;, &#39;from langgraph.prebuilt import ToolNode\n\ngraph.add_node(&quot;tools&quot;, ToolNode(tools))\ngraph.add_edge(START, &quot;agent&quot;)\ngraph.add_conditional_edges(&quot;agent&quot;, should_continue, {&quot;tools&quot;: &quot;tools&quot;, END: END})\ngraph.add_edge(&quot;tools&quot;, &quot;agent&quot;)\napp = graph.compile()\n\nresult = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;先算 12 加 30，再把结果乘以 2。&quot;)]})\nprint(len(result[&quot;messages&quot;]))          # 6\nfor m in result[&quot;messages&quot;]:\n    print(type(m).__name__, getattr(m, &quot;tool_calls&quot;, None) or m.content)&#39;), (&#39;2. `tools_condition`：连路由函数也不用写了&#39;, &#39;from langgraph.prebuilt import ToolNode, tools_condition\n\nprint(tools_condition({&quot;messages&quot;: [HumanMessage(&quot;你好&quot;)]}))              # __end__\nprint(tools_condition({&quot;messages&quot;: [AIMessage(&quot;&quot;, tool_calls=[{&quot;name&quot;: &quot;add&quot;, &quot;args&quot;: {&quot;a&quot;: 1, &quot;b&quot;: 2}, &quot;id&quot;: &quot;c1&quot;}])]}))  # tools\nprint(repr(END))                                                        # \&#39;__end__\&#39;\n\ng = StateGraph(MessagesState)\ng.add_node(&quot;agent&quot;, agent)\ng.add_node(&quot;tools&quot;, ToolNode(tools))\ng.add_edge(START, &quot;agent&quot;)\ng.add_conditional_edges(&quot;agent&quot;, tools_condition)      # 不传 path_map\ng.add_edge(&quot;tools&quot;, &quot;agent&quot;)\nr = g.compile().invoke({&quot;messages&quot;: [HumanMessage(&quot;先算 12 加 30，再把结果乘以 2。&quot;)]})\nprint(len(r[&quot;messages&quot;]))                              # 6&#39;), (&#39;3. 工具报错时 `ToolNode` 怎么办&#39;, &#39;app_default = tools_only_app(ToolNode([boom]))\ntry:\n    app_default.invoke({&quot;messages&quot;: [HumanMessage(&quot;go&quot;), call]})\nexcept Exception as e:\n    print(type(e).__name__, e)          # ValueError 炸了\n\napp_soft = tools_only_app(ToolNode([boom], handle_tool_errors=True))\ntm = app_soft.invoke({&quot;messages&quot;: [HumanMessage(&quot;go&quot;), call]})[&quot;messages&quot;][-1]\nprint(type(tm).__name__, tm.content, tm.status)      # ToolMessage ... error\n\ncall_unknown = AIMessage(&quot;&quot;, tool_calls=[{&quot;name&quot;: &quot;nope&quot;, &quot;args&quot;: {}, &quot;id&quot;: &quot;c2&quot;}])\ntm = app_default.invoke({&quot;messages&quot;: [HumanMessage(&quot;go&quot;), call_unknown]})[&quot;messages&quot;][-1]\nprint(type(tm).__name__, tm.content, tm.status)      # ToolMessage Error: nope is not a valid tool ... error&#39;), (&#39;4. `create_agent`：整张图一行建好&#39;, &#39;from langchain.agents import create_agent\napp_pre = create_agent(model, [add, mul])\nprint(sorted(app_pre.get_graph().nodes.keys()))     # [\&#39;__end__\&#39;, \&#39;__start__\&#39;, \&#39;model\&#39;, \&#39;tools\&#39;]\n\nfrom langgraph.prebuilt import ToolNode, tools_condition\ng = StateGraph(MessagesState)\ng.add_node(&quot;agent&quot;, agent)\ng.add_node(&quot;tools&quot;, ToolNode(tools))\ng.add_edge(START, &quot;agent&quot;)\ng.add_conditional_edges(&quot;agent&quot;, tools_condition)\ng.add_edge(&quot;tools&quot;, &quot;agent&quot;)\nprint(sorted(g.compile().get_graph().nodes.keys()))  # [\&#39;__end__\&#39;, \&#39;__start__\&#39;, \&#39;agent\&#39;, \&#39;tools\&#39;]&#39;), (&#39;5. 综合：预置图照样接 checkpointer、system prompt、断点&#39;, &#39;cfg = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;pb-1&quot;}}\nr1 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, cfg)\nprint(len(r1[&quot;messages&quot;]), r1[&quot;messages&quot;][-1].content)      # 2 ...\nr2 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;3 加 4 是多少？&quot;)]}, cfg)\nprint(len(r2[&quot;messages&quot;]), r2[&quot;messages&quot;][-1].content)      # 6 ...\n\ncfg2 = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;pb-2&quot;}}\nr = app2.invoke({&quot;messages&quot;: [HumanMessage(&quot;3 加 4 是多少？&quot;)]}, cfg2)\nprint(list(r.keys()), app2.get_state(cfg2).next)            # [\&#39;messages\&#39;] (\&#39;tools\&#39;,)\nr = app2.invoke(None, cfg2)\nprint(len(r[&quot;messages&quot;]))                                  # 4&#39;)]
+```
+
+### 07_persistence_send_subgraph
+```python
+[(&#39;1. `SqliteSaver`：把 checkpoint 写进文件&#39;, &#39;from langgraph.checkpoint.sqlite import SqliteSaver\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:\n    app = graph.compile(checkpointer=saver)\n    r1 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, config)\n    print(len(r1[&quot;messages&quot;]))                                  # 2\n    r2 = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, config)\n    print(len(r2[&quot;messages&quot;]), r2[&quot;messages&quot;][-1].content)      # 4 你叫小明\n\nprint(DB.is_file(), DB.stat().st_size)&#39;), (&#39;2. 关掉连接、换新连接：证明它是真的持久&#39;, &#39;cfg_s = configs[thread_sqlite]\ncfg_m = configs[thread_mem]\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:\n    app = graph.compile(checkpointer=saver)\n    r = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, cfg_s)\n    print(len(r[&quot;messages&quot;]))                                   # 2\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:            # 换新连接\n    app = graph.compile(checkpointer=saver)                     # 换新 app 对象\n    print(&quot;读回:&quot;, len(app.get_state(cfg_s).values[&quot;messages&quot;])) # 2\n    r = app.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, cfg_s)\n    print(len(r[&quot;messages&quot;]), r[&quot;messages&quot;][-1].content)        # 4 你叫小明\n\nmem1 = graph.compile(checkpointer=MemorySaver())\nprint(len(mem1.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫小明。&quot;)]}, cfg_m)[&quot;messages&quot;]))\nmem2 = graph.compile(checkpointer=MemorySaver())                # 换新实例\nrm = mem2.invoke({&quot;messages&quot;: [HumanMessage(&quot;我叫什么？&quot;)]}, cfg_m)\nprint(len(rm[&quot;messages&quot;]), rm[&quot;messages&quot;][-1].content)          # 2 答不出名字&#39;), (&#39;3. `Send`：一次派发多条分支（map）&#39;, &#39;from langgraph.types import Send\n\ndef dispatch(state: Fan):\n    return [Send(&quot;write_line&quot;, {&quot;topic&quot;: t}) for t in state[&quot;topics&quot;]]\n\ngraph.add_conditional_edges(START, dispatch, [&quot;write_line&quot;])\ngraph.add_edge(&quot;write_line&quot;, END)\napp = graph.compile()\n\nout = app.invoke({&quot;topics&quot;: [&quot;缓存&quot;, &quot;限流&quot;, &quot;重试&quot;]})\nprint(len(out[&quot;lines&quot;]), sorted(out[&quot;lines&quot;]))       # 3 [\&#39;[limiting]\&#39; ...]\nout = app.invoke({&quot;topics&quot;: list(&quot;abcde&quot;)})\nprint(out[&quot;lines&quot;], sorted(out[&quot;lines&quot;]))            # 5 条，顺序不保证&#39;), (&#39;4. 子图当节点：把一条流水线打包成一块积木&#39;, &#39;sg.add_edge(START, &quot;draft&quot;)\nsg.add_edge(&quot;draft&quot;, &quot;polish&quot;)\nsg.add_edge(&quot;polish&quot;, END)\nsub = sg.compile()\n\npg = StateGraph(Doc)\npg.add_node(&quot;pipeline&quot;, sub)\npg.add_edge(START, &quot;pipeline&quot;)\npg.add_edge(&quot;pipeline&quot;, END)\napp = pg.compile()\n\nprint(app.invoke({&quot;text&quot;: &quot;LangGraph&quot;})[&quot;text&quot;])             # 草稿：LangGraph！\nprint(sorted(sub.get_graph().nodes.keys()))\nprint(sorted(app.get_graph().nodes.keys()))\nprint(sorted(app.get_graph(xray=True).nodes.keys()))&#39;), (&#39;5. durable execution：节点炸了，从 checkpoint 接着跑&#39;, &#39;from langgraph.checkpoint.sqlite import SqliteSaver\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:\n    app = graph.compile(checkpointer=saver)\n    try:\n        app.invoke({&quot;value&quot;: 1}, config)\n    except Exception as e:\n        print(type(e).__name__, e)                            # RuntimeError 第一次故意失败\n\n    snap = app.get_state(config)\n    print(snap.next, snap.values[&quot;value&quot;])                    # (\&#39;flaky\&#39;,) 2\n\n    out = app.invoke(None, config)\n    print(out[&quot;value&quot;], app.get_state(config).next)            # 24 ()\n    print(len(list(app.get_state_history(config))))            # 5&#39;), (&#39;6. 综合：fanout 到子图，结果落盘&#39;, &#39;from langgraph.types import Send\nfrom langgraph.checkpoint.sqlite import SqliteSaver\n\ndef dispatch(state: Report):\n    return [Send(&quot;section&quot;, {&quot;topic&quot;: t}) for t in state[&quot;topics&quot;]]\n\ngraph.add_conditional_edges(START, dispatch, [&quot;section&quot;])\ngraph.add_edge(&quot;section&quot;, &quot;summary&quot;)\ngraph.add_edge(&quot;summary&quot;, END)\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:\n    app = graph.compile(checkpointer=saver)\n    out = app.invoke({&quot;topics&quot;: [&quot;缓存&quot;, &quot;限流&quot;, &quot;重试&quot;]}, config)\n    print(len(out[&quot;lines&quot;]), out[&quot;lines&quot;][-1])                # 4 汇总段\n\nwith SqliteSaver.from_conn_string(str(DB)) as saver:           # 新连接，不重跑\n    app2 = graph.compile(checkpointer=saver)\n    snap = app2.get_state(config)\n    print(len(snap.values[&quot;lines&quot;]), snap.values[&quot;lines&quot;] == out[&quot;lines&quot;])   # 4 True&#39;)]
+```
+
+## 常见坑
+- **字段名三处必须逐字一致**：State 定义、节点返回的键、`invoke` 传入的键。对不上时 LangGraph **不报错**，只静默丢掉更新——轻则 `None`，重则整份 state 为空。
+- 节点必须返回部分 state（dict），不是整份；返回 `{&quot;messages&quot;: [msg]}` 而不是 `{&quot;messages&quot;: msg}`，多套一层列表是把 `list` 塞进了消息列表里。
+- 默认 reducer 是覆盖，不是追加。要在 `MessagesState` 之外自己收消息，必须 `Annotated[list, add_messages]`。
+- `tool_calls` 每一项是 `{&quot;name&quot;, &quot;args&quot;, &quot;id&quot;, &quot;type&quot;}` 的 **dict**，取值用中括号：`call[&quot;name&quot;]` / `call[&quot;args&quot;]` / `call[&quot;id&quot;]`；执行工具用 `tools_by_name[call[&quot;name&quot;]].invoke(call[&quot;args&quot;])`，`StructuredTool` 不能直接当函数调，`*call.args` 也会把字典键当位置参数展开。
+- 回填工具结果用 `ToolMessage(content=str(result), tool_call_id=call[&quot;id&quot;])`——`tool_call_id` 必填且要和发起的 id 对上；`ToolMessage` 没有 `args` / `observation` 字段，结果放 `content`。
+- router 是路由函数不是节点，别 `add_node`；循环（条件边指回自己）**必须留出口**，有分支就 `return END` 才停得下来。返回 `END` 和返回字符串 `&quot;__end__&quot;` 等价。
+- `recursion_limit` 是执行步数上限，正常图也要留余量；设小了会 `GraphRecursionError`，不是图写错了。
+- 静态断点（`interrupt_before` / `interrupt_after`）的返回里**没有** `__interrupt__`，停在哪儿看 `get_state(config).next`；只有动态 `interrupt()` 才给 `__interrupt__`。
+- `Command(resume=...)` 会让被中断的节点**从头再跑一遍**（只是这次 `interrupt()` 直接返回你给的值），所以 `interrupt()` 之前的代码必须幂等——写文件、发请求这类副作用要自己兜。
+- `update_state` 只写 state，**不推进图**；`next` 不变说明它没往前走，还得 `invoke(None, config)` 才继续。
+- `config` 要写成 `{&quot;configurable&quot;: {&quot;thread_id&quot;: ...}}`。写成扁平的 `{&quot;thread_id&quot;: ...}` 时 `invoke` 能跑（`ensure_config` 会把顶层不认识的键悄悄塞进 `configurable`），但 `get_state` 直接读 `config[&quot;configurable&quot;]`，会 `KeyError: &#39;configurable&#39;`。别依赖这个隐式转换。
+- 没有 checkpointer 时每次 `invoke` 都是全新的 state，第二轮只看到新消息、答不出上一轮的事；`MemorySaver` 只在内存里，进程退出就没了——落盘（`SqliteSaver` / Postgres）是第 7 阶段的内容，本机**没装** `langgraph-checkpoint-sqlite` / `langgraph-checkpoint-postgres`。
+- `messages` 流里混着大量 `content == &quot;&quot;` 的空块（工具调用 / 用量信息），拼接时跳过即可；两个节点都会吐 token，想只截「说给人看」的那段得按 `metadata[&quot;langgraph_node&quot;]` 挑。
+- 笔记本里直接顶层 `await` / `async for`——`ipykernel` 已经在跑事件循环，再调 `asyncio.run(main())` 会报 `RuntimeError: asyncio.run() cannot be called from a running event loop`；`.py` 脚本里才需要 `async def main()` + `asyncio.run(main())`。
+- 节点里用 `model` 还是 `bound = model.bind_tools(tools)` 差别很大：用没绑工具的 `model`，模型永远不会返回 `tool_calls`，条件边第一次就走向 `END`，循环一步都不进。
+</textarea>
+<script>
+(() => {
+  const root = document.documentElement;
+  const cycle = (list, cur) => list[(list.indexOf(cur) + 1) % list.length];
+  const label = (btn, value) => {
+    const map = JSON.parse(btn.dataset.labels || '{}');
+    btn.textContent = map[value] || value;
+  };
+  const bind = (name, attr, values) => {
+    const btn = document.querySelector(`[data-am="${name}"]`);
+    if (!btn) return;
+    label(btn, root.getAttribute(attr));
+    btn.addEventListener('click', () => {
+      const next = cycle(values, root.getAttribute(attr));
+      root.setAttribute(attr, next);
+      label(btn, next);
+    });
+  };
+  bind('theme', 'data-theme', ['blueprint', 'shadcn']);
+  bind('mode', 'data-mode', ['auto', 'light', 'dark']);
+
+  const copyBtn = document.querySelector('[data-am="copy"]');
+  copyBtn?.addEventListener('click', async () => {
+    const nodes = document.querySelectorAll('#am-source');
+    const text = nodes[nodes.length - 1]?.value ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      document.body.append(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    const original = copyBtn.textContent;
+    copyBtn.textContent = copyBtn.dataset.done;
+    setTimeout(() => { copyBtn.textContent = original; }, 1400);
+  });
+})();
+(() => {
+// Pure planner for justified ("photo wall") rows on sheet pages. No DOM access.
+//
+// This file must stay inlinable into the page script: top-level declarations only, no imports, and the exports are
+// `planLayout` and the constants the DOM adapter shares (STEP, MAX_SCALE, MIN_SCALE). The page build strips the `export ` keyword,
+// and test/layout-plan.test.js checks that this still works.
+//
+// planLayout({ width, gap, cols, panels }) -> { rows: [{ columns: [{ panels: [index, ...], width }], height }] }
+//
+// Input (all lengths in px):
+//   width   container width
+//   gap     space between columns, and between two panels stacked in one column
+//   cols    most columns in one row (the planner never uses more than MAX_COLUMNS, but spans stay shares of `cols`)
+//   panels  one entry per panel, in reading order:
+//     samples   [{ w, h }] panel height at sampled widths, ascending by w (heights between samples are interpolated)
+//     minWidth  narrowest feasible width (clamped to `width`)
+//     maxWidth  widest useful width; beyond it the panel only gains empty space (default: no limit)
+//     natural   natural diagram width for a diagram-only panel (default: none)
+//     pad       panel width not used by the diagram (padding and border; default 0)
+//     span      the author's width hint in grid columns (default 1); span >= cols keeps the panel alone in its row
+//
+// Output: { rows, maxScale }. Rows are in reading order; a row is a list of columns (at most `cols`); a column holds one panel or two
+// consecutive panels, stacked. For integer inputs the column widths plus the gaps between them equal `width`.
+// Rows are chosen by dynamic programming over break points; widths by a search in STEP px steps. Cost per row:
+//   H = tallest column; waste = sum((H - columnHeight) * columnWidth) + sum over diagrams wider than maxWidth of (w - maxWidth) * h
+//   dev = sum(((w - preferred) / oneColumn)^2) + SCALE_WEIGHT * sum over diagrams of (ln(scale) / ln(MAX_SCALE))^2
+//   cost = waste / 1000 + PREF_WEIGHT * dev * H
+// Scale band: diagrams on one page stay at similar sizes. With the result's `maxScale` as the diagram size limit, a diagram is
+// shown at scale min(maxScale, (width - pad) / natural). The planner tries a few bands [lo, lo * BAND_RATIO] (lo in BAND_LOS) and
+// keeps the cheapest plan in which no diagram is narrower than scale lo and none is shown above the band's top, so the largest and
+// smallest diagram scale on the page differ by at most BAND_RATIO. A panel wider than its diagram's top size keeps the diagram at
+// that size, and the page script must set the diagram's max-width to natural * maxScale. The band starts no higher than the
+// largest scale the page allows the least roomy diagram, so one wide diagram lowers the band for the others.
+// If no band is feasible the plan is made without a band (maxScale = MAX_SCALE); if no plan fits (or the input is unusable) the
+// result is a single column: one panel per row at the full width.
+
+const STEP = 10;
+const MAX_SCALE = 1.25;
+const MIN_SCALE = 0.75; // the narrowest a diagram is shown, as a share of its natural width
+const MAX_COLUMNS = 6; // rows with more columns are unreadable, and the search grows steeply with the column count
+const BAND_RATIO = 1.25; // the largest and smallest diagram scale on a page differ by at most this
+const BAND_LOS = [MIN_SCALE, 0.85, 0.95, 1]; // lower ends tried for the band; lo * BAND_RATIO is the upper end (1.25 means no upper limit)
+const SCALE_WEIGHT = 3;
+const PREF_WEIGHT = 0.15;
+
+function heightAt(samples, w) {
+  const i = samples.findIndex((s) => s.w >= w);
+  if (i === -1) return samples[samples.length - 1].h;
+  if (i === 0) return samples[0].h;
+  const a = samples[i - 1];
+  const b = samples[i];
+  return a.h + ((b.h - a.h) * (w - a.w)) / (b.w - a.w);
+}
+
+// Every way to split `len` consecutive panels into columns of 1 or 2 panels, as lists of column sizes.
+function splits(len) {
+  if (len === 0) return [[]];
+  return [1, 2].filter((k) => k <= len).flatMap((k) => splits(len - k).map((rest) => [k, ...rest]));
+}
+
+function singleColumn(width, panels) {
+  return { rows: panels.map((_, i) => ({ columns: [{ panels: [i], width }], height: 0 })) };
+}
+
+function planLayout({ width, gap = 0, cols = 3, panels }) {
+  const usable = Number.isFinite(width) && width > 0 && panels.every((p) => Array.isArray(p.samples) && p.samples.length > 0);
+  if (!usable) return singleColumn(width, panels);
+
+  // `cols` stays the unit of the author's spans; no row gets more than MAX_COLUMNS columns however large `cols` is.
+  const maxColumns = Math.min(cols, MAX_COLUMNS);
+  const oneColumn = Math.max(1, (width - gap * (cols - 1)) / cols);
+  // Per-panel limits. With a band [lo, lo * BAND_RATIO], a diagram is no narrower than scale lo and shown at most at the top of the
+  // band: a wider panel keeps it at that size and gains empty space, which the cost counts as waste.
+  const prepare = (lo) => panels.map((p) => {
+    const pad = p.pad ?? 0;
+    const diagram = lo > 0 && p.natural > 0;
+    const scaleCap = diagram ? Math.min(MAX_SCALE, lo * BAND_RATIO) : MAX_SCALE;
+    return {
+      ...p,
+      minWidth: Math.min(width, Math.max(Math.ceil(p.minWidth || 0), diagram ? Math.ceil(p.natural * lo + pad) : 0)),
+      maxWidth: Math.min(p.maxWidth ?? Infinity, diagram ? p.natural * scaleCap + pad : Infinity),
+      scaleCap,
+      pad,
+      preferred: Math.min(width, (p.span ?? 1) * oneColumn + ((p.span ?? 1) - 1) * gap),
+      alone: (p.span ?? 1) >= cols,
+    };
+  });
+  let info = prepare(0);
+  // Beyond its maxWidth a panel only gains empty space, so its height stops changing there (matters when a band lowers maxWidth).
+  const heightOf = (p, w) => heightAt(p.samples, Math.min(w, p.maxWidth));
+  const columnHeight = (col, w) => col.reduce((h, k) => h + heightOf(info[k], w), 0) + gap * (col.length - 1);
+
+  function bestColumns(columns) {
+    const avail = width - gap * (columns.length - 1);
+    const mins = columns.map((c) => Math.max(...c.map((k) => info[k].minWidth)));
+    const minsFrom = mins.map((_, n) => mins.slice(n).reduce((s, w) => s + w, 0));
+    if (minsFrom[0] > avail) return null;
+    let best = null;
+    const evaluate = (ws) => {
+      const hs = ws.map((w, n) => columnHeight(columns[n], w));
+      const H = Math.max(...hs);
+      let waste = 0;
+      let dev = 0;
+      ws.forEach((w, n) => {
+        waste += (H - hs[n]) * w;
+        for (const k of columns[n]) {
+          const p = info[k];
+          if (w > p.maxWidth) waste += (w - p.maxWidth) * heightOf(p, w);
+          dev += ((w - p.preferred) / oneColumn) ** 2;
+          if (p.natural > 0) {
+            const scale = Math.min(p.scaleCap, Math.max(w - p.pad, 1) / p.natural);
+            dev += SCALE_WEIGHT * (Math.log(scale) / Math.log(MAX_SCALE)) ** 2;
+          }
+        }
+      });
+      const cost = waste / 1000 + PREF_WEIGHT * dev * H;
+      if (!best || cost < best.cost) best = { cost, ws, height: H, columns };
+    };
+    const choose = (n, used, ws) => {
+      if (n === columns.length - 1) {
+        const w = avail - used;
+        if (w >= mins[n]) evaluate([...ws, w]);
+        return;
+      }
+      for (let w = mins[n]; used + w + minsFrom[n + 1] <= avail; w += STEP) choose(n + 1, used + w, [...ws, w]);
+    };
+    choose(0, 0, []);
+    return best;
+  }
+
+  // Best columns for one row of panels i..j.
+  function bestRow(i, j) {
+    if (j > i && info.slice(i, j + 1).some((p) => p.alone)) return null;
+    let best = null;
+    for (const split of splits(j - i + 1)) {
+      if (split.length > maxColumns) continue;
+      let next = i;
+      const columns = split.map((size) => Array.from({ length: size }, () => next++));
+      const r = bestColumns(columns);
+      if (r && (!best || r.cost < best.cost)) best = r;
+    }
+    return best;
+  }
+
+  // Row breaks in reading order, for the band set up in `info`. A row holds at most 2 * maxColumns panels. Null if nothing fits.
+  function solve() {
+    const n = panels.length;
+    const total = Array(n + 1).fill(Infinity);
+    const from = Array(n + 1).fill(-1);
+    const chosen = Array(n + 1).fill(null);
+    total[0] = 0;
+    for (let j = 1; j <= n; j++) {
+      for (let i = Math.max(0, j - 2 * maxColumns); i < j; i++) {
+        if (total[i] === Infinity) continue;
+        const r = bestRow(i, j - 1);
+        if (r && total[i] + r.cost < total[j]) {
+          total[j] = total[i] + r.cost;
+          from[j] = i;
+          chosen[j] = r;
+        }
+      }
+    }
+    if (total[n] === Infinity) return null;
+    const rows = [];
+    for (let j = n; j > 0; j = from[j]) {
+      const r = chosen[j];
+      rows.unshift({ columns: r.columns.map((panelsInColumn, c) => ({ panels: panelsInColumn, width: r.ws[c] })), height: r.height });
+    }
+    return { rows, cost: total[n] };
+  }
+
+  let best = null;
+  const diagrams = panels.filter((p) => p.natural > 0);
+  if (diagrams.length > 1) {
+    // No diagram can be shown larger than the page allows, so the band cannot start above the smallest of those limits.
+    const reach = Math.min(...diagrams.map((p) => Math.min(MAX_SCALE, Math.max(width - (p.pad ?? 0), 1) / p.natural)));
+    for (const lo of new Set([...BAND_LOS.filter((x) => x < reach), reach])) {
+      info = prepare(lo);
+      const r = solve();
+      if (r && (!best || r.cost < best.cost)) best = { ...r, maxScale: Math.min(MAX_SCALE, lo * BAND_RATIO) };
+    }
+    info = prepare(0);
+  }
+  best ??= solve();
+  return best ? { rows: best.rows, maxScale: best.maxScale ?? MAX_SCALE } : singleColumn(width, panels);
+}
+
+// DOM adapter for the sheet's justified ("photo wall") layout. Not a module: compose.js puts it after src/runtime/layout-plan.js
+// (which defines planLayout and the shared STEP, MAX_SCALE, MIN_SCALE) inside one function scope of the page script.
+//
+// It measures every panel at sampled widths, asks planLayout for rows and column widths, and applies them with flexbox.
+// The rendered HTML keeps the plain CSS grid: with JavaScript off, at the single-column breakpoint, or while printing, the grid is what
+// shows (the planned widths belong to the screen width, so print never gets a mix of the two); after printing the layout comes back.
+
+const grid = document.querySelector('.am-grid');
+const panels = grid ? [...grid.children].filter((el) => el.classList.contains('am-panel')) : [];
+
+if (panels.length > 1) {
+  const SINGLE_COLUMN = '(max-width: 760px)'; // the single-column breakpoint in src/themes/base.css
+  const TWO_COLUMNS = '(max-width: 1100px)'; // below this the CSS grid has two columns
+  const SAMPLE_STEP = 20; // width sampling step, px; the planner interpolates between samples
+  const TEXT_MIN = 260; // text keeps at least about 16 CJK characters per line
+  const TABLE_COL_MIN = 96; // per table column, px
+  const DIAGRAM_MIN = 160;
+  const RESIZE_DELAY = 150;
+  const OVERFLOWING = '.am-table-wrap, .am-diagram, .am-annot-scroll, pre';
+
+  const original = new Map([grid, ...panels, ...grid.querySelectorAll('.am-diagram > svg')].map((el) => [el, el.getAttribute('style')]));
+  const restoreStyle = (el) => (original.get(el) === null ? el.removeAttribute('style') : el.setAttribute('style', original.get(el)));
+
+  // Back to the plain grid markup and styles.
+  const restore = () => {
+    for (const box of grid.querySelectorAll(':scope > .am-col')) box.replaceWith(...box.children);
+    for (const el of original.keys()) restoreStyle(el);
+  };
+
+  // The author's width hint, rendered as data-span only when the author wrote one. The inline grid-column is the no-JavaScript fallback
+  // and may hold spans the server added, so it is never read here.
+  const spanHint = (el) => Number(el.dataset.span) || 1;
+  const diagramOnly = (el) => {
+    const body = el.querySelector(':scope > .am-panel-body');
+    return body && body.children.length === 1 ? body.querySelector(':scope > .am-diagram > svg') : null;
+  };
+  const naturalWidth = (svg) => Number(svg.getAttribute('width')) || 0;
+
+  // Height (and, for panels with tables or code, the narrowest width without sideways scrolling) at sampled widths.
+  // Only one panel is displayed while it is measured, so each width change lays out that panel alone.
+  function measure(width) {
+    grid.style.display = 'block';
+    for (const el of panels) {
+      el.style.display = 'none';
+      el.style.boxSizing = 'border-box';
+      for (const svg of el.querySelectorAll('.am-diagram > svg')) {
+        svg.style.width = '100%';
+        svg.style.maxWidth = `${naturalWidth(svg) * MAX_SCALE}px`;
+      }
+    }
+    const info = panels.map((el) => {
+      const svg = diagramOnly(el);
+      const svgs = [...el.querySelectorAll('.am-diagram > svg')];
+      const scrollers = el.querySelectorAll(OVERFLOWING);
+      const tableCols = Math.max(0, ...[...el.querySelectorAll('table tr:first-child')].map((tr) => tr.children.length));
+      el.style.display = '';
+      el.style.width = `${width}px`;
+      const pad = svg ? el.offsetWidth - svg.parentElement.clientWidth : 0;
+      const natural = svg ? naturalWidth(svg) : 0;
+      const shrunk = Math.max(0, ...svgs.map((s) => naturalWidth(s) * MIN_SCALE)) + (svg ? pad : 34);
+      const floor = svg ? Math.max(DIAGRAM_MIN, natural * MIN_SCALE + pad) : Math.max(TEXT_MIN, shrunk, tableCols * TABLE_COL_MIN + 34);
+      const from = Math.min(width, Math.floor(floor / STEP) * STEP);
+      const samples = [];
+      let fits = null;
+      for (let w = from; ; w += SAMPLE_STEP) {
+        w = Math.min(w, width);
+        el.style.width = `${w}px`;
+        if (fits === null && !svg && scrollers.length && ![...scrollers].some((s) => s.scrollWidth > s.clientWidth + 1)) fits = w;
+        samples.push({ w, h: el.offsetHeight });
+        if (w === width) break;
+      }
+      el.style.display = 'none';
+      return {
+        samples,
+        minWidth: svg ? floor : Math.max(floor, fits ?? (scrollers.length ? width : 0)),
+        maxWidth: svg ? natural * MAX_SCALE + pad : Infinity,
+        natural,
+        pad,
+        span: spanHint(el),
+      };
+    });
+    for (const el of panels) {
+      el.style.display = '';
+      el.style.width = '';
+    }
+    return info;
+  }
+
+  // Each column gets a fixed width. A row adds up to the full width, so flex-wrap breaks rows by itself.
+  // Stacked panels go into a column wrapper whose last panel absorbs the extra height.
+  function apply(plan, gap) {
+    grid.style.display = 'flex';
+    grid.style.flexWrap = 'wrap';
+    grid.style.alignItems = 'stretch';
+    grid.style.gap = `${gap}px`;
+    for (const el of panels) {
+      el.style.gridColumn = '';
+      el.style.gridRow = '';
+      el.style.flex = '0 0 auto';
+    }
+    for (const row of plan.rows) {
+      for (const col of row.columns) {
+        const width = `${col.width}px`;
+        if (col.panels.length === 1) {
+          panels[col.panels[0]].style.width = width;
+          continue;
+        }
+        const box = document.createElement('div');
+        box.className = 'am-col';
+        box.style.cssText = `width:${width};flex:0 0 auto;display:flex;flex-direction:column;gap:${gap}px`;
+        panels[col.panels[0]].before(box);
+        for (const k of col.panels) {
+          panels[k].style.width = '';
+          box.append(panels[k]);
+        }
+        panels[col.panels[col.panels.length - 1]].style.flex = '1 1 auto';
+      }
+    }
+  }
+
+  // Diagram-only panels show their diagram at most at the top of the page's scale band; a wider panel gains empty space instead.
+  function capDiagrams(maxScale) {
+    for (const el of panels) {
+      const svg = diagramOnly(el);
+      if (svg) svg.style.maxWidth = `${naturalWidth(svg) * maxScale}px`;
+    }
+  }
+
+  const containerWidth = () => Math.floor(grid.getBoundingClientRect().width);
+
+  function justify() {
+    if (printing || printQuery.matches) return;
+    try {
+      // A vertical scrollbar can appear or vanish once the rows change height; plan again if the width moved.
+      let planned = -1;
+      for (let pass = 0; pass < 3 && planned !== containerWidth(); pass++) {
+        restore();
+        if (matchMedia(SINGLE_COLUMN).matches) return;
+        planned = containerWidth();
+        const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+        const cols = Math.max(1, Number(getComputedStyle(grid).getPropertyValue('--cols')) || 3);
+        const plan = planLayout({ width: planned, gap, cols: matchMedia(TWO_COLUMNS).matches ? Math.min(cols, 2) : cols, panels: measure(planned) });
+        apply(plan, gap);
+        capDiagrams(plan.maxScale);
+      }
+      // The width never settled: columns planned for another width would overflow or leave gaps, so show the plain grid.
+      if (planned !== containerWidth()) restore();
+    } catch {
+      restore();
+    }
+  }
+
+  // Printing: back to the plain grid (spans and all), and the layout again afterwards. Browsers disagree on which of the
+  // `beforeprint` event and the print media query change fires first, or at all, so listen to both; both are idempotent.
+  // While `printing` is set (beforeprint to afterprint) justify() does nothing, so a late resize cannot bring flex widths into the print layout.
+  let printing = false;
+  const printQuery = matchMedia('print');
+  let timer = 0;
+  const later = () => {
+    clearTimeout(timer);
+    timer = setTimeout(justify, RESIZE_DELAY);
+  };
+  const toPrint = () => {
+    clearTimeout(timer);
+    restore();
+  };
+  justify();
+  addEventListener('resize', later);
+  addEventListener('beforeprint', () => {
+    printing = true;
+    toPrint();
+  });
+  addEventListener('afterprint', () => {
+    printing = false;
+    later();
+  });
+  printQuery.addEventListener('change', (e) => (e.matches ? toPrint() : later()));
+  // Late changes to panel heights: web fonts arriving, and images inside the grid finishing their load (load does not bubble, so capture it).
+  document.fonts?.ready.then(later);
+  grid.addEventListener('load', later, true);
+  // Switching theme changes paddings and fonts, hence panel heights.
+  document.querySelector('[data-am="theme"]')?.addEventListener('click', later);
+}
+})();
+</script>
+</body>
+</html>

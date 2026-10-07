@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="blueprint" data-mode="auto" data-style="80">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Answer me with HTML 0.4.9">
+<title>pathlib API 速查</title>
+<style>
+html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 0px;
+  --shadow: none;
+  --bw: 1.5px;
+  --head-font: var(--font-sans);
+  --bg: #f6f6f3;
+  --paper: #ffffff;
+  --ink: #16181d;
+  --ink-2: #4b5260;
+  --ink-3: #8b929e;
+  --line: #1d2026;
+  --line-2: #d6dae1;
+  --fill: #f3f5f8;
+  --accent: #1d5fbf;
+  --accent-bg: #e4ecf8;
+  --ok: #1d5fbf;
+  --ok-bg: #e4ecf8;
+  --err: #c62828;
+  --err-bg: #fbeaea;
+  --warn: #a8620a;
+  --warn-bg: #fdf3e2;
+  --head-bg: #16181d;
+  --head-fg: #ffffff;
+}
+html[data-theme="blueprint"][data-mode="dark"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="blueprint"][data-mode="auto"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+}
+
+html[data-theme="shadcn"], html[data-theme="shadcn"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 8px;
+  --shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --bw: 1px;
+  --head-font: var(--font-sans);
+  --bg: #fafafa;
+  --paper: #ffffff;
+  --ink: #09090b;
+  --ink-2: #71717a;
+  --ink-3: #a1a1aa;
+  --line: #e4e4e7;
+  --line-2: #f0f0f2;
+  --fill: #f4f4f5;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --ok: #16a34a;
+  --ok-bg: #f0fdf4;
+  --err: #dc2626;
+  --err-bg: #fef2f2;
+  --warn: #d97706;
+  --warn-bg: #fffbeb;
+  --head-bg: #18181b;
+  --head-fg: #fafafa;
+}
+html[data-theme="shadcn"][data-mode="dark"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="shadcn"][data-mode="auto"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+}
+
+html[lang="ja"][data-theme][data-mode] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", "PingFang SC", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+html[lang="ja"][data-theme="3b1b"][data-mode] {
+  --v-title-font: "CMU Serif", "Latin Modern Roman", "Iowan Old Style", "Palatino", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Serif JP", "Songti SC", serif;
+}
+
+/* Answer me with HTML base — uses theme variables only, never hard-coded colors (theme tokens: themes/index.js). Exception: the var() fallbacks of diagrams (flow / sequence) equal the blueprint light tokens, guarded by a test. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* ── Toolbar ─────────────────────────────── */
+.am-toolbar {
+  position: fixed; top: 12px; right: 12px; z-index: 10; display: flex; gap: 6px;
+}
+.am-btn {
+  font: 12px/1 var(--font-sans); color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); padding: 7px 10px; cursor: pointer;
+}
+.am-btn:hover { border-color: var(--ink-3); }
+.am-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Header ───────────────────────────────── */
+.am-head { margin: 0 0 20px; padding-right: 260px; }
+.am-head h1 { margin: 0; font-size: 24px; line-height: 1.25; letter-spacing: -0.01em; }
+.am-sub { margin: 4px 0 0; color: var(--ink-2); }
+.am-head-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+.am-head-meta b { font-family: var(--font-mono); font-weight: 400; color: var(--ink-3); margin-right: 6px; }
+.am-intro { margin-top: 12px; max-width: 80ch; }
+
+/* ── sheet template ────────────────────────── */
+.am-sheet { max-width: 1680px; margin: 0 auto; padding: 32px 28px 40px; }
+.am-frame { position: relative; }
+.am-grid {
+  display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 20px; align-items: start;
+}
+.am-ruler { display: none; }
+html[data-theme="blueprint"] .am-frame { border: 1px solid var(--line); padding: 30px; }
+html[data-theme="blueprint"] .am-frame::before {
+  content: ""; position: absolute; inset: 18px; border: 1px solid var(--line); pointer-events: none;
+}
+html[data-theme="blueprint"] .am-ruler {
+  display: flex; position: absolute; font: 10px/1 var(--font-mono); color: var(--ink-3);
+}
+.am-ruler span { flex: 1; display: flex; align-items: center; justify-content: center; }
+.am-ruler--top, .am-ruler--bottom { left: 18px; right: 18px; height: 18px; }
+.am-ruler--top { top: 0; }
+.am-ruler--bottom { bottom: 0; }
+.am-ruler--left, .am-ruler--right { top: 18px; bottom: 18px; width: 18px; flex-direction: column; }
+.am-ruler--left { left: 0; }
+.am-ruler--right { right: 0; }
+.am-ruler--top span + span, .am-ruler--bottom span + span { border-left: 1px solid var(--line); }
+.am-ruler--left span + span, .am-ruler--right span + span { border-top: 1px solid var(--line); }
+
+/* ── Panels ───────────────────────────────── */
+.am-panel {
+  background: var(--paper); border: var(--bw) solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); min-width: 0; overflow: hidden;
+}
+.am-panel-head {
+  display: flex; align-items: stretch; gap: 0; border-bottom: var(--bw) solid var(--line); min-height: 34px;
+}
+.am-panel-id {
+  display: flex; align-items: center; justify-content: center; min-width: 34px; padding: 0 8px;
+  background: var(--head-bg); color: var(--head-fg); font-weight: 600; font-size: 14px;
+}
+html[data-theme="shadcn"] .am-panel-id { border-radius: 6px; min-width: 24px; height: 24px; margin: 9px 0 9px 14px; font-size: 12px; }
+html[data-theme="shadcn"] .am-panel-head { border-bottom-width: 1px; }
+.am-panel-head h2 { margin: 0; padding: 7px 12px; font-size: 15px; font-weight: 600; flex: 1; display: flex; align-items: center; }
+.am-panel-meta { align-self: center; padding: 0 12px; font: 11px/1.3 var(--font-mono); color: var(--ink-2); text-align: right; }
+.am-panel-body { padding: 14px 16px 16px; }
+.am-panel-body > * + * { margin-top: 12px; }
+
+/* ── Markdown body ───────────────────────── */
+.am-md > :first-child { margin-top: 0; }
+.am-md > :last-child { margin-bottom: 0; }
+.am-md p { margin: 0 0 8px; }
+.am-md ul, .am-md ol { margin: 0 0 8px; padding-left: 20px; }
+.am-md li + li { margin-top: 3px; }
+.am-md h3, .am-md h4 { margin: 14px 0 6px; font-size: 13px; }
+.am-md a { color: var(--accent); }
+.am-md blockquote { margin: 0 0 8px; padding: 2px 12px; border-left: 3px solid var(--line-2); color: var(--ink-2); }
+.am-md :not(pre) > code { font-size: 0.9em; background: var(--fill); padding: 1px 5px; border-radius: 4px; }
+.am-md hr { border: 0; border-top: 1px solid var(--line-2); margin: 12px 0; }
+.am-md table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.am-md th {
+  text-align: left; font: 11px/1.3 var(--font-mono); color: var(--ink-2); font-weight: 400;
+  padding: 6px 10px; border-bottom: 1px solid var(--line-2);
+}
+/* th { text-align: left } outranks the align attribute from Markdown alignment, so restore right and center columns explicitly. */
+.am-md th[align="right"] { text-align: right; }
+.am-md th[align="center"] { text-align: center; }
+.am-md td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.am-md tbody tr:nth-child(even) td { background: var(--fill); }
+.am-table-wrap { overflow-x: auto; }
+.am-code {
+  margin: 0; padding: 12px 14px; background: var(--fill); border: 1px solid var(--line-2);
+  border-radius: var(--radius); overflow-x: auto; font-size: 12.5px; line-height: 1.5;
+}
+
+/* ── Status badges ok / no / warn ──────────────── */
+.am-status { white-space: nowrap; font-weight: 500; }
+.am-status--ok { color: var(--ok); }
+.am-status--no { color: var(--err); }
+.am-status--warn { color: var(--warn); }
+.am-status-icon { display: inline-block; width: 1.1em; font-weight: 700; }
+
+/* ── callout ─────────────────────────────── */
+.am-callout {
+  border: 1px solid var(--line-2); border-left: 3px solid var(--accent); background: var(--accent-bg);
+  padding: 10px 14px; border-radius: var(--radius);
+}
+.am-callout--ok { border-left-color: var(--ok); background: var(--ok-bg); }
+.am-callout--warn { border-left-color: var(--warn); background: var(--warn-bg); }
+.am-callout--err { border-left-color: var(--err); background: var(--err-bg); }
+.am-callout-title { font-weight: 600; margin-bottom: 4px; }
+
+/* ── kv title block ─────────────────────────── */
+.am-kv {
+  display: grid; grid-template-columns: repeat(var(--kv-cols, 2), minmax(0, 1fr)); margin: 0;
+  border-top: var(--bw) solid var(--line); border-left: var(--bw) solid var(--line);
+}
+.am-kv-cell { border-right: var(--bw) solid var(--line); border-bottom: var(--bw) solid var(--line); padding: 6px 10px 8px; min-width: 0; }
+.am-kv-cell--wide { grid-column: 1 / -1; }
+.am-kv dt { font: 11px/1.4 var(--font-mono); color: var(--ink-2); }
+.am-kv dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.am-kv-cell--wide dd { font-size: 17px; font-weight: 600; }
+html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var(--radius); overflow: hidden; }
+
+/* ── timeline ────────────────────────────── */
+.am-timeline { list-style: none; margin: 0; padding: 0; }
+.am-timeline--h { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); padding-top: 4px; }
+.am-timeline--h li { position: relative; text-align: center; padding: 0 6px; }
+.am-timeline--h li::before {
+  content: ""; position: absolute; top: 31px; left: 0; right: 0; border-top: var(--bw) solid var(--line);
+}
+.am-timeline--h li:first-child::before { left: 50%; }
+.am-timeline--h li:last-child::before { right: 50%; }
+.am-tl-when { display: block; font-size: 15px; font-weight: 500; height: 24px; }
+.am-tl-dot {
+  position: relative; display: block; width: 11px; height: 11px; margin: 2px auto 8px;
+  border: var(--bw) solid var(--line); border-radius: 50%; background: var(--paper);
+}
+.am-tl-item--hi .am-tl-dot { background: var(--accent); border-color: var(--accent); }
+.am-tl-title { display: block; font-size: 12.5px; font-weight: 500; }
+.am-tl-text { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+.am-timeline--v li { position: relative; padding: 0 0 14px 22px; }
+.am-timeline--v li::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: -6px; border-left: var(--bw) solid var(--line-2); }
+.am-timeline--v li:last-child::before { display: none; }
+.am-timeline--v .am-tl-dot { position: absolute; left: 0; top: 4px; margin: 0; }
+.am-timeline--v .am-tl-when { display: inline; height: auto; font: 12px var(--font-mono); color: var(--ink-2); margin-right: 8px; }
+.am-timeline--v .am-tl-title { display: inline; font-size: 14px; }
+.am-timeline--v .am-tl-text { margin-top: 2px; }
+
+/* ── annot sentence notes ──────────────────────── */
+.am-annot + .am-annot { border-top: 1px solid var(--line-2); padding-top: 12px; }
+.am-annot-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.am-annot-meta { font: 11px var(--font-mono); font-weight: 400; color: var(--ink-2); }
+.am-annot-scroll { overflow-x: auto; }
+.am-annot-line {
+  position: relative; display: inline-block; white-space: pre; font: 14px/1.6 var(--font-mono);
+  padding-bottom: calc(var(--rows, 0) * 17px + 14px);
+}
+.am-annot-line--wrap { display: block; white-space: normal; padding-bottom: 10px; }
+.am-annot-line--wrap .am-seg { white-space: nowrap; }
+.am-seg { position: relative; }
+.am-seg::after {
+  content: ""; position: absolute; left: 1px; right: 1px; top: calc(100% + 1px); height: 5px;
+  border: 1px solid var(--accent); border-top: 0;
+}
+.am-seg-n {
+  position: absolute; left: 0; top: calc(100% + 8px + var(--row, 0) * 17px);
+  font: 11px/16px var(--font-sans); color: var(--accent); white-space: nowrap;
+}
+.am-seg--err { color: var(--err); }
+.am-seg--err::after { border-color: var(--err); }
+.am-seg--err .am-seg-n { color: var(--err); }
+.am-annot-caption { font-size: 12px; color: var(--ink-2); }
+
+/* ── limits bars ───────────────────────── */
+.am-lim + .am-lim { margin-top: 14px; }
+.am-lim-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 4px; }
+.am-lim-val { font: 12px var(--font-mono); color: var(--accent); white-space: nowrap; }
+.am-lim-track { position: relative; height: 12px; border: 1px solid var(--line-2); background: var(--fill); border-radius: calc(var(--radius) / 2); }
+.am-lim-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent-bg); border-right: 1px solid var(--accent); }
+.am-lim-mark { position: absolute; top: -4px; bottom: -4px; border-left: 2px solid var(--accent); }
+.am-lim.is-over .am-lim-fill { background: var(--err-bg); border-right-color: var(--err); }
+.am-lim.is-over .am-lim-val { color: var(--err); }
+.am-lim-ticks { position: relative; height: 16px; font: 10px/16px var(--font-mono); color: var(--ink-3); }
+.am-lim-ticks span { position: absolute; transform: translateX(-50%); }
+.am-lim-ticks span:first-child { transform: none; }
+.am-lim-note { font-size: 11px; color: var(--ink-2); margin-left: 6px; }
+
+/* ── tree ─────────────────────────── */
+.am-tree { font-size: 13px; }
+.am-tree-root { display: flex; justify-content: center; position: relative; padding-bottom: 18px; }
+.am-tree-root::after { content: ""; position: absolute; bottom: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-root--solo { padding-bottom: 12px; }
+.am-tree-root--solo::after { display: none; }
+.am-tree-box {
+  border: var(--bw) solid var(--line); background: var(--paper); padding: 6px 14px; text-align: center;
+  border-radius: var(--radius); font-weight: 600;
+}
+.am-tree-box small { display: block; font-weight: 400; color: var(--ink-2); font-size: 12px; }
+.am-tree-box--root { background: var(--accent-bg); font-size: 15px; padding: 8px 28px; }
+.am-tree-cols { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
+.am-tree-col { position: relative; padding: 18px 8px 0; min-width: 0; }
+.am-tree-col::before { content: ""; position: absolute; top: 0; left: 0; right: 0; border-top: var(--bw) solid var(--line); }
+.am-tree-col:first-child::before { left: 50%; }
+.am-tree-col:last-child::before { right: 50%; }
+.am-tree-col::after { content: ""; position: absolute; top: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-list, .am-tree-list ul { list-style: none; margin: 0; padding: 0; }
+.am-tree-col > .am-tree-list { margin: 8px 0 0 14px; }
+.am-tree-list ul { margin-left: 16px; }
+.am-tree-list li { position: relative; padding: 3px 0 3px 18px; }
+.am-tree-list li::before { content: ""; position: absolute; left: 0; top: 0.95em; width: 12px; border-top: 1px solid var(--ink-3); }
+.am-tree-list li::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--ink-3); }
+.am-tree-list li:last-child::after { bottom: auto; height: 0.95em; }
+.am-tree-tag { font: 11px var(--font-mono); color: var(--ink-3); margin-right: 4px; }
+.am-tree code { font: 12px var(--font-mono); }
+.am-tree-sub { display: block; font-size: 11.5px; color: var(--ink-2); }
+.am-tree-hi > .am-tree-label { color: var(--accent); font-weight: 600; }
+
+/* ── Diagrams (flow / sequence) ───────────────── */
+.am-diagram { margin: 0; overflow-x: auto; text-align: center; }
+/* Embedded previews can lose html[data-theme]; the fallbacks keep diagrams readable, and defined theme variables still win. */
+.am-diagram svg { max-width: 100%; height: auto; font-family: var(--font-sans, sans-serif); }
+.am-diagram text { fill: var(--ink, #16181d); font-size: 13px; }
+.am-node-shape { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-node--hi .am-node-shape { fill: var(--accent-bg, #e4ecf8); stroke: var(--accent, #1d5fbf); }
+.am-node--hi text { fill: var(--accent, #1d5fbf); font-weight: 600; }
+.am-edge { fill: none; stroke: var(--ink-2, #4b5260); stroke-width: 1.3; }
+.am-edge--dashed { stroke-dasharray: 5 4; }
+.am-arrow { fill: var(--ink-2, #4b5260); }
+.am-edge-label rect { fill: var(--paper, #ffffff); }
+.am-diagram .am-edge-label text { fill: var(--accent, #1d5fbf); font-size: 11.5px; }
+.am-cluster { fill: var(--fill, #f3f5f8); stroke: var(--line-2, #d6dae1); stroke-width: 1; stroke-dasharray: 4 3; }
+.am-diagram .am-cluster-label { fill: var(--ink-2, #4b5260); font: 11px var(--font-mono, monospace); }
+.am-lifeline { stroke: var(--ink-3, #8b929e); stroke-width: 1; stroke-dasharray: 4 4; }
+.am-actor { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-note { fill: var(--warn-bg, #fdf3e2); stroke: var(--warn, #a8620a); stroke-width: 1; }
+.am-diagram .am-step { fill: var(--ink-3, #8b929e); font: 10px var(--font-mono, monospace); }
+
+/* ── doc template ────────────────────────── */
+.am-doc { max-width: 1120px; margin: 0 auto; padding: 40px 28px 64px; }
+.am-doc-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+.am-doc-layout--notoc { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.am-toc { position: sticky; top: 24px; font-size: 13px; }
+.am-toc a { display: block; color: var(--ink-2); text-decoration: none; padding: 4px 0 4px 10px; border-left: 2px solid var(--line-2); }
+.am-toc a:hover { color: var(--ink); border-left-color: var(--accent); }
+.am-doc-body > .am-panel + .am-panel { margin-top: 20px; }
+
+/* ── Responsive and print ─────────────────────────── */
+@media (max-width: 1100px) {
+  .am-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .am-grid > .am-panel { grid-column: auto !important; }
+  .am-grid > .am-panel.am-span-wide { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 760px) {
+  .am-sheet, .am-doc { padding: 56px 12px 24px; }
+  .am-head { padding-right: 0; }
+  .am-grid { grid-template-columns: minmax(0, 1fr); }
+  .am-grid > .am-panel.am-span-wide { grid-column: auto !important; }
+  html[data-theme="blueprint"] .am-frame { padding: 0; border: 0; }
+  html[data-theme="blueprint"] .am-frame::before, html[data-theme="blueprint"] .am-ruler { display: none; }
+  .am-doc-layout { grid-template-columns: minmax(0, 1fr); }
+  .am-toc { position: static; }
+  .am-timeline--h { grid-template-columns: minmax(0, 1fr); }
+  .am-tree-cols { grid-template-columns: minmax(0, 1fr); }
+  /* Tables and diagrams keep their size: the wrapper scrolls horizontally when they overflow. */
+  .am-md th, .am-md td { min-width: 6em; }
+  .am-diagram svg { max-width: none; }
+}
+.am-colophon { text-align: center; padding: 0 0 28px; font: 11px var(--font-mono); color: var(--ink-3); }
+
+@media print {
+  .am-toolbar { display: none; }
+  body { background: var(--paper); }
+  .am-panel { break-inside: avoid; box-shadow: none; }
+}
+.am-panel--bare { border: 0; background: transparent; box-shadow: none; }
+.am-panel--bare > .am-panel-body { padding: 0; }
+.am-panel--bare .am-kv { background: var(--paper); }
+
+</style>
+</head>
+<body>
+<div class="am-toolbar">
+<button class="am-btn" type="button" data-am="theme" data-labels="{&quot;blueprint&quot;:&quot;主题：图纸&quot;,&quot;shadcn&quot;:&quot;主题：卡片&quot;}">主题：图纸</button>
+<button class="am-btn" type="button" data-am="mode" data-labels="{&quot;auto&quot;:&quot;明暗：跟随系统&quot;,&quot;light&quot;:&quot;明暗：亮&quot;,&quot;dark&quot;:&quot;明暗：暗&quot;}">明暗：跟随系统</button>
+<button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
+</div>
+<main class="am-doc">
+<header class="am-head"><h1>pathlib API 速查</h1><p class="am-sub">拼路径、读写文件</p><div class="am-head-meta"><span><b>source</b>codes/python_stdlibs/pathlib/cheat_api.md</span></div></header>
+<div class="am-doc-layout">
+<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 速览</a><a href="#panel-B">B · API 速查</a><a href="#panel-C">C · 使用用例</a><a href="#panel-D">D · 常见坑</a></nav><div class="am-doc-body">
+<section class="am-panel" id="panel-A">
+<header class="am-panel-head"><span class="am-panel-id">A</span><h2>速览</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>按主题分组的常用 API。签名与默认值对照本机 <code>Python 3.14.6</code> 核对，<code>=</code> 后面是默认值，没写默认值的表示必填。练习见 <code>qa.ipynb</code>，模块清单一览见 <code>../stdlib.md</code>。</p>
+<p>约定：</p>
+<ul>
+<li><code>Path</code> 是带 I/O 的具体实现；<code>PurePath</code> / <code>PurePosixPath</code> / <code>PureWindowsPath</code> 只做字符串层面的路径运算，不碰磁盘。</li>
+<li>属性（<code>name</code>、<code>suffix</code>、<code>parent</code> …）不带括号；方法带括号。</li>
+<li>大写 <code>ROOT</code> 之类只是命名习惯，<code>pathlib</code> 本身不区分大小写。</li>
+</ul>
+</div></div>
+</section>
+<section class="am-panel" id="panel-B">
+<header class="am-panel-head"><span class="am-panel-id">B</span><h2>API 速查</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>构造与平台入口</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Path</code></td>
+<td><code>*pathsegments</code></td>
+<td><code>Path(&quot;a&quot;, &quot;b&quot;)</code> 与 <code>Path(&quot;a/b&quot;)</code> 等价；不检查路径是否存在</td>
+</tr>
+<tr>
+<td><code>PurePath</code> / <code>PurePosixPath</code> / <code>PureWindowsPath</code></td>
+<td><code>*pathsegments</code></td>
+<td>纯计算版；跨平台判断 Windows 路径时用</td>
+</tr>
+<tr>
+<td><code>cwd</code></td>
+<td>—</td>
+<td>类方法，返回当前工作目录</td>
+</tr>
+<tr>
+<td><code>home</code></td>
+<td>—</td>
+<td>类方法，返回 <code>~</code> 展开后的目录</td>
+</tr>
+</tbody></table></div>
+<h3>拼接 / 拆解</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/</code></td>
+<td>—</td>
+<td>运算符重载，推荐写法：<code>root / &quot;src&quot; / &quot;app.py&quot;</code></td>
+</tr>
+<tr>
+<td><code>joinpath</code></td>
+<td><code>*pathsegments</code></td>
+<td><code>/</code> 背后的方法，一次拼多段</td>
+</tr>
+<tr>
+<td><code>name</code> / <code>stem</code> / <code>suffix</code> / <code>suffixes</code></td>
+<td>—</td>
+<td>文件名 / 去后缀主名 / 末段后缀（含点）/ 全部后缀列表</td>
+</tr>
+<tr>
+<td><code>parent</code> / <code>parents</code></td>
+<td>—</td>
+<td>上级目录 / 所有祖先，<code>parents[0]</code> 就是 <code>parent</code></td>
+</tr>
+<tr>
+<td><code>parts</code> / <code>anchor</code> / <code>drive</code> / <code>root</code></td>
+<td>—</td>
+<td>拆成各段 / 盘符加根 / 盘符 / 根</td>
+</tr>
+<tr>
+<td><code>with_name</code></td>
+<td><code>name</code></td>
+<td>只换最后一段文件名</td>
+</tr>
+<tr>
+<td><code>with_stem</code></td>
+<td><code>stem</code></td>
+<td>只换主名，保留后缀</td>
+</tr>
+<tr>
+<td><code>with_suffix</code></td>
+<td><code>suffix</code></td>
+<td>换后缀，<code>&#39;&#39;</code> 可去掉后缀；不改文件</td>
+</tr>
+<tr>
+<td><code>relative_to</code></td>
+<td><code>other</code>、<code>walk_up=False</code></td>
+<td>算相对路径，<code>walk_up=True</code> 允许用 <code>..</code> 回退（3.12+）</td>
+</tr>
+<tr>
+<td><code>is_relative_to</code></td>
+<td><code>other</code></td>
+<td>判断是否在另一路径之下，比字符串前缀可靠</td>
+</tr>
+<tr>
+<td><code>as_posix</code> / <code>as_uri</code></td>
+<td>—</td>
+<td>正斜杠字符串 / <code>file:</code> URI</td>
+</tr>
+<tr>
+<td><code>__fspath__</code></td>
+<td>—</td>
+<td>实现 <code>os.PathLike</code>，可直接丢给 <code>open()</code>、<code>os</code> 函数</td>
+</tr>
+</tbody></table></div>
+<h3>判断 / 解析</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>exists</code> / <code>is_dir</code> / <code>is_file</code> / <code>is_symlink</code></td>
+<td><code>follow_symlinks=True</code></td>
+<td>存在性判断；<code>is_symlink</code> 没有该参数</td>
+</tr>
+<tr>
+<td><code>resolve</code></td>
+<td><code>strict=False</code></td>
+<td>转绝对路径并解析符号链接；<code>strict=True</code> 时不存在就报错</td>
+</tr>
+<tr>
+<td><code>absolute</code></td>
+<td>—</td>
+<td>只补绝对路径，不解析 <code>..</code> 和链接</td>
+</tr>
+<tr>
+<td><code>expanduser</code></td>
+<td>—</td>
+<td>展开 <code>~</code> 和 <code>~user</code></td>
+</tr>
+<tr>
+<td><code>stat</code> / <code>lstat</code></td>
+<td><code>follow_symlinks=True</code></td>
+<td>类似 <code>os.stat</code>，返回 <code>os.stat_result</code></td>
+</tr>
+<tr>
+<td><code>samefile</code></td>
+<td><code>other_path</code></td>
+<td>是否指向同一个实际文件</td>
+</tr>
+<tr>
+<td><code>owner</code> / <code>group</code></td>
+<td><code>follow_symlinks=True</code></td>
+<td>属主 / 属组名字</td>
+</tr>
+<tr>
+<td><code>match</code></td>
+<td><code>path_pattern</code>、<code>case_sensitive=None</code></td>
+<td>用 glob 风格匹配，从末段往前比对</td>
+</tr>
+</tbody></table></div>
+<h3>读写文件</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>open</code></td>
+<td><code>mode=&#39;r&#39;</code>、<code>buffering=-1</code>、<code>encoding=None</code>、<code>errors=None</code>、<code>newline=None</code></td>
+<td>返回文件对象，参数与内置 <code>open</code> 一致</td>
+</tr>
+<tr>
+<td><code>read_text</code> / <code>read_bytes</code></td>
+<td><code>encoding=None</code>、<code>errors=None</code>、<code>newline=None</code></td>
+<td>一次读完并关闭</td>
+</tr>
+<tr>
+<td><code>write_text</code> / <code>write_bytes</code></td>
+<td><code>data</code>、<code>encoding=None</code>、<code>errors=None</code>、<code>newline=None</code></td>
+<td>一次覆盖写；不会追加，也不自动建父目录</td>
+</tr>
+<tr>
+<td><code>touch</code></td>
+<td><code>mode=0o666</code>、<code>exist_ok=True</code></td>
+<td>建空文件或更新 mtime；<code>exist_ok=True</code> 时重复调用不报错</td>
+</tr>
+</tbody></table></div>
+<h3>目录操作</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mkdir</code></td>
+<td><code>mode=0o777</code>、<code>parents=False</code>、<code>exist_ok=False</code></td>
+<td><code>parents=True</code> 连父目录一起建；重复建要配 <code>exist_ok=True</code></td>
+</tr>
+<tr>
+<td><code>rmdir</code></td>
+<td>—</td>
+<td>只能删空目录；非空用 <code>shutil.rmtree</code></td>
+</tr>
+<tr>
+<td><code>iterdir</code></td>
+<td>—</td>
+<td>只看当前这一层，返回迭代器，顺序不保证</td>
+</tr>
+<tr>
+<td><code>glob</code> / <code>rglob</code></td>
+<td><code>pattern</code>、<code>case_sensitive=None</code>、<code>recurse_symlinks=False</code></td>
+<td><code>glob</code> 只看一层，<code>rglob</code> 递归；只返回已存在项</td>
+</tr>
+<tr>
+<td><code>walk</code></td>
+<td><code>top_down=True</code>、<code>on_error=None</code>、<code>follow_symlinks=False</code></td>
+<td>生成 <code>(dirpath, dirnames, filenames)</code>，3.12+</td>
+</tr>
+</tbody></table></div>
+<h3>改名 / 删除 / 链接</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>常用关键字参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>rename</code> / <code>replace</code></td>
+<td><code>target</code></td>
+<td>改名；目标存在时 <code>replace</code> 覆盖，<code>rename</code> 在 Windows 上会失败</td>
+</tr>
+<tr>
+<td><code>unlink</code></td>
+<td><code>missing_ok=False</code></td>
+<td>删文件或链接；<code>missing_ok=True</code> 时不存在也不报错</td>
+</tr>
+<tr>
+<td><code>symlink_to</code></td>
+<td><code>target</code>、<code>target_is_directory=False</code></td>
+<td>建符号链接；Windows 上要权限</td>
+</tr>
+<tr>
+<td><code>hardlink_to</code></td>
+<td><code>target</code></td>
+<td>建硬链接</td>
+</tr>
+<tr>
+<td><code>readlink</code></td>
+<td>—</td>
+<td>读符号链接指向的目标</td>
+</tr>
+</tbody></table></div>
+</div></div>
+</section>
+<section class="am-panel" id="panel-C">
+<header class="am-panel-head"><span class="am-panel-id">C</span><h2>使用用例</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>1. 拼接，再拆开</h3>
+</div>
+<pre class="am-code"><code data-lang="python">path = root / &quot;src&quot; / &quot;app.py&quot;
+print(path.name, path.stem, path.suffix, path.parent)</code></pre>
+<div class="am-md"><h3>2. 写入再读出</h3>
+</div>
+<pre class="am-code"><code data-lang="python">notes = box / &quot;notes.txt&quot;
+notes.write_text(text)
+print(notes.read_text())</code></pre>
+<div class="am-md"><h3>3. 一次建好多层</h3>
+</div>
+<pre class="am-code"><code data-lang="python">target = box / &quot;a&quot; / &quot;b&quot;
+target.mkdir(parents=True, exist_ok=True)
+target.mkdir(parents=True, exist_ok=True)
+print(target.is_dir())</code></pre>
+<div class="am-md"><h3>4. 只看当前这一层</h3>
+</div>
+<pre class="am-code"><code data-lang="python">files, dirs = [], []
+for item in box.iterdir():
+    (dirs if item.is_dir() else files).append(item.name)
+print(sorted(dirs))
+print(sorted(files))</code></pre>
+<div class="am-md"><h3>5. 含子目录的全部 <code>.py</code></h3>
+</div>
+<pre class="am-code"><code data-lang="python">for path in sorted(p.relative_to(box) for p in box.rglob(&quot;*.py&quot;)):
+    print(path)</code></pre>
+<div class="am-md"><h3>6. 换后缀，再改名</h3>
+</div>
+<pre class="am-code"><code data-lang="python">dest = src.with_suffix(&quot;.md&quot;)
+print(dest)
+src.rename(dest)
+print(src.exists())</code></pre>
+<div class="am-md"><h3>7. 相对路径不许跳出沙箱</h3>
+</div>
+<pre class="am-code"><code data-lang="python">for rel in (inside, outside):
+    full = (sandbox / rel).resolve()
+    print(full, full.is_relative_to(sandbox))</code></pre></div>
+</section>
+<section class="am-panel" id="panel-D">
+<header class="am-panel-head"><span class="am-panel-id">D</span><h2>常见坑</h2></header>
+<div class="am-panel-body"><div class="am-md"><ul>
+<li><code>Path(&quot;/a&quot;) / &quot;/b&quot;</code> 结果是 <code>/b</code>：右侧是绝对路径时会丢掉左边，拼接前先确认没有前导 <code>/</code>。</li>
+<li><code>resolve()</code> 默认 <code>strict=False</code>，路径不存在也能返回；要看真实性别拿它当 <code>exists()</code>。</li>
+<li><code>iterdir()</code> 和 <code>glob()</code> 返回的是迭代器，遍历一次就耗尽；要反复用先 <code>list(...)</code> 或 <code>sorted(...)</code>。</li>
+<li><code>write_text()</code> 是整文件覆盖，追加得用 <code>open(&quot;a&quot;)</code>；父目录不存在会直接报错，先 <code>mkdir(parents=True, exist_ok=True)</code>。</li>
+<li><code>relative_to()</code> 只接收真正的下级路径；能含 <code>..</code> 的是 <code>is_relative_to()</code> 和 <code>walk_up=True</code>，别混用。</li>
+<li><code>suffix</code> 只认最后一段，<code>.tar.gz</code> 的 <code>suffix</code> 是 <code>.gz</code>，要 <code>.suffixes</code> 才拿到 <code>[&#39;.tar&#39;, &#39;.gz&#39;]</code>。</li>
+<li><code>Path</code> 对象可以直接当 <code>str</code> 用（<code>os.fspath</code>），但比较路径别比字符串，用 <code>samefile()</code> 或 <code>resolve()</code> 后比。</li>
+<li>3.12 起才有 <code>Path.walk</code>、<code>relative_to(walk_up=)</code>；3.13 起 <code>glob</code> 才支持 <code>recurse_symlinks</code>。</li>
+</ul>
+</div></div>
+</section>
+</div>
+</div>
+</main>
+<footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-07 10:32</footer>
+<textarea id="am-source" hidden readonly aria-hidden="true">---
+title: pathlib API 速查
+
+subtitle: 拼路径、读写文件
+
+template: doc
+theme: blueprint
+source: codes/python_stdlibs/pathlib/cheat_api.md
+---
+
+## 速览
+按主题分组的常用 API。签名与默认值对照本机 `Python 3.14.6` 核对，`=` 后面是默认值，没写默认值的表示必填。练习见 `qa.ipynb`，模块清单一览见 `../stdlib.md`。
+
+约定：
+
+- `Path` 是带 I/O 的具体实现；`PurePath` / `PurePosixPath` / `PureWindowsPath` 只做字符串层面的路径运算，不碰磁盘。
+- 属性（`name`、`suffix`、`parent` …）不带括号；方法带括号。
+- 大写 `ROOT` 之类只是命名习惯，`pathlib` 本身不区分大小写。
+
+## API 速查
+### 构造与平台入口
+| 名称 | 常用关键字参数 | 说明 |
+| --- | --- | --- |
+| `Path` | `*pathsegments` | `Path(&quot;a&quot;, &quot;b&quot;)` 与 `Path(&quot;a/b&quot;)` 等价；不检查路径是否存在 |
+| `PurePath` / `PurePosixPath` / `PureWindowsPath` | `*pathsegments` | 纯计算版；跨平台判断 Windows 路径时用 |
+| `cwd` | — | 类方法，返回当前工作目录 |
+| `home` | — | 类方法，返回 `~` 展开后的目录 |
+
+### 拼接 / 拆解
+| 名称 | 常用关键字参数 | 说明 |
+| --- | --- | --- |
+| `/` | — | 运算符重载，推荐写法：`root / &quot;src&quot; / &quot;app.py&quot;` |
+| `joinpath` | `*pathsegments` | `/` 背后的方法，一次拼多段 |
+| `name` / `stem` / `suffix` / `suffixes` | — | 文件名 / 去后缀主名 / 末段后缀（含点）/ 全部后缀列表 |
+| `parent` / `parents` | — | 上级目录 / 所有祖先，`parents[0]` 就是 `parent` |
+| `parts` / `anchor` / `drive` / `root` | — | 拆成各段 / 盘符加根 / 盘符 / 根 |
+| `with_name` | `name` | 只换最后一段文件名 |
+| `with_stem` | `stem` | 只换主名，保留后缀 |
+| `with_suffix` | `suffix` | 换后缀，`&#39;&#39;` 可去掉后缀；不改文件 |
+| `relative_to` | `other`、`walk_up=False` | 算相对路径，`walk_up=True` 允许用 `..` 回退（3.12+） |
+| `is_relative_to` | `other` | 判断是否在另一路径之下，比字符串前缀可靠 |
+| `as_posix` / `as_uri` | — | 正斜杠字符串 / `file:` URI |
+| `__fspath__` | — | 实现 `os.PathLike`，可直接丢给 `open()`、`os` 函数 |
+
+### 判断 / 解析
+| 名称 | 常用关键字参数 | 说明 |
+| --- | --- | --- |
+| `exists` / `is_dir` / `is_file` / `is_symlink` | `follow_symlinks=True` | 存在性判断；`is_symlink` 没有该参数 |
+| `resolve` | `strict=False` | 转绝对路径并解析符号链接；`strict=True` 时不存在就报错 |
+| `absolute` | — | 只补绝对路径，不解析 `..` 和链接 |
+| `expanduser` | — | 展开 `~` 和 `~user` |
+| `stat` / `lstat` | `follow_symlinks=True` | 类似 `os.stat`，返回 `os.stat_result` |
+| `samefile` | `other_path` | 是否指向同一个实际文件 |
+| `owner` / `group` | `follow_symlinks=True` | 属主 / 属组名字 |
+| `match` | `path_pattern`、`case_sensitive=None` | 用 glob 风格匹配，从末段往前比对 |
+
+### 读写文件
+| 名称 | 常用关键字参数 | 说明 |
+| --- | --- | --- |
+| `open` | `mode=&#39;r&#39;`、`buffering=-1`、`encoding=None`、`errors=None`、`newline=None` | 返回文件对象，参数与内置 `open` 一致 |
+| `read_text` / `read_bytes` | `encoding=None`、`errors=None`、`newline=None` | 一次读完并关闭 |
+| `write_text` / `write_bytes` | `data`、`encoding=None`、`errors=None`、`newline=None` | 一次覆盖写；不会追加，也不自动建父目录 |
+| `touch` | `mode=0o666`、`exist_ok=True` | 建空文件或更新 mtime；`exist_ok=True` 时重复调用不报错 |
+
+### 目录操作
+| 名称 | 常用关键字参数 | 说明 |
+| --- | --- | --- |
+| `mkdir` | `mode=0o777`、`parents=False`、`exist_ok=False` | `parents=True` 连父目录一起建；重复建要配 `exist_ok=True` |
+| `rmdir` | — | 只能删空目录；非空用 `shutil.rmtree` |
+| `iterdir` | — | 只看当前这一层，返回迭代器，顺序不保证 |
+| `glob` / `rglob` | `pattern`、`case_sensitive=None`、`recurse_symlinks=False` | `glob` 只看一层，`rglob` 递归；只返回已存在项 |
+| `walk` | `top_down=True`、`on_error=None`、`follow_symlinks=False` | 生成 `(dirpath, dirnames, filenames)`，3.12+ |
+
+### 改名 / 删除 / 链接
+| 名称 | 常用关键字参数 | 说明 |
+| --- | --- | --- |
+| `rename` / `replace` | `target` | 改名；目标存在时 `replace` 覆盖，`rename` 在 Windows 上会失败 |
+| `unlink` | `missing_ok=False` | 删文件或链接；`missing_ok=True` 时不存在也不报错 |
+| `symlink_to` | `target`、`target_is_directory=False` | 建符号链接；Windows 上要权限 |
+| `hardlink_to` | `target` | 建硬链接 |
+| `readlink` | — | 读符号链接指向的目标 |
+
+## 使用用例
+### 1. 拼接，再拆开
+```python
+path = root / &quot;src&quot; / &quot;app.py&quot;
+print(path.name, path.stem, path.suffix, path.parent)
+```
+
+### 2. 写入再读出
+```python
+notes = box / &quot;notes.txt&quot;
+notes.write_text(text)
+print(notes.read_text())
+```
+
+### 3. 一次建好多层
+```python
+target = box / &quot;a&quot; / &quot;b&quot;
+target.mkdir(parents=True, exist_ok=True)
+target.mkdir(parents=True, exist_ok=True)
+print(target.is_dir())
+```
+
+### 4. 只看当前这一层
+```python
+files, dirs = [], []
+for item in box.iterdir():
+    (dirs if item.is_dir() else files).append(item.name)
+print(sorted(dirs))
+print(sorted(files))
+```
+
+### 5. 含子目录的全部 `.py`
+```python
+for path in sorted(p.relative_to(box) for p in box.rglob(&quot;*.py&quot;)):
+    print(path)
+```
+
+### 6. 换后缀，再改名
+```python
+dest = src.with_suffix(&quot;.md&quot;)
+print(dest)
+src.rename(dest)
+print(src.exists())
+```
+
+### 7. 相对路径不许跳出沙箱
+```python
+for rel in (inside, outside):
+    full = (sandbox / rel).resolve()
+    print(full, full.is_relative_to(sandbox))
+```
+
+## 常见坑
+- `Path(&quot;/a&quot;) / &quot;/b&quot;` 结果是 `/b`：右侧是绝对路径时会丢掉左边，拼接前先确认没有前导 `/`。
+- `resolve()` 默认 `strict=False`，路径不存在也能返回；要看真实性别拿它当 `exists()`。
+- `iterdir()` 和 `glob()` 返回的是迭代器，遍历一次就耗尽；要反复用先 `list(...)` 或 `sorted(...)`。
+- `write_text()` 是整文件覆盖，追加得用 `open(&quot;a&quot;)`；父目录不存在会直接报错，先 `mkdir(parents=True, exist_ok=True)`。
+- `relative_to()` 只接收真正的下级路径；能含 `..` 的是 `is_relative_to()` 和 `walk_up=True`，别混用。
+- `suffix` 只认最后一段，`.tar.gz` 的 `suffix` 是 `.gz`，要 `.suffixes` 才拿到 `[&#39;.tar&#39;, &#39;.gz&#39;]`。
+- `Path` 对象可以直接当 `str` 用（`os.fspath`），但比较路径别比字符串，用 `samefile()` 或 `resolve()` 后比。
+- 3.12 起才有 `Path.walk`、`relative_to(walk_up=)`；3.13 起 `glob` 才支持 `recurse_symlinks`。
+</textarea>
+<script>
+(() => {
+  const root = document.documentElement;
+  const cycle = (list, cur) => list[(list.indexOf(cur) + 1) % list.length];
+  const label = (btn, value) => {
+    const map = JSON.parse(btn.dataset.labels || '{}');
+    btn.textContent = map[value] || value;
+  };
+  const bind = (name, attr, values) => {
+    const btn = document.querySelector(`[data-am="${name}"]`);
+    if (!btn) return;
+    label(btn, root.getAttribute(attr));
+    btn.addEventListener('click', () => {
+      const next = cycle(values, root.getAttribute(attr));
+      root.setAttribute(attr, next);
+      label(btn, next);
+    });
+  };
+  bind('theme', 'data-theme', ['blueprint', 'shadcn']);
+  bind('mode', 'data-mode', ['auto', 'light', 'dark']);
+
+  const copyBtn = document.querySelector('[data-am="copy"]');
+  copyBtn?.addEventListener('click', async () => {
+    const nodes = document.querySelectorAll('#am-source');
+    const text = nodes[nodes.length - 1]?.value ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      document.body.append(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    const original = copyBtn.textContent;
+    copyBtn.textContent = copyBtn.dataset.done;
+    setTimeout(() => { copyBtn.textContent = original; }, 1400);
+  });
+})();
+(() => {
+// Pure planner for justified ("photo wall") rows on sheet pages. No DOM access.
+//
+// This file must stay inlinable into the page script: top-level declarations only, no imports, and the exports are
+// `planLayout` and the constants the DOM adapter shares (STEP, MAX_SCALE, MIN_SCALE). The page build strips the `export ` keyword,
+// and test/layout-plan.test.js checks that this still works.
+//
+// planLayout({ width, gap, cols, panels }) -> { rows: [{ columns: [{ panels: [index, ...], width }], height }] }
+//
+// Input (all lengths in px):
+//   width   container width
+//   gap     space between columns, and between two panels stacked in one column
+//   cols    most columns in one row (the planner never uses more than MAX_COLUMNS, but spans stay shares of `cols`)
+//   panels  one entry per panel, in reading order:
+//     samples   [{ w, h }] panel height at sampled widths, ascending by w (heights between samples are interpolated)
+//     minWidth  narrowest feasible width (clamped to `width`)
+//     maxWidth  widest useful width; beyond it the panel only gains empty space (default: no limit)
+//     natural   natural diagram width for a diagram-only panel (default: none)
+//     pad       panel width not used by the diagram (padding and border; default 0)
+//     span      the author's width hint in grid columns (default 1); span >= cols keeps the panel alone in its row
+//
+// Output: { rows, maxScale }. Rows are in reading order; a row is a list of columns (at most `cols`); a column holds one panel or two
+// consecutive panels, stacked. For integer inputs the column widths plus the gaps between them equal `width`.
+// Rows are chosen by dynamic programming over break points; widths by a search in STEP px steps. Cost per row:
+//   H = tallest column; waste = sum((H - columnHeight) * columnWidth) + sum over diagrams wider than maxWidth of (w - maxWidth) * h
+//   dev = sum(((w - preferred) / oneColumn)^2) + SCALE_WEIGHT * sum over diagrams of (ln(scale) / ln(MAX_SCALE))^2
+//   cost = waste / 1000 + PREF_WEIGHT * dev * H
+// Scale band: diagrams on one page stay at similar sizes. With the result's `maxScale` as the diagram size limit, a diagram is
+// shown at scale min(maxScale, (width - pad) / natural). The planner tries a few bands [lo, lo * BAND_RATIO] (lo in BAND_LOS) and
+// keeps the cheapest plan in which no diagram is narrower than scale lo and none is shown above the band's top, so the largest and
+// smallest diagram scale on the page differ by at most BAND_RATIO. A panel wider than its diagram's top size keeps the diagram at
+// that size, and the page script must set the diagram's max-width to natural * maxScale. The band starts no higher than the
+// largest scale the page allows the least roomy diagram, so one wide diagram lowers the band for the others.
+// If no band is feasible the plan is made without a band (maxScale = MAX_SCALE); if no plan fits (or the input is unusable) the
+// result is a single column: one panel per row at the full width.
+
+const STEP = 10;
+const MAX_SCALE = 1.25;
+const MIN_SCALE = 0.75; // the narrowest a diagram is shown, as a share of its natural width
+const MAX_COLUMNS = 6; // rows with more columns are unreadable, and the search grows steeply with the column count
+const BAND_RATIO = 1.25; // the largest and smallest diagram scale on a page differ by at most this
+const BAND_LOS = [MIN_SCALE, 0.85, 0.95, 1]; // lower ends tried for the band; lo * BAND_RATIO is the upper end (1.25 means no upper limit)
+const SCALE_WEIGHT = 3;
+const PREF_WEIGHT = 0.15;
+
+function heightAt(samples, w) {
+  const i = samples.findIndex((s) => s.w >= w);
+  if (i === -1) return samples[samples.length - 1].h;
+  if (i === 0) return samples[0].h;
+  const a = samples[i - 1];
+  const b = samples[i];
+  return a.h + ((b.h - a.h) * (w - a.w)) / (b.w - a.w);
+}
+
+// Every way to split `len` consecutive panels into columns of 1 or 2 panels, as lists of column sizes.
+function splits(len) {
+  if (len === 0) return [[]];
+  return [1, 2].filter((k) => k <= len).flatMap((k) => splits(len - k).map((rest) => [k, ...rest]));
+}
+
+function singleColumn(width, panels) {
+  return { rows: panels.map((_, i) => ({ columns: [{ panels: [i], width }], height: 0 })) };
+}
+
+function planLayout({ width, gap = 0, cols = 3, panels }) {
+  const usable = Number.isFinite(width) && width > 0 && panels.every((p) => Array.isArray(p.samples) && p.samples.length > 0);
+  if (!usable) return singleColumn(width, panels);
+
+  // `cols` stays the unit of the author's spans; no row gets more than MAX_COLUMNS columns however large `cols` is.
+  const maxColumns = Math.min(cols, MAX_COLUMNS);
+  const oneColumn = Math.max(1, (width - gap * (cols - 1)) / cols);
+  // Per-panel limits. With a band [lo, lo * BAND_RATIO], a diagram is no narrower than scale lo and shown at most at the top of the
+  // band: a wider panel keeps it at that size and gains empty space, which the cost counts as waste.
+  const prepare = (lo) => panels.map((p) => {
+    const pad = p.pad ?? 0;
+    const diagram = lo > 0 && p.natural > 0;
+    const scaleCap = diagram ? Math.min(MAX_SCALE, lo * BAND_RATIO) : MAX_SCALE;
+    return {
+      ...p,
+      minWidth: Math.min(width, Math.max(Math.ceil(p.minWidth || 0), diagram ? Math.ceil(p.natural * lo + pad) : 0)),
+      maxWidth: Math.min(p.maxWidth ?? Infinity, diagram ? p.natural * scaleCap + pad : Infinity),
+      scaleCap,
+      pad,
+      preferred: Math.min(width, (p.span ?? 1) * oneColumn + ((p.span ?? 1) - 1) * gap),
+      alone: (p.span ?? 1) >= cols,
+    };
+  });
+  let info = prepare(0);
+  // Beyond its maxWidth a panel only gains empty space, so its height stops changing there (matters when a band lowers maxWidth).
+  const heightOf = (p, w) => heightAt(p.samples, Math.min(w, p.maxWidth));
+  const columnHeight = (col, w) => col.reduce((h, k) => h + heightOf(info[k], w), 0) + gap * (col.length - 1);
+
+  function bestColumns(columns) {
+    const avail = width - gap * (columns.length - 1);
+    const mins = columns.map((c) => Math.max(...c.map((k) => info[k].minWidth)));
+    const minsFrom = mins.map((_, n) => mins.slice(n).reduce((s, w) => s + w, 0));
+    if (minsFrom[0] > avail) return null;
+    let best = null;
+    const evaluate = (ws) => {
+      const hs = ws.map((w, n) => columnHeight(columns[n], w));
+      const H = Math.max(...hs);
+      let waste = 0;
+      let dev = 0;
+      ws.forEach((w, n) => {
+        waste += (H - hs[n]) * w;
+        for (const k of columns[n]) {
+          const p = info[k];
+          if (w > p.maxWidth) waste += (w - p.maxWidth) * heightOf(p, w);
+          dev += ((w - p.preferred) / oneColumn) ** 2;
+          if (p.natural > 0) {
+            const scale = Math.min(p.scaleCap, Math.max(w - p.pad, 1) / p.natural);
+            dev += SCALE_WEIGHT * (Math.log(scale) / Math.log(MAX_SCALE)) ** 2;
+          }
+        }
+      });
+      const cost = waste / 1000 + PREF_WEIGHT * dev * H;
+      if (!best || cost < best.cost) best = { cost, ws, height: H, columns };
+    };
+    const choose = (n, used, ws) => {
+      if (n === columns.length - 1) {
+        const w = avail - used;
+        if (w >= mins[n]) evaluate([...ws, w]);
+        return;
+      }
+      for (let w = mins[n]; used + w + minsFrom[n + 1] <= avail; w += STEP) choose(n + 1, used + w, [...ws, w]);
+    };
+    choose(0, 0, []);
+    return best;
+  }
+
+  // Best columns for one row of panels i..j.
+  function bestRow(i, j) {
+    if (j > i && info.slice(i, j + 1).some((p) => p.alone)) return null;
+    let best = null;
+    for (const split of splits(j - i + 1)) {
+      if (split.length > maxColumns) continue;
+      let next = i;
+      const columns = split.map((size) => Array.from({ length: size }, () => next++));
+      const r = bestColumns(columns);
+      if (r && (!best || r.cost < best.cost)) best = r;
+    }
+    return best;
+  }
+
+  // Row breaks in reading order, for the band set up in `info`. A row holds at most 2 * maxColumns panels. Null if nothing fits.
+  function solve() {
+    const n = panels.length;
+    const total = Array(n + 1).fill(Infinity);
+    const from = Array(n + 1).fill(-1);
+    const chosen = Array(n + 1).fill(null);
+    total[0] = 0;
+    for (let j = 1; j <= n; j++) {
+      for (let i = Math.max(0, j - 2 * maxColumns); i < j; i++) {
+        if (total[i] === Infinity) continue;
+        const r = bestRow(i, j - 1);
+        if (r && total[i] + r.cost < total[j]) {
+          total[j] = total[i] + r.cost;
+          from[j] = i;
+          chosen[j] = r;
+        }
+      }
+    }
+    if (total[n] === Infinity) return null;
+    const rows = [];
+    for (let j = n; j > 0; j = from[j]) {
+      const r = chosen[j];
+      rows.unshift({ columns: r.columns.map((panelsInColumn, c) => ({ panels: panelsInColumn, width: r.ws[c] })), height: r.height });
+    }
+    return { rows, cost: total[n] };
+  }
+
+  let best = null;
+  const diagrams = panels.filter((p) => p.natural > 0);
+  if (diagrams.length > 1) {
+    // No diagram can be shown larger than the page allows, so the band cannot start above the smallest of those limits.
+    const reach = Math.min(...diagrams.map((p) => Math.min(MAX_SCALE, Math.max(width - (p.pad ?? 0), 1) / p.natural)));
+    for (const lo of new Set([...BAND_LOS.filter((x) => x < reach), reach])) {
+      info = prepare(lo);
+      const r = solve();
+      if (r && (!best || r.cost < best.cost)) best = { ...r, maxScale: Math.min(MAX_SCALE, lo * BAND_RATIO) };
+    }
+    info = prepare(0);
+  }
+  best ??= solve();
+  return best ? { rows: best.rows, maxScale: best.maxScale ?? MAX_SCALE } : singleColumn(width, panels);
+}
+
+// DOM adapter for the sheet's justified ("photo wall") layout. Not a module: compose.js puts it after src/runtime/layout-plan.js
+// (which defines planLayout and the shared STEP, MAX_SCALE, MIN_SCALE) inside one function scope of the page script.
+//
+// It measures every panel at sampled widths, asks planLayout for rows and column widths, and applies them with flexbox.
+// The rendered HTML keeps the plain CSS grid: with JavaScript off, at the single-column breakpoint, or while printing, the grid is what
+// shows (the planned widths belong to the screen width, so print never gets a mix of the two); after printing the layout comes back.
+
+const grid = document.querySelector('.am-grid');
+const panels = grid ? [...grid.children].filter((el) => el.classList.contains('am-panel')) : [];
+
+if (panels.length > 1) {
+  const SINGLE_COLUMN = '(max-width: 760px)'; // the single-column breakpoint in src/themes/base.css
+  const TWO_COLUMNS = '(max-width: 1100px)'; // below this the CSS grid has two columns
+  const SAMPLE_STEP = 20; // width sampling step, px; the planner interpolates between samples
+  const TEXT_MIN = 260; // text keeps at least about 16 CJK characters per line
+  const TABLE_COL_MIN = 96; // per table column, px
+  const DIAGRAM_MIN = 160;
+  const RESIZE_DELAY = 150;
+  const OVERFLOWING = '.am-table-wrap, .am-diagram, .am-annot-scroll, pre';
+
+  const original = new Map([grid, ...panels, ...grid.querySelectorAll('.am-diagram > svg')].map((el) => [el, el.getAttribute('style')]));
+  const restoreStyle = (el) => (original.get(el) === null ? el.removeAttribute('style') : el.setAttribute('style', original.get(el)));
+
+  // Back to the plain grid markup and styles.
+  const restore = () => {
+    for (const box of grid.querySelectorAll(':scope > .am-col')) box.replaceWith(...box.children);
+    for (const el of original.keys()) restoreStyle(el);
+  };
+
+  // The author's width hint, rendered as data-span only when the author wrote one. The inline grid-column is the no-JavaScript fallback
+  // and may hold spans the server added, so it is never read here.
+  const spanHint = (el) => Number(el.dataset.span) || 1;
+  const diagramOnly = (el) => {
+    const body = el.querySelector(':scope > .am-panel-body');
+    return body && body.children.length === 1 ? body.querySelector(':scope > .am-diagram > svg') : null;
+  };
+  const naturalWidth = (svg) => Number(svg.getAttribute('width')) || 0;
+
+  // Height (and, for panels with tables or code, the narrowest width without sideways scrolling) at sampled widths.
+  // Only one panel is displayed while it is measured, so each width change lays out that panel alone.
+  function measure(width) {
+    grid.style.display = 'block';
+    for (const el of panels) {
+      el.style.display = 'none';
+      el.style.boxSizing = 'border-box';
+      for (const svg of el.querySelectorAll('.am-diagram > svg')) {
+        svg.style.width = '100%';
+        svg.style.maxWidth = `${naturalWidth(svg) * MAX_SCALE}px`;
+      }
+    }
+    const info = panels.map((el) => {
+      const svg = diagramOnly(el);
+      const svgs = [...el.querySelectorAll('.am-diagram > svg')];
+      const scrollers = el.querySelectorAll(OVERFLOWING);
+      const tableCols = Math.max(0, ...[...el.querySelectorAll('table tr:first-child')].map((tr) => tr.children.length));
+      el.style.display = '';
+      el.style.width = `${width}px`;
+      const pad = svg ? el.offsetWidth - svg.parentElement.clientWidth : 0;
+      const natural = svg ? naturalWidth(svg) : 0;
+      const shrunk = Math.max(0, ...svgs.map((s) => naturalWidth(s) * MIN_SCALE)) + (svg ? pad : 34);
+      const floor = svg ? Math.max(DIAGRAM_MIN, natural * MIN_SCALE + pad) : Math.max(TEXT_MIN, shrunk, tableCols * TABLE_COL_MIN + 34);
+      const from = Math.min(width, Math.floor(floor / STEP) * STEP);
+      const samples = [];
+      let fits = null;
+      for (let w = from; ; w += SAMPLE_STEP) {
+        w = Math.min(w, width);
+        el.style.width = `${w}px`;
+        if (fits === null && !svg && scrollers.length && ![...scrollers].some((s) => s.scrollWidth > s.clientWidth + 1)) fits = w;
+        samples.push({ w, h: el.offsetHeight });
+        if (w === width) break;
+      }
+      el.style.display = 'none';
+      return {
+        samples,
+        minWidth: svg ? floor : Math.max(floor, fits ?? (scrollers.length ? width : 0)),
+        maxWidth: svg ? natural * MAX_SCALE + pad : Infinity,
+        natural,
+        pad,
+        span: spanHint(el),
+      };
+    });
+    for (const el of panels) {
+      el.style.display = '';
+      el.style.width = '';
+    }
+    return info;
+  }
+
+  // Each column gets a fixed width. A row adds up to the full width, so flex-wrap breaks rows by itself.
+  // Stacked panels go into a column wrapper whose last panel absorbs the extra height.
+  function apply(plan, gap) {
+    grid.style.display = 'flex';
+    grid.style.flexWrap = 'wrap';
+    grid.style.alignItems = 'stretch';
+    grid.style.gap = `${gap}px`;
+    for (const el of panels) {
+      el.style.gridColumn = '';
+      el.style.gridRow = '';
+      el.style.flex = '0 0 auto';
+    }
+    for (const row of plan.rows) {
+      for (const col of row.columns) {
+        const width = `${col.width}px`;
+        if (col.panels.length === 1) {
+          panels[col.panels[0]].style.width = width;
+          continue;
+        }
+        const box = document.createElement('div');
+        box.className = 'am-col';
+        box.style.cssText = `width:${width};flex:0 0 auto;display:flex;flex-direction:column;gap:${gap}px`;
+        panels[col.panels[0]].before(box);
+        for (const k of col.panels) {
+          panels[k].style.width = '';
+          box.append(panels[k]);
+        }
+        panels[col.panels[col.panels.length - 1]].style.flex = '1 1 auto';
+      }
+    }
+  }
+
+  // Diagram-only panels show their diagram at most at the top of the page's scale band; a wider panel gains empty space instead.
+  function capDiagrams(maxScale) {
+    for (const el of panels) {
+      const svg = diagramOnly(el);
+      if (svg) svg.style.maxWidth = `${naturalWidth(svg) * maxScale}px`;
+    }
+  }
+
+  const containerWidth = () => Math.floor(grid.getBoundingClientRect().width);
+
+  function justify() {
+    if (printing || printQuery.matches) return;
+    try {
+      // A vertical scrollbar can appear or vanish once the rows change height; plan again if the width moved.
+      let planned = -1;
+      for (let pass = 0; pass < 3 && planned !== containerWidth(); pass++) {
+        restore();
+        if (matchMedia(SINGLE_COLUMN).matches) return;
+        planned = containerWidth();
+        const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+        const cols = Math.max(1, Number(getComputedStyle(grid).getPropertyValue('--cols')) || 3);
+        const plan = planLayout({ width: planned, gap, cols: matchMedia(TWO_COLUMNS).matches ? Math.min(cols, 2) : cols, panels: measure(planned) });
+        apply(plan, gap);
+        capDiagrams(plan.maxScale);
+      }
+      // The width never settled: columns planned for another width would overflow or leave gaps, so show the plain grid.
+      if (planned !== containerWidth()) restore();
+    } catch {
+      restore();
+    }
+  }
+
+  // Printing: back to the plain grid (spans and all), and the layout again afterwards. Browsers disagree on which of the
+  // `beforeprint` event and the print media query change fires first, or at all, so listen to both; both are idempotent.
+  // While `printing` is set (beforeprint to afterprint) justify() does nothing, so a late resize cannot bring flex widths into the print layout.
+  let printing = false;
+  const printQuery = matchMedia('print');
+  let timer = 0;
+  const later = () => {
+    clearTimeout(timer);
+    timer = setTimeout(justify, RESIZE_DELAY);
+  };
+  const toPrint = () => {
+    clearTimeout(timer);
+    restore();
+  };
+  justify();
+  addEventListener('resize', later);
+  addEventListener('beforeprint', () => {
+    printing = true;
+    toPrint();
+  });
+  addEventListener('afterprint', () => {
+    printing = false;
+    later();
+  });
+  printQuery.addEventListener('change', (e) => (e.matches ? toPrint() : later()));
+  // Late changes to panel heights: web fonts arriving, and images inside the grid finishing their load (load does not bubble, so capture it).
+  document.fonts?.ready.then(later);
+  grid.addEventListener('load', later, true);
+  // Switching theme changes paddings and fonts, hence panel heights.
+  document.querySelector('[data-am="theme"]')?.addEventListener('click', later);
+}
+})();
+</script>
+</body>
+</html>
