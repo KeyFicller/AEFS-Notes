@@ -1,0 +1,9 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# 反例：代码和依赖一起拷。改一行代码，缓存就从这里断掉。
+COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python", "main.py"]

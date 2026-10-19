@@ -1,0 +1,15 @@
+name: docker-lab
+
+services:
+  lab:
+    image: docker-lab:1
+    command: ["python", "-c", "import time; time.sleep(3600)"]
+    depends_on: [cache]
+
+  cache:
+    image: redis:7-alpine
+    volumes:
+      - cache_data:/data
+
+volumes:
+  cache_data:

@@ -33,6 +33,9 @@ codes/langchain/*/*/
 # langgraph 各阶段 qa 运行时写下的题目目录。名字不限，只忽略子目录。
 codes/langgraph/*/*/
 
+# Docker 练习第 3 题挂载出来的宿主机目录。
+codes/docker/artifacts/
+
 # Code RAG 的向量库落盘产物，由 02_rag_over_codebase/prod_main.py 生成。
 codes/capstone/*/.index/
 

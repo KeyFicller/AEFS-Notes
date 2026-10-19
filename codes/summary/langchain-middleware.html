@@ -1,0 +1,1528 @@
+<!doctype html>
+<html lang="en" data-theme="blueprint" data-mode="auto" data-style="80">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="Answer me with HTML 0.4.9">
+<title>AgentMiddleware 速查</title>
+<style>
+html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 0px;
+  --shadow: none;
+  --bw: 1.5px;
+  --head-font: var(--font-sans);
+  --bg: #f6f6f3;
+  --paper: #ffffff;
+  --ink: #16181d;
+  --ink-2: #4b5260;
+  --ink-3: #8b929e;
+  --line: #1d2026;
+  --line-2: #d6dae1;
+  --fill: #f3f5f8;
+  --accent: #1d5fbf;
+  --accent-bg: #e4ecf8;
+  --ok: #1d5fbf;
+  --ok-bg: #e4ecf8;
+  --err: #c62828;
+  --err-bg: #fbeaea;
+  --warn: #a8620a;
+  --warn-bg: #fdf3e2;
+  --head-bg: #16181d;
+  --head-fg: #ffffff;
+}
+html[data-theme="blueprint"][data-mode="dark"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="blueprint"][data-mode="auto"] {
+  --bg: #081322;
+  --paper: #0d1c31;
+  --ink: #e6edf7;
+  --ink-2: #a9b8cc;
+  --ink-3: #6b7f99;
+  --line: #c9d6e8;
+  --line-2: #23385a;
+  --fill: #12253f;
+  --accent: #6ea8ff;
+  --accent-bg: #16305a;
+  --ok: #6ea8ff;
+  --ok-bg: #16305a;
+  --err: #ff7070;
+  --err-bg: #3b1620;
+  --warn: #f0b14a;
+  --warn-bg: #3a2a10;
+  --head-bg: #e6edf7;
+  --head-fg: #081322;
+}
+}
+
+html[data-theme="shadcn"], html[data-theme="shadcn"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 8px;
+  --shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+  --bw: 1px;
+  --head-font: var(--font-sans);
+  --bg: #fafafa;
+  --paper: #ffffff;
+  --ink: #09090b;
+  --ink-2: #71717a;
+  --ink-3: #a1a1aa;
+  --line: #e4e4e7;
+  --line-2: #f0f0f2;
+  --fill: #f4f4f5;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --ok: #16a34a;
+  --ok-bg: #f0fdf4;
+  --err: #dc2626;
+  --err-bg: #fef2f2;
+  --warn: #d97706;
+  --warn-bg: #fffbeb;
+  --head-bg: #18181b;
+  --head-fg: #fafafa;
+}
+html[data-theme="shadcn"][data-mode="dark"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="shadcn"][data-mode="auto"] {
+  --bg: #09090b;
+  --paper: #121215;
+  --ink: #fafafa;
+  --ink-2: #a1a1aa;
+  --ink-3: #71717a;
+  --line: #27272a;
+  --line-2: #1c1c1f;
+  --fill: #18181b;
+  --accent: #60a5fa;
+  --accent-bg: #172554;
+  --ok: #4ade80;
+  --ok-bg: #052e16;
+  --err: #f87171;
+  --err-bg: #450a0a;
+  --warn: #fbbf24;
+  --warn-bg: #451a03;
+  --head-bg: #fafafa;
+  --head-fg: #18181b;
+}
+}
+
+html[lang="ja"][data-theme][data-mode] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", "PingFang SC", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+html[lang="ja"][data-theme="3b1b"][data-mode] {
+  --v-title-font: "CMU Serif", "Latin Modern Roman", "Iowan Old Style", "Palatino", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Serif JP", "Songti SC", serif;
+}
+
+/* Answer me with HTML base — uses theme variables only, never hard-coded colors (theme tokens: themes/index.js). Exception: the var() fallbacks of diagrams (flow / sequence) equal the blueprint light tokens, guarded by a test. */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-sans); font-size: 14px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+code, pre, kbd { font-family: var(--font-mono); }
+
+/* ── Toolbar ─────────────────────────────── */
+.am-toolbar {
+  position: fixed; top: 12px; right: 12px; z-index: 10; display: flex; gap: 6px;
+}
+.am-btn {
+  font: 12px/1 var(--font-sans); color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); padding: 7px 10px; cursor: pointer;
+}
+.am-btn:hover { border-color: var(--ink-3); }
+.am-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ── Header ───────────────────────────────── */
+.am-head { margin: 0 0 20px; padding-right: 260px; }
+.am-head h1 { margin: 0; font-size: 24px; line-height: 1.25; letter-spacing: -0.01em; }
+.am-sub { margin: 4px 0 0; color: var(--ink-2); }
+.am-head-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
+.am-head-meta b { font-family: var(--font-mono); font-weight: 400; color: var(--ink-3); margin-right: 6px; }
+.am-intro { margin-top: 12px; max-width: 80ch; }
+
+/* ── sheet template ────────────────────────── */
+.am-sheet { max-width: 1680px; margin: 0 auto; padding: 32px 28px 40px; }
+.am-frame { position: relative; }
+.am-grid {
+  display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+  gap: 20px; align-items: start;
+}
+.am-ruler { display: none; }
+html[data-theme="blueprint"] .am-frame { border: 1px solid var(--line); padding: 30px; }
+html[data-theme="blueprint"] .am-frame::before {
+  content: ""; position: absolute; inset: 18px; border: 1px solid var(--line); pointer-events: none;
+}
+html[data-theme="blueprint"] .am-ruler {
+  display: flex; position: absolute; font: 10px/1 var(--font-mono); color: var(--ink-3);
+}
+.am-ruler span { flex: 1; display: flex; align-items: center; justify-content: center; }
+.am-ruler--top, .am-ruler--bottom { left: 18px; right: 18px; height: 18px; }
+.am-ruler--top { top: 0; }
+.am-ruler--bottom { bottom: 0; }
+.am-ruler--left, .am-ruler--right { top: 18px; bottom: 18px; width: 18px; flex-direction: column; }
+.am-ruler--left { left: 0; }
+.am-ruler--right { right: 0; }
+.am-ruler--top span + span, .am-ruler--bottom span + span { border-left: 1px solid var(--line); }
+.am-ruler--left span + span, .am-ruler--right span + span { border-top: 1px solid var(--line); }
+
+/* ── Panels ───────────────────────────────── */
+.am-panel {
+  background: var(--paper); border: var(--bw) solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); min-width: 0; overflow: hidden;
+}
+.am-panel-head {
+  display: flex; align-items: stretch; gap: 0; border-bottom: var(--bw) solid var(--line); min-height: 34px;
+}
+.am-panel-id {
+  display: flex; align-items: center; justify-content: center; min-width: 34px; padding: 0 8px;
+  background: var(--head-bg); color: var(--head-fg); font-weight: 600; font-size: 14px;
+}
+html[data-theme="shadcn"] .am-panel-id { border-radius: 6px; min-width: 24px; height: 24px; margin: 9px 0 9px 14px; font-size: 12px; }
+html[data-theme="shadcn"] .am-panel-head { border-bottom-width: 1px; }
+.am-panel-head h2 { margin: 0; padding: 7px 12px; font-size: 15px; font-weight: 600; flex: 1; display: flex; align-items: center; }
+.am-panel-meta { align-self: center; padding: 0 12px; font: 11px/1.3 var(--font-mono); color: var(--ink-2); text-align: right; }
+.am-panel-body { padding: 14px 16px 16px; }
+.am-panel-body > * + * { margin-top: 12px; }
+
+/* ── Markdown body ───────────────────────── */
+.am-md > :first-child { margin-top: 0; }
+.am-md > :last-child { margin-bottom: 0; }
+.am-md p { margin: 0 0 8px; }
+.am-md ul, .am-md ol { margin: 0 0 8px; padding-left: 20px; }
+.am-md li + li { margin-top: 3px; }
+.am-md h3, .am-md h4 { margin: 14px 0 6px; font-size: 13px; }
+.am-md a { color: var(--accent); }
+.am-md blockquote { margin: 0 0 8px; padding: 2px 12px; border-left: 3px solid var(--line-2); color: var(--ink-2); }
+.am-md :not(pre) > code { font-size: 0.9em; background: var(--fill); padding: 1px 5px; border-radius: 4px; }
+.am-md hr { border: 0; border-top: 1px solid var(--line-2); margin: 12px 0; }
+.am-md table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.am-md th {
+  text-align: left; font: 11px/1.3 var(--font-mono); color: var(--ink-2); font-weight: 400;
+  padding: 6px 10px; border-bottom: 1px solid var(--line-2);
+}
+/* th { text-align: left } outranks the align attribute from Markdown alignment, so restore right and center columns explicitly. */
+.am-md th[align="right"] { text-align: right; }
+.am-md th[align="center"] { text-align: center; }
+.am-md td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+.am-md tbody tr:nth-child(even) td { background: var(--fill); }
+.am-table-wrap { overflow-x: auto; }
+.am-code {
+  margin: 0; padding: 12px 14px; background: var(--fill); border: 1px solid var(--line-2);
+  border-radius: var(--radius); overflow-x: auto; font-size: 12.5px; line-height: 1.5;
+}
+
+/* ── Status badges ok / no / warn ──────────────── */
+.am-status { white-space: nowrap; font-weight: 500; }
+.am-status--ok { color: var(--ok); }
+.am-status--no { color: var(--err); }
+.am-status--warn { color: var(--warn); }
+.am-status-icon { display: inline-block; width: 1.1em; font-weight: 700; }
+
+/* ── callout ─────────────────────────────── */
+.am-callout {
+  border: 1px solid var(--line-2); border-left: 3px solid var(--accent); background: var(--accent-bg);
+  padding: 10px 14px; border-radius: var(--radius);
+}
+.am-callout--ok { border-left-color: var(--ok); background: var(--ok-bg); }
+.am-callout--warn { border-left-color: var(--warn); background: var(--warn-bg); }
+.am-callout--err { border-left-color: var(--err); background: var(--err-bg); }
+.am-callout-title { font-weight: 600; margin-bottom: 4px; }
+
+/* ── kv title block ─────────────────────────── */
+.am-kv {
+  display: grid; grid-template-columns: repeat(var(--kv-cols, 2), minmax(0, 1fr)); margin: 0;
+  border-top: var(--bw) solid var(--line); border-left: var(--bw) solid var(--line);
+}
+.am-kv-cell { border-right: var(--bw) solid var(--line); border-bottom: var(--bw) solid var(--line); padding: 6px 10px 8px; min-width: 0; }
+.am-kv-cell--wide { grid-column: 1 / -1; }
+.am-kv dt { font: 11px/1.4 var(--font-mono); color: var(--ink-2); }
+.am-kv dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.am-kv-cell--wide dd { font-size: 17px; font-weight: 600; }
+html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var(--radius); overflow: hidden; }
+
+/* ── timeline ────────────────────────────── */
+.am-timeline { list-style: none; margin: 0; padding: 0; }
+.am-timeline--h { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); padding-top: 4px; }
+.am-timeline--h li { position: relative; text-align: center; padding: 0 6px; }
+.am-timeline--h li::before {
+  content: ""; position: absolute; top: 31px; left: 0; right: 0; border-top: var(--bw) solid var(--line);
+}
+.am-timeline--h li:first-child::before { left: 50%; }
+.am-timeline--h li:last-child::before { right: 50%; }
+.am-tl-when { display: block; font-size: 15px; font-weight: 500; height: 24px; }
+.am-tl-dot {
+  position: relative; display: block; width: 11px; height: 11px; margin: 2px auto 8px;
+  border: var(--bw) solid var(--line); border-radius: 50%; background: var(--paper);
+}
+.am-tl-item--hi .am-tl-dot { background: var(--accent); border-color: var(--accent); }
+.am-tl-title { display: block; font-size: 12.5px; font-weight: 500; }
+.am-tl-text { display: block; font-size: 12px; color: var(--ink-2); line-height: 1.45; }
+.am-timeline--v li { position: relative; padding: 0 0 14px 22px; }
+.am-timeline--v li::before { content: ""; position: absolute; left: 5px; top: 6px; bottom: -6px; border-left: var(--bw) solid var(--line-2); }
+.am-timeline--v li:last-child::before { display: none; }
+.am-timeline--v .am-tl-dot { position: absolute; left: 0; top: 4px; margin: 0; }
+.am-timeline--v .am-tl-when { display: inline; height: auto; font: 12px var(--font-mono); color: var(--ink-2); margin-right: 8px; }
+.am-timeline--v .am-tl-title { display: inline; font-size: 14px; }
+.am-timeline--v .am-tl-text { margin-top: 2px; }
+
+/* ── annot sentence notes ──────────────────────── */
+.am-annot + .am-annot { border-top: 1px solid var(--line-2); padding-top: 12px; }
+.am-annot-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+.am-annot-meta { font: 11px var(--font-mono); font-weight: 400; color: var(--ink-2); }
+.am-annot-scroll { overflow-x: auto; }
+.am-annot-line {
+  position: relative; display: inline-block; white-space: pre; font: 14px/1.6 var(--font-mono);
+  padding-bottom: calc(var(--rows, 0) * 17px + 14px);
+}
+.am-annot-line--wrap { display: block; white-space: normal; padding-bottom: 10px; }
+.am-annot-line--wrap .am-seg { white-space: nowrap; }
+.am-seg { position: relative; }
+.am-seg::after {
+  content: ""; position: absolute; left: 1px; right: 1px; top: calc(100% + 1px); height: 5px;
+  border: 1px solid var(--accent); border-top: 0;
+}
+.am-seg-n {
+  position: absolute; left: 0; top: calc(100% + 8px + var(--row, 0) * 17px);
+  font: 11px/16px var(--font-sans); color: var(--accent); white-space: nowrap;
+}
+.am-seg--err { color: var(--err); }
+.am-seg--err::after { border-color: var(--err); }
+.am-seg--err .am-seg-n { color: var(--err); }
+.am-annot-caption { font-size: 12px; color: var(--ink-2); }
+
+/* ── limits bars ───────────────────────── */
+.am-lim + .am-lim { margin-top: 14px; }
+.am-lim-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; margin-bottom: 4px; }
+.am-lim-val { font: 12px var(--font-mono); color: var(--accent); white-space: nowrap; }
+.am-lim-track { position: relative; height: 12px; border: 1px solid var(--line-2); background: var(--fill); border-radius: calc(var(--radius) / 2); }
+.am-lim-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent-bg); border-right: 1px solid var(--accent); }
+.am-lim-mark { position: absolute; top: -4px; bottom: -4px; border-left: 2px solid var(--accent); }
+.am-lim.is-over .am-lim-fill { background: var(--err-bg); border-right-color: var(--err); }
+.am-lim.is-over .am-lim-val { color: var(--err); }
+.am-lim-ticks { position: relative; height: 16px; font: 10px/16px var(--font-mono); color: var(--ink-3); }
+.am-lim-ticks span { position: absolute; transform: translateX(-50%); }
+.am-lim-ticks span:first-child { transform: none; }
+.am-lim-note { font-size: 11px; color: var(--ink-2); margin-left: 6px; }
+
+/* ── tree ─────────────────────────── */
+.am-tree { font-size: 13px; }
+.am-tree-root { display: flex; justify-content: center; position: relative; padding-bottom: 18px; }
+.am-tree-root::after { content: ""; position: absolute; bottom: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-root--solo { padding-bottom: 12px; }
+.am-tree-root--solo::after { display: none; }
+.am-tree-box {
+  border: var(--bw) solid var(--line); background: var(--paper); padding: 6px 14px; text-align: center;
+  border-radius: var(--radius); font-weight: 600;
+}
+.am-tree-box small { display: block; font-weight: 400; color: var(--ink-2); font-size: 12px; }
+.am-tree-box--root { background: var(--accent-bg); font-size: 15px; padding: 8px 28px; }
+.am-tree-cols { display: grid; grid-template-columns: repeat(var(--n, 1), minmax(0, 1fr)); }
+.am-tree-col { position: relative; padding: 18px 8px 0; min-width: 0; }
+.am-tree-col::before { content: ""; position: absolute; top: 0; left: 0; right: 0; border-top: var(--bw) solid var(--line); }
+.am-tree-col:first-child::before { left: 50%; }
+.am-tree-col:last-child::before { right: 50%; }
+.am-tree-col::after { content: ""; position: absolute; top: 0; left: 50%; height: 18px; border-left: var(--bw) solid var(--line); }
+.am-tree-list, .am-tree-list ul { list-style: none; margin: 0; padding: 0; }
+.am-tree-col > .am-tree-list { margin: 8px 0 0 14px; }
+.am-tree-list ul { margin-left: 16px; }
+.am-tree-list li { position: relative; padding: 3px 0 3px 18px; }
+.am-tree-list li::before { content: ""; position: absolute; left: 0; top: 0.95em; width: 12px; border-top: 1px solid var(--ink-3); }
+.am-tree-list li::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--ink-3); }
+.am-tree-list li:last-child::after { bottom: auto; height: 0.95em; }
+.am-tree-tag { font: 11px var(--font-mono); color: var(--ink-3); margin-right: 4px; }
+.am-tree code { font: 12px var(--font-mono); }
+.am-tree-sub { display: block; font-size: 11.5px; color: var(--ink-2); }
+.am-tree-hi > .am-tree-label { color: var(--accent); font-weight: 600; }
+
+/* ── Diagrams (flow / sequence) ───────────────── */
+.am-diagram { margin: 0; overflow-x: auto; text-align: center; }
+/* Embedded previews can lose html[data-theme]; the fallbacks keep diagrams readable, and defined theme variables still win. */
+.am-diagram svg { max-width: 100%; height: auto; font-family: var(--font-sans, sans-serif); }
+.am-diagram text { fill: var(--ink, #16181d); font-size: 13px; }
+.am-node-shape { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-node--hi .am-node-shape { fill: var(--accent-bg, #e4ecf8); stroke: var(--accent, #1d5fbf); }
+.am-node--hi text { fill: var(--accent, #1d5fbf); font-weight: 600; }
+.am-edge { fill: none; stroke: var(--ink-2, #4b5260); stroke-width: 1.3; }
+.am-edge--dashed { stroke-dasharray: 5 4; }
+.am-arrow { fill: var(--ink-2, #4b5260); }
+.am-edge-label rect { fill: var(--paper, #ffffff); }
+.am-diagram .am-edge-label text { fill: var(--accent, #1d5fbf); font-size: 11.5px; }
+.am-cluster { fill: var(--fill, #f3f5f8); stroke: var(--line-2, #d6dae1); stroke-width: 1; stroke-dasharray: 4 3; }
+.am-diagram .am-cluster-label { fill: var(--ink-2, #4b5260); font: 11px var(--font-mono, monospace); }
+.am-lifeline { stroke: var(--ink-3, #8b929e); stroke-width: 1; stroke-dasharray: 4 4; }
+.am-actor { fill: var(--paper, #ffffff); stroke: var(--line, #1d2026); stroke-width: var(--bw, 1.5px); }
+.am-note { fill: var(--warn-bg, #fdf3e2); stroke: var(--warn, #a8620a); stroke-width: 1; }
+.am-diagram .am-step { fill: var(--ink-3, #8b929e); font: 10px var(--font-mono, monospace); }
+
+/* ── doc template ────────────────────────── */
+.am-doc { max-width: 1120px; margin: 0 auto; padding: 40px 28px 64px; }
+.am-doc-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 32px; align-items: start; }
+.am-doc-layout--notoc { grid-template-columns: minmax(0, 1fr); max-width: 860px; }
+.am-toc { position: sticky; top: 24px; font-size: 13px; }
+.am-toc a { display: block; color: var(--ink-2); text-decoration: none; padding: 4px 0 4px 10px; border-left: 2px solid var(--line-2); }
+.am-toc a:hover { color: var(--ink); border-left-color: var(--accent); }
+.am-doc-body > .am-panel + .am-panel { margin-top: 20px; }
+
+/* ── Responsive and print ─────────────────────────── */
+@media (max-width: 1100px) {
+  .am-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .am-grid > .am-panel { grid-column: auto !important; }
+  .am-grid > .am-panel.am-span-wide { grid-column: 1 / -1 !important; }
+}
+@media (max-width: 760px) {
+  .am-sheet, .am-doc { padding: 56px 12px 24px; }
+  .am-head { padding-right: 0; }
+  .am-grid { grid-template-columns: minmax(0, 1fr); }
+  .am-grid > .am-panel.am-span-wide { grid-column: auto !important; }
+  html[data-theme="blueprint"] .am-frame { padding: 0; border: 0; }
+  html[data-theme="blueprint"] .am-frame::before, html[data-theme="blueprint"] .am-ruler { display: none; }
+  .am-doc-layout { grid-template-columns: minmax(0, 1fr); }
+  .am-toc { position: static; }
+  .am-timeline--h { grid-template-columns: minmax(0, 1fr); }
+  .am-tree-cols { grid-template-columns: minmax(0, 1fr); }
+  /* Tables and diagrams keep their size: the wrapper scrolls horizontally when they overflow. */
+  .am-md th, .am-md td { min-width: 6em; }
+  .am-diagram svg { max-width: none; }
+}
+.am-colophon { text-align: center; padding: 0 0 28px; font: 11px var(--font-mono); color: var(--ink-3); }
+
+@media print {
+  .am-toolbar { display: none; }
+  body { background: var(--paper); }
+  .am-panel { break-inside: avoid; box-shadow: none; }
+}
+.am-panel--bare { border: 0; background: transparent; box-shadow: none; }
+.am-panel--bare > .am-panel-body { padding: 0; }
+.am-panel--bare .am-kv { background: var(--paper); }
+
+</style>
+</head>
+<body>
+<div class="am-toolbar">
+<button class="am-btn" type="button" data-am="theme" data-labels="{&quot;blueprint&quot;:&quot;Theme: Blueprint&quot;,&quot;shadcn&quot;:&quot;Theme: Cards&quot;}">Theme: Blueprint</button>
+<button class="am-btn" type="button" data-am="mode" data-labels="{&quot;auto&quot;:&quot;Mode: Auto&quot;,&quot;light&quot;:&quot;Mode: Light&quot;,&quot;dark&quot;:&quot;Mode: Dark&quot;}">Mode: Auto</button>
+<button class="am-btn" type="button" data-am="copy" data-done="Copied ✓">Copy source</button>
+</div>
+<main class="am-doc">
+<header class="am-head"><h1>AgentMiddleware 速查</h1><p class="am-sub">create_agent 的中间件钩子与官方实现</p><div class="am-head-meta"><span><b>source</b>codes/langchain/10_middleware/cheat_api.md</span></div></header>
+<div class="am-doc-layout">
+<nav class="am-toc" aria-label="Contents"><a href="#panel-A">A · 速览</a><a href="#panel-B">B · 六个钩子</a><a href="#panel-C">C · 类式中间件</a><a href="#panel-D">D · 官方中间件一览</a><a href="#panel-E">E · 使用用例</a><a href="#panel-F">F · 常见坑</a></nav><div class="am-doc-body">
+<section class="am-panel" id="panel-A">
+<header class="am-panel-head"><span class="am-panel-id">A</span><h2>速览</h2></header>
+<div class="am-panel-body"><div class="am-md"><p><code>create_agent(model, tools, middleware=[...])</code> 在 ReAct 循环外面再套一层。中间件在固定位置读写 state，并拦截模型请求和工具执行。</p>
+<p>对照本机 <code>langchain 1.4.2</code> / <code>langchain-core 1.6.4</code> 核对。练习见 <code>codes/langchain/10_middleware/qa.ipynb</code>。</p>
+</div>
+<figure class="am-diagram am-flow"><svg viewBox="0 0 300 782" width="300" height="782" role="img" aria-label="Flowchart: 触发 invoke, before_agent, before_model, wrap_model_call, 模型调用, after_model, 有 tool_calls?, wrap_tool_call" xmlns="http://www.w3.org/2000/svg"><defs><marker id="am1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="am-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs><g></g><g><g data-step="0"><path class="am-edge" d="M144.6,49 L144.6,60.5 Q144.6,72 144.6,83.5 L144.6,95" marker-end="url(#am1-arrow)"/></g><g data-step="1"><path class="am-edge" d="M144.6,130 L144.6,141.5 Q144.6,153 144.6,164.5 L144.6,176" marker-end="url(#am1-arrow)"/></g><g data-step="2"><path class="am-edge" d="M168.8,211 L184.8,222.5 Q200.8,234 200.8,245.5 L200.8,257" marker-end="url(#am1-arrow)"/></g><g data-step="3"><path class="am-edge" d="M200.8,292 L200.8,303.5 Q200.8,315 200.8,326.5 L200.8,338" marker-end="url(#am1-arrow)"/></g><g data-step="4"><path class="am-edge" d="M200.8,387 L200.8,403 Q200.8,419 200.8,435 L200.8,451" marker-end="url(#am1-arrow)"/></g><g data-step="5"><path class="am-edge" d="M200.8,486 L200.8,497.5 Q200.8,509 200.8,520.5 L200.8,532" marker-end="url(#am1-arrow)"/></g><g data-step="6"><path class="am-edge" d="M176.9,580.1 L153.1,600 Q129.3,620 111.1,636 L93,652" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="118.5" y="611" width="21.5" height="18" rx="3"/><text x="129.3" y="620" text-anchor="middle" dominant-baseline="central">是</text></g></g><g data-step="7"><path class="am-edge" d="M67.5,652 L62.4,636 Q57.2,620 57.2,590 Q57.2,560 57.2,534.5 Q57.2,509 57.2,488.8 Q57.2,468.5 57.2,443.8 Q57.2,419 57.2,390.8 Q57.2,362.5 57.2,338.8 Q57.2,315 57.2,294.8 Q57.2,274.5 57.2,254.3 Q57.2,234 82,222.5 L106.8,211" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="29.2" y="410" width="56" height="18" rx="3"/><text x="57.2" y="419" text-anchor="middle" dominant-baseline="central">回到循环</text></g></g><g data-step="8"><path class="am-edge" d="M209.8,585 L216.2,602.5 Q222.5,620 222.5,636 L222.5,652" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="211.8" y="611" width="21.5" height="18" rx="3"/><text x="222.5" y="620" text-anchor="middle" dominant-baseline="central">否</text></g></g><g data-step="9"><path class="am-edge" d="M222.5,687 L222.5,698.5 Q222.5,710 222.5,721.5 L222.5,733" marker-end="url(#am1-arrow)"/></g></g><g><g class="am-node am-node--round" data-key="触发 invoke" data-step="0"><rect class="am-node-shape" x="89.3" y="14" width="110.5" height="35" rx="17.5"/><text x="144.6" y="31.5" text-anchor="middle" dominant-baseline="central">触发 invoke</text></g><g class="am-node am-node--rect" data-key="before_agent" data-step="0"><rect class="am-node-shape" x="91.6" y="95" width="106" height="35" rx="3"/><text x="144.6" y="112.5" text-anchor="middle" dominant-baseline="central">before_agent</text></g><g class="am-node am-node--rect" data-key="before_model" data-step="1"><rect class="am-node-shape" x="89.6" y="176" width="109.9" height="35" rx="3"/><text x="144.6" y="193.5" text-anchor="middle" dominant-baseline="central">before_model</text></g><g class="am-node am-node--rect" data-key="wrap_model_call" data-step="2"><rect class="am-node-shape" x="134.5" y="257" width="132.5" height="35" rx="3"/><text x="200.8" y="274.5" text-anchor="middle" dominant-baseline="central">wrap_model_call</text></g><g class="am-node am-node--db" data-key="模型调用" data-step="3"><path class="am-node-shape" d="M160.8,345 A40,7 0 0 1 240.8,345 V380 A40,7 0 0 1 160.8,380 Z"/><path class="am-node-shape" d="M160.8,345 A40,7 0 0 0 240.8,345"/><text x="200.8" y="366.5" text-anchor="middle" dominant-baseline="central">模型调用</text></g><g class="am-node am-node--rect" data-key="after_model" data-step="4"><rect class="am-node-shape" x="151" y="451" width="99.5" height="35" rx="3"/><text x="200.8" y="468.5" text-anchor="middle" dominant-baseline="central">after_model</text></g><g class="am-node am-node--diamond" data-key="有 tool_calls?" data-step="5"><polygon class="am-node-shape" points="200.8,532 285.1,560 200.8,588 116.4,560"/><text x="200.8" y="560" text-anchor="middle" dominant-baseline="central">有 tool_calls?</text></g><g class="am-node am-node--rect" data-key="wrap_tool_call" data-step="6"><rect class="am-node-shape" x="14" y="652" width="118.2" height="35" rx="3"/><text x="73.1" y="669.5" text-anchor="middle" dominant-baseline="central">wrap_tool_call</text></g><g class="am-node am-node--rect" data-key="after_agent" data-step="8"><rect class="am-node-shape" x="174.7" y="652" width="95.6" height="35" rx="3"/><text x="222.5" y="669.5" text-anchor="middle" dominant-baseline="central">after_agent</text></g><g class="am-node am-node--round" data-key="返回 state" data-step="9"><rect class="am-node-shape" x="172.5" y="733" width="100.1" height="35" rx="17.5"/><text x="222.5" y="750.5" text-anchor="middle" dominant-baseline="central">返回 state</text></g></g></svg></figure>
+<div class="am-md"><p>约定：</p>
+<ul>
+<li><code>before_agent</code> 和 <code>after_agent</code> 每次 <code>invoke</code> 各跑一次。中间三个钩子每轮模型调用都跑。</li>
+<li>一次 <code>invoke</code> 不等于一次模型调用。有工具往返时模型会被调多次。</li>
+<li><code>middleware=[A, B]</code> 里越靠前越在外层。<code>wrap_*</code> 是洋葱模型：A 进 → B 进 → B 出 → A 出。</li>
+<li>装饰器只能写无状态小钩子。要自己存字段就写成 <code>AgentMiddleware</code> 子类。</li>
+</ul>
+</div></div>
+</section>
+<section class="am-panel" id="panel-B">
+<header class="am-panel-head"><span class="am-panel-id">B</span><h2>六个钩子</h2></header>
+<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>钩子</th>
+<th>签名</th>
+<th>时机</th>
+<th>返回值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>before_agent</code></td>
+<td><code>(state, runtime)</code></td>
+<td>整个 agent 开始前，一次</td>
+<td>state 更新 <code>dict</code> 或 <code>None</code></td>
+</tr>
+<tr>
+<td><code>before_model</code></td>
+<td><code>(state, runtime)</code></td>
+<td>每次调模型之前</td>
+<td>state 更新 <code>dict</code> 或 <code>None</code></td>
+</tr>
+<tr>
+<td><code>after_model</code></td>
+<td><code>(state, runtime)</code></td>
+<td>每次调模型之后</td>
+<td>state 更新 <code>dict</code> 或 <code>None</code></td>
+</tr>
+<tr>
+<td><code>after_agent</code></td>
+<td><code>(state, runtime)</code></td>
+<td>agent 结束时，一次</td>
+<td>state 更新 <code>dict</code> 或 <code>None</code></td>
+</tr>
+<tr>
+<td><code>wrap_model_call</code></td>
+<td><code>(request, handler)</code></td>
+<td>包住每次模型调用</td>
+<td><code>ModelResponse</code></td>
+</tr>
+<tr>
+<td><code>wrap_tool_call</code></td>
+<td><code>(request, handler)</code></td>
+<td>包住每次工具执行</td>
+<td><code>ToolMessage</code> 或 <code>Command</code></td>
+</tr>
+</tbody></table></div>
+<p>装饰器与类方法同名，作用是把函数包成单例中间件：</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>装饰器</th>
+<th>类里的等价写法</th>
+<th>要点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@before_model</code></td>
+<td><code>def before_model(...)</code></td>
+<td>返回 <code>None</code> 表示不改 state</td>
+</tr>
+<tr>
+<td><code>@after_model</code></td>
+<td><code>def after_model(...)</code></td>
+<td>同理</td>
+</tr>
+<tr>
+<td><code>@wrap_model_call</code></td>
+<td><code>def wrap_model_call(...)</code></td>
+<td>必须自己调 <code>handler(request)</code></td>
+</tr>
+<tr>
+<td><code>@wrap_tool_call</code></td>
+<td><code>def wrap_tool_call(...)</code></td>
+<td>不调 <code>handler</code> 就等于跳过工具</td>
+</tr>
+<tr>
+<td><code>@dynamic_prompt</code></td>
+<td><code>def wrap_model_call(...)</code></td>
+<td>按运行时上下文算 system prompt</td>
+</tr>
+</tbody></table></div>
+<ul>
+<li>每个钩子都有异步版，加 <code>a</code> 前缀：<code>abefore_model</code>、<code>awrap_tool_call</code> 等。</li>
+<li><code>@hook_config(can_jump_to=[...])</code> 声明允许的跳转目标，取值只有 <code>&quot;tools&quot;</code>、<code>&quot;model&quot;</code>、<code>&quot;end&quot;</code>。</li>
+<li>钩子返回 <code>{&quot;jump_to&quot;: &quot;end&quot;}</code> 可提前结束循环。</li>
+</ul>
+</div></div>
+</section>
+<section class="am-panel" id="panel-C">
+<header class="am-panel-head"><span class="am-panel-id">C</span><h2>类式中间件</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>三个类属性决定中间件怎么接入：</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>state_schema</code></td>
+<td>声明扩展的 state 字段。不写也能跑，但 <code>return {&quot;calls&quot;: 1}</code> 会被静默丢弃</td>
+</tr>
+<tr>
+<td><code>tools</code></td>
+<td>中间件自带的工具，自动并入 agent 的工具集</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>默认取类名，用于追踪</td>
+</tr>
+</tbody></table></div>
+<p><code>AgentState</code> 自带三个字段：<code>messages</code>、<code>jump_to</code>、<code>structured_response</code>。扩展字段要给默认值或标 <code>NotRequired</code>，否则第一次进钩子会 <code>KeyError</code>。</p>
+<p>钩子拿到的两个请求对象：</p>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>对象</th>
+<th>字段</th>
+<th>出现在</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ModelRequest</code></td>
+<td><code>model</code>、<code>messages</code>、<code>system_message</code>、<code>tool_choice</code>、<code>tools</code>、<code>response_format</code>、<code>state</code>、<code>runtime</code>、<code>model_settings</code></td>
+<td><code>wrap_model_call</code></td>
+</tr>
+<tr>
+<td><code>ToolCallRequest</code></td>
+<td><code>tool_call</code>、<code>tool</code>、<code>state</code>、<code>runtime</code></td>
+<td><code>wrap_tool_call</code></td>
+</tr>
+</tbody></table></div>
+<p><code>request.override(...)</code> 返回改过的副本。<code>system_message</code> 默认是 <code>None</code>，只有设了 <code>system_prompt</code> 才有值；<code>messages</code> 是这次要发的完整历史。</p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-D">
+<header class="am-panel-head"><span class="am-panel-id">D</span><h2>官方中间件一览</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>按用途分组。「钩子」一列是它实际覆写的位置。</p>
+<h3>上下文管理</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>类</th>
+<th>关键参数</th>
+<th>钩子</th>
+<th>做什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SummarizationMiddleware</code></td>
+<td><code>model</code>、<code>trigger=(&quot;messages&quot;, 20)</code>、<code>keep=(&quot;messages&quot;, 20)</code>、<code>token_counter</code></td>
+<td><code>before_model</code></td>
+<td>历史超阈值时压成摘要，只留最近几条</td>
+</tr>
+<tr>
+<td><code>ContextEditingMiddleware</code></td>
+<td><code>edits=[ClearToolUsesEdit()]</code>、<code>token_count_method</code></td>
+<td><code>wrap_model_call</code></td>
+<td>按规则裁剪旧的工具结果，默认触发线 10 万 token</td>
+</tr>
+</tbody></table></div>
+<h3>可靠性</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>类</th>
+<th>关键参数</th>
+<th>钩子</th>
+<th>做什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ToolRetryMiddleware</code></td>
+<td><code>max_retries=2</code>、<code>tools</code>、<code>retry_on</code>、<code>on_failure=&#39;continue&#39;</code>、<code>initial_delay=1.0</code>、<code>backoff_factor=2.0</code>、<code>jitter=True</code></td>
+<td><code>wrap_tool_call</code></td>
+<td>工具失败自动重试，指数退避</td>
+</tr>
+<tr>
+<td><code>ModelRetryMiddleware</code></td>
+<td>同上</td>
+<td><code>wrap_model_call</code></td>
+<td>模型调用失败自动重试</td>
+</tr>
+<tr>
+<td><code>ModelFallbackMiddleware</code></td>
+<td><code>first_model, *additional_models</code></td>
+<td><code>wrap_model_call</code></td>
+<td>主模型报错时换备用模型</td>
+</tr>
+<tr>
+<td><code>ToolErrorMiddleware</code></td>
+<td><code>on_error</code>、<code>tools</code></td>
+<td><code>wrap_tool_call</code></td>
+<td>把指定工具的异常转成给模型看的 <code>ToolMessage</code></td>
+</tr>
+</tbody></table></div>
+<h3>限流</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>类</th>
+<th>关键参数</th>
+<th>钩子</th>
+<th>做什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ModelCallLimitMiddleware</code></td>
+<td><code>run_limit</code>、<code>thread_limit</code>、<code>exit_behavior=&#39;end&#39;</code></td>
+<td><code>before_model</code>、<code>after_model</code></td>
+<td>卡模型调用次数，按单次 run 或整个 thread 计</td>
+</tr>
+<tr>
+<td><code>ToolCallLimitMiddleware</code></td>
+<td><code>tool_name</code>、<code>run_limit</code>、<code>thread_limit</code>、<code>exit_behavior=&#39;continue&#39;</code></td>
+<td><code>after_model</code></td>
+<td>卡工具调用次数，可只针对某个工具</td>
+</tr>
+</tbody></table></div>
+<p>两个限流的 <code>exit_behavior</code> 决定超限后的走向。模型限流取 <code>&#39;end&#39;</code> / <code>&#39;error&#39;</code>；工具限流取 <code>&#39;continue&#39;</code> / <code>&#39;end&#39;</code> / <code>&#39;error&#39;</code>。</p>
+<h3>安全与人工介入</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>类</th>
+<th>关键参数</th>
+<th>钩子</th>
+<th>做什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>HumanInTheLoopMiddleware</code></td>
+<td><code>interrupt_on={&quot;add&quot;: True}</code>、<code>description_prefix</code></td>
+<td><code>after_model</code>、<code>wrap_tool_call</code></td>
+<td>工具执行前停下等人审批。需要 <code>checkpointer</code> 和 <code>thread_id</code></td>
+</tr>
+<tr>
+<td><code>PIIMiddleware</code></td>
+<td><code>pii_type</code>、<code>strategy=&#39;redact&#39;</code>、<code>detector</code>、<code>apply_to_input=True</code>、<code>apply_to_output</code></td>
+<td><code>before_model</code>、<code>after_model</code></td>
+<td>检出邮箱、卡号、IP 等并拦截、脱敏或改写</td>
+</tr>
+</tbody></table></div>
+<h3>规划、工具选择与执行环境</h3>
+<div class="am-table-wrap"><table>
+<thead>
+<tr>
+<th>类</th>
+<th>关键参数</th>
+<th>钩子</th>
+<th>做什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TodoListMiddleware</code></td>
+<td><code>system_prompt</code>、<code>tool_description</code></td>
+<td><code>after_model</code>、<code>wrap_model_call</code></td>
+<td>注册 <code>write_todos</code> 工具，让 agent 自己列计划</td>
+</tr>
+<tr>
+<td><code>LLMToolSelectorMiddleware</code></td>
+<td><code>model</code>、<code>max_tools</code>、<code>always_include</code>、<code>max_retries</code></td>
+<td><code>wrap_model_call</code></td>
+<td>先用小模型挑出相关工具，再调主模型</td>
+</tr>
+<tr>
+<td><code>LLMToolEmulator</code></td>
+<td><code>tools</code>、<code>model</code></td>
+<td><code>wrap_tool_call</code></td>
+<td>不真跑工具，用模型编一个结果</td>
+</tr>
+<tr>
+<td><code>ProviderToolSearchMiddleware</code></td>
+<td><code>searchable_tools</code></td>
+<td><code>wrap_model_call</code></td>
+<td>把工具藏到厂商原生的工具搜索后面</td>
+</tr>
+<tr>
+<td><code>ShellToolMiddleware</code></td>
+<td><code>workspace_root</code>、<code>execution_policy</code>（<code>HostExecutionPolicy</code> / <code>DockerExecutionPolicy</code> / <code>CodexSandboxExecutionPolicy</code>）、<code>startup_commands</code>、<code>tool_name=&#39;shell&#39;</code></td>
+<td><code>before_agent</code>、<code>after_agent</code></td>
+<td>注册一个常驻 <code>shell</code> 工具，跑命令前先起沙箱</td>
+</tr>
+<tr>
+<td><code>FilesystemFileSearchMiddleware</code></td>
+<td><code>root_path</code>、<code>use_ripgrep=True</code>、<code>max_file_size_mb=10</code></td>
+<td>不挂钩子，只加工具</td>
+<td>注册 <code>glob_search</code> 和 <code>grep_search</code> 两个搜索工具</td>
+</tr>
+</tbody></table></div>
+</div></div>
+</section>
+<section class="am-panel" id="panel-E">
+<header class="am-panel-head"><span class="am-panel-id">E</span><h2>使用用例</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>1. 装饰器写两个观察钩子</h3>
+</div>
+<pre class="am-code"><code data-lang="python">from langchain.agents import create_agent
+from langchain.agents.middleware import after_model, before_model
+
+
+@before_model
+def spy_before(state, runtime):
+    print(&quot;[before_model]&quot;, len(state[&quot;messages&quot;]))
+    return None
+
+
+@after_model
+def spy_after(state, runtime):
+    print(&quot;[after_model]&quot;, len(state[&quot;messages&quot;]))
+    return None
+
+
+agent = create_agent(&quot;deepseek:deepseek-chat&quot;, tools=[add], middleware=[spy_before, spy_after])
+agent.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]})
+# 两个钩子各打两行：模型被调两次，而 invoke 只有一次</code></pre>
+<div class="am-md"><h3>2. 类式中间件加自己的 state 字段</h3>
+</div>
+<pre class="am-code"><code data-lang="python">from typing import NotRequired
+
+from langchain.agents.middleware import AgentMiddleware, AgentState
+
+
+class MyState(AgentState):
+    calls: NotRequired[int] = 0
+
+
+class CountCalls(AgentMiddleware):
+    state_schema = MyState
+
+    def before_model(self, state, runtime):
+        return {&quot;calls&quot;: state.get(&quot;calls&quot;, 0) + 1}
+
+
+agent = create_agent(&quot;deepseek:deepseek-chat&quot;, tools=[add], middleware=[CountCalls()])
+print(agent.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]})[&quot;calls&quot;])  # 2</code></pre>
+<div class="am-md"><h3>3. 改这次要发的系统提示</h3>
+</div>
+<pre class="am-code"><code data-lang="python">from langchain.agents.middleware import wrap_model_call
+
+
+@wrap_model_call
+def inject(request, handler):
+    print(&quot;字段:&quot;, list(request.__dataclass_fields__))
+    print(&quot;system_message:&quot;, request.system_message)
+    return handler(request.override(system_prompt=&quot;回答结尾补一句「已核对」&quot;))</code></pre>
+<div class="am-md"><h3>4. 工具失败时兜底</h3>
+</div>
+<pre class="am-code"><code data-lang="python">from langchain.agents.middleware import ToolRetryMiddleware, wrap_tool_call
+from langchain_core.messages import ToolMessage
+
+
+@wrap_tool_call
+def catch(request, handler):
+    try:
+        return handler(request)
+    except Exception as exc:
+        return ToolMessage(content=f&quot;工具执行失败：{exc}&quot;, tool_call_id=request.tool_call[&quot;id&quot;])</code></pre>
+<div class="am-md"><p><code>ToolRetryMiddleware(max_retries=2, initial_delay=0.1)</code> 做的是另一件事：固定重试，最终还是把异常抛到上层。</p>
+<h3>5. 给 agent 装上限</h3>
+</div>
+<pre class="am-code"><code data-lang="python">from langchain.agents.middleware import ModelCallLimitMiddleware, ToolCallLimitMiddleware
+
+ModelCallLimitMiddleware(run_limit=1, exit_behavior=&quot;end&quot;)
+ToolCallLimitMiddleware(tool_name=&quot;add&quot;, run_limit=0, exit_behavior=&quot;continue&quot;)</code></pre>
+<div class="am-md"><h3>6. 历史太长自动摘要</h3>
+</div>
+<pre class="am-code"><code data-lang="python">from langchain.agents.middleware import SummarizationMiddleware
+
+SummarizationMiddleware(
+    model=&quot;deepseek:deepseek-chat&quot;,
+    trigger=(&quot;messages&quot;, 4),
+    keep=(&quot;messages&quot;, 2),
+)</code></pre>
+<div class="am-md"><h3>7. 工具审批要配 checkpointer</h3>
+</div>
+<pre class="am-code"><code data-lang="python">from langchain.agents.middleware import HumanInTheLoopMiddleware
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.types import Command
+
+agent = create_agent(
+    &quot;deepseek:deepseek-chat&quot;,
+    tools=[add],
+    middleware=[HumanInTheLoopMiddleware(interrupt_on={&quot;add&quot;: True})],
+    checkpointer=MemorySaver(),
+)
+cfg = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;t1&quot;}}
+first = agent.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]}, config=cfg)
+print(first[&quot;__interrupt__&quot;][0].value)  # action_requests + review_configs
+agent.invoke(Command(resume={&quot;decisions&quot;: [{&quot;type&quot;: &quot;approve&quot;}]}), config=cfg)</code></pre></div>
+</section>
+<section class="am-panel" id="panel-F">
+<header class="am-panel-head"><span class="am-panel-id">F</span><h2>常见坑</h2></header>
+<div class="am-panel-body"><div class="am-md"><ul>
+<li>忘了 <code>state_schema</code>：<code>return {&quot;calls&quot;: 1}</code> 不报错，但键直接消失。这是最难查的一类坑。</li>
+<li>扩展字段要标 <code>NotRequired</code> 或给默认值，否则第一次进钩子读不到就 <code>KeyError</code>。</li>
+<li>state 字段活在 state 里，不在中间件实例上。结果读 <code>response[&quot;calls&quot;]</code>，不是 <code>middleware.calls</code>。</li>
+<li><code>wrap_model_call</code> 忘了 <code>return handler(request)</code>，模型就不会被调用。</li>
+<li><code>wrap_tool_call</code> 的 <code>except</code> 里要自己造 <code>ToolMessage</code>，<code>tool_call_id</code> 取 <code>request.tool_call[&quot;id&quot;]</code>。</li>
+<li><code>ToolRetryMiddleware</code> 重试完仍会抛异常。想彻底兜住就用 <code>wrap_tool_call</code> 自己接。</li>
+<li>限流的 <code>exit_behavior</code>：<code>&#39;continue&#39;</code> 把限制做成正常消息让流程走下去，<code>&#39;error&#39;</code> 直接抛 <code>ModelCallLimitExceededError</code> 或 <code>ToolCallLimitExceededError</code>。</li>
+<li><code>HumanInTheLoopMiddleware</code> 的 <code>decisions</code> 长度必须等于挂起的工具调用数。给多给少都会 <code>ValueError</code>。</li>
+<li><code>SummarizationMiddleware</code> 的摘要在每次调模型前重算，不写回 state。最终 state 的条数和进模型的条数对不上。</li>
+</ul>
+</div></div>
+</section>
+</div>
+</div>
+</main>
+<footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-09 17:59</footer>
+<textarea id="am-source" hidden readonly aria-hidden="true">---
+title: AgentMiddleware 速查
+subtitle: create_agent 的中间件钩子与官方实现
+template: doc
+theme: blueprint
+source: codes/langchain/10_middleware/cheat_api.md
+---
+
+## 速览
+`create_agent(model, tools, middleware=[...])` 在 ReAct 循环外面再套一层。中间件在固定位置读写 state，并拦截模型请求和工具执行。
+
+对照本机 `langchain 1.4.2` / `langchain-core 1.6.4` 核对。练习见 `codes/langchain/10_middleware/qa.ipynb`。
+
+```flow
+(触发 invoke) -&gt; before_agent
+before_agent -&gt; before_model
+before_model -&gt; wrap_model_call
+wrap_model_call -&gt; [(模型调用)]
+[(模型调用)] -&gt; after_model
+after_model -&gt; {有 tool_calls?}
+{有 tool_calls?} -&gt; wrap_tool_call: 是
+wrap_tool_call -&gt; before_model: 回到循环
+{有 tool_calls?} -&gt; after_agent: 否
+after_agent -&gt; (返回 state)
+```
+
+约定：
+
+- `before_agent` 和 `after_agent` 每次 `invoke` 各跑一次。中间三个钩子每轮模型调用都跑。
+- 一次 `invoke` 不等于一次模型调用。有工具往返时模型会被调多次。
+- `middleware=[A, B]` 里越靠前越在外层。`wrap_*` 是洋葱模型：A 进 → B 进 → B 出 → A 出。
+- 装饰器只能写无状态小钩子。要自己存字段就写成 `AgentMiddleware` 子类。
+
+## 六个钩子
+| 钩子 | 签名 | 时机 | 返回值 |
+| --- | --- | --- | --- |
+| `before_agent` | `(state, runtime)` | 整个 agent 开始前，一次 | state 更新 `dict` 或 `None` |
+| `before_model` | `(state, runtime)` | 每次调模型之前 | state 更新 `dict` 或 `None` |
+| `after_model` | `(state, runtime)` | 每次调模型之后 | state 更新 `dict` 或 `None` |
+| `after_agent` | `(state, runtime)` | agent 结束时，一次 | state 更新 `dict` 或 `None` |
+| `wrap_model_call` | `(request, handler)` | 包住每次模型调用 | `ModelResponse` |
+| `wrap_tool_call` | `(request, handler)` | 包住每次工具执行 | `ToolMessage` 或 `Command` |
+
+装饰器与类方法同名，作用是把函数包成单例中间件：
+
+| 装饰器 | 类里的等价写法 | 要点 |
+| --- | --- | --- |
+| `@before_model` | `def before_model(...)` | 返回 `None` 表示不改 state |
+| `@after_model` | `def after_model(...)` | 同理 |
+| `@wrap_model_call` | `def wrap_model_call(...)` | 必须自己调 `handler(request)` |
+| `@wrap_tool_call` | `def wrap_tool_call(...)` | 不调 `handler` 就等于跳过工具 |
+| `@dynamic_prompt` | `def wrap_model_call(...)` | 按运行时上下文算 system prompt |
+
+- 每个钩子都有异步版，加 `a` 前缀：`abefore_model`、`awrap_tool_call` 等。
+- `@hook_config(can_jump_to=[...])` 声明允许的跳转目标，取值只有 `&quot;tools&quot;`、`&quot;model&quot;`、`&quot;end&quot;`。
+- 钩子返回 `{&quot;jump_to&quot;: &quot;end&quot;}` 可提前结束循环。
+
+## 类式中间件
+三个类属性决定中间件怎么接入：
+
+| 属性 | 作用 |
+| --- | --- |
+| `state_schema` | 声明扩展的 state 字段。不写也能跑，但 `return {&quot;calls&quot;: 1}` 会被静默丢弃 |
+| `tools` | 中间件自带的工具，自动并入 agent 的工具集 |
+| `name` | 默认取类名，用于追踪 |
+
+`AgentState` 自带三个字段：`messages`、`jump_to`、`structured_response`。扩展字段要给默认值或标 `NotRequired`，否则第一次进钩子会 `KeyError`。
+
+钩子拿到的两个请求对象：
+
+| 对象 | 字段 | 出现在 |
+| --- | --- | --- |
+| `ModelRequest` | `model`、`messages`、`system_message`、`tool_choice`、`tools`、`response_format`、`state`、`runtime`、`model_settings` | `wrap_model_call` |
+| `ToolCallRequest` | `tool_call`、`tool`、`state`、`runtime` | `wrap_tool_call` |
+
+`request.override(...)` 返回改过的副本。`system_message` 默认是 `None`，只有设了 `system_prompt` 才有值；`messages` 是这次要发的完整历史。
+
+## 官方中间件一览
+按用途分组。「钩子」一列是它实际覆写的位置。
+
+### 上下文管理
+| 类 | 关键参数 | 钩子 | 做什么 |
+| --- | --- | --- | --- |
+| `SummarizationMiddleware` | `model`、`trigger=(&quot;messages&quot;, 20)`、`keep=(&quot;messages&quot;, 20)`、`token_counter` | `before_model` | 历史超阈值时压成摘要，只留最近几条 |
+| `ContextEditingMiddleware` | `edits=[ClearToolUsesEdit()]`、`token_count_method` | `wrap_model_call` | 按规则裁剪旧的工具结果，默认触发线 10 万 token |
+
+### 可靠性
+| 类 | 关键参数 | 钩子 | 做什么 |
+| --- | --- | --- | --- |
+| `ToolRetryMiddleware` | `max_retries=2`、`tools`、`retry_on`、`on_failure=&#39;continue&#39;`、`initial_delay=1.0`、`backoff_factor=2.0`、`jitter=True` | `wrap_tool_call` | 工具失败自动重试，指数退避 |
+| `ModelRetryMiddleware` | 同上 | `wrap_model_call` | 模型调用失败自动重试 |
+| `ModelFallbackMiddleware` | `first_model, *additional_models` | `wrap_model_call` | 主模型报错时换备用模型 |
+| `ToolErrorMiddleware` | `on_error`、`tools` | `wrap_tool_call` | 把指定工具的异常转成给模型看的 `ToolMessage` |
+
+### 限流
+| 类 | 关键参数 | 钩子 | 做什么 |
+| --- | --- | --- | --- |
+| `ModelCallLimitMiddleware` | `run_limit`、`thread_limit`、`exit_behavior=&#39;end&#39;` | `before_model`、`after_model` | 卡模型调用次数，按单次 run 或整个 thread 计 |
+| `ToolCallLimitMiddleware` | `tool_name`、`run_limit`、`thread_limit`、`exit_behavior=&#39;continue&#39;` | `after_model` | 卡工具调用次数，可只针对某个工具 |
+
+两个限流的 `exit_behavior` 决定超限后的走向。模型限流取 `&#39;end&#39;` / `&#39;error&#39;`；工具限流取 `&#39;continue&#39;` / `&#39;end&#39;` / `&#39;error&#39;`。
+
+### 安全与人工介入
+| 类 | 关键参数 | 钩子 | 做什么 |
+| --- | --- | --- | --- |
+| `HumanInTheLoopMiddleware` | `interrupt_on={&quot;add&quot;: True}`、`description_prefix` | `after_model`、`wrap_tool_call` | 工具执行前停下等人审批。需要 `checkpointer` 和 `thread_id` |
+| `PIIMiddleware` | `pii_type`、`strategy=&#39;redact&#39;`、`detector`、`apply_to_input=True`、`apply_to_output` | `before_model`、`after_model` | 检出邮箱、卡号、IP 等并拦截、脱敏或改写 |
+
+### 规划、工具选择与执行环境
+| 类 | 关键参数 | 钩子 | 做什么 |
+| --- | --- | --- | --- |
+| `TodoListMiddleware` | `system_prompt`、`tool_description` | `after_model`、`wrap_model_call` | 注册 `write_todos` 工具，让 agent 自己列计划 |
+| `LLMToolSelectorMiddleware` | `model`、`max_tools`、`always_include`、`max_retries` | `wrap_model_call` | 先用小模型挑出相关工具，再调主模型 |
+| `LLMToolEmulator` | `tools`、`model` | `wrap_tool_call` | 不真跑工具，用模型编一个结果 |
+| `ProviderToolSearchMiddleware` | `searchable_tools` | `wrap_model_call` | 把工具藏到厂商原生的工具搜索后面 |
+| `ShellToolMiddleware` | `workspace_root`、`execution_policy`（`HostExecutionPolicy` / `DockerExecutionPolicy` / `CodexSandboxExecutionPolicy`）、`startup_commands`、`tool_name=&#39;shell&#39;` | `before_agent`、`after_agent` | 注册一个常驻 `shell` 工具，跑命令前先起沙箱 |
+| `FilesystemFileSearchMiddleware` | `root_path`、`use_ripgrep=True`、`max_file_size_mb=10` | 不挂钩子，只加工具 | 注册 `glob_search` 和 `grep_search` 两个搜索工具 |
+
+## 使用用例
+### 1. 装饰器写两个观察钩子
+```python
+from langchain.agents import create_agent
+from langchain.agents.middleware import after_model, before_model
+
+
+@before_model
+def spy_before(state, runtime):
+    print(&quot;[before_model]&quot;, len(state[&quot;messages&quot;]))
+    return None
+
+
+@after_model
+def spy_after(state, runtime):
+    print(&quot;[after_model]&quot;, len(state[&quot;messages&quot;]))
+    return None
+
+
+agent = create_agent(&quot;deepseek:deepseek-chat&quot;, tools=[add], middleware=[spy_before, spy_after])
+agent.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]})
+# 两个钩子各打两行：模型被调两次，而 invoke 只有一次
+```
+
+### 2. 类式中间件加自己的 state 字段
+```python
+from typing import NotRequired
+
+from langchain.agents.middleware import AgentMiddleware, AgentState
+
+
+class MyState(AgentState):
+    calls: NotRequired[int] = 0
+
+
+class CountCalls(AgentMiddleware):
+    state_schema = MyState
+
+    def before_model(self, state, runtime):
+        return {&quot;calls&quot;: state.get(&quot;calls&quot;, 0) + 1}
+
+
+agent = create_agent(&quot;deepseek:deepseek-chat&quot;, tools=[add], middleware=[CountCalls()])
+print(agent.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]})[&quot;calls&quot;])  # 2
+```
+
+### 3. 改这次要发的系统提示
+```python
+from langchain.agents.middleware import wrap_model_call
+
+
+@wrap_model_call
+def inject(request, handler):
+    print(&quot;字段:&quot;, list(request.__dataclass_fields__))
+    print(&quot;system_message:&quot;, request.system_message)
+    return handler(request.override(system_prompt=&quot;回答结尾补一句「已核对」&quot;))
+```
+
+### 4. 工具失败时兜底
+```python
+from langchain.agents.middleware import ToolRetryMiddleware, wrap_tool_call
+from langchain_core.messages import ToolMessage
+
+
+@wrap_tool_call
+def catch(request, handler):
+    try:
+        return handler(request)
+    except Exception as exc:
+        return ToolMessage(content=f&quot;工具执行失败：{exc}&quot;, tool_call_id=request.tool_call[&quot;id&quot;])
+```
+
+`ToolRetryMiddleware(max_retries=2, initial_delay=0.1)` 做的是另一件事：固定重试，最终还是把异常抛到上层。
+
+### 5. 给 agent 装上限
+```python
+from langchain.agents.middleware import ModelCallLimitMiddleware, ToolCallLimitMiddleware
+
+ModelCallLimitMiddleware(run_limit=1, exit_behavior=&quot;end&quot;)
+ToolCallLimitMiddleware(tool_name=&quot;add&quot;, run_limit=0, exit_behavior=&quot;continue&quot;)
+```
+
+### 6. 历史太长自动摘要
+```python
+from langchain.agents.middleware import SummarizationMiddleware
+
+SummarizationMiddleware(
+    model=&quot;deepseek:deepseek-chat&quot;,
+    trigger=(&quot;messages&quot;, 4),
+    keep=(&quot;messages&quot;, 2),
+)
+```
+
+### 7. 工具审批要配 checkpointer
+```python
+from langchain.agents.middleware import HumanInTheLoopMiddleware
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.types import Command
+
+agent = create_agent(
+    &quot;deepseek:deepseek-chat&quot;,
+    tools=[add],
+    middleware=[HumanInTheLoopMiddleware(interrupt_on={&quot;add&quot;: True})],
+    checkpointer=MemorySaver(),
+)
+cfg = {&quot;configurable&quot;: {&quot;thread_id&quot;: &quot;t1&quot;}}
+first = agent.invoke({&quot;messages&quot;: [HumanMessage(&quot;用工具算 2+3&quot;)]}, config=cfg)
+print(first[&quot;__interrupt__&quot;][0].value)  # action_requests + review_configs
+agent.invoke(Command(resume={&quot;decisions&quot;: [{&quot;type&quot;: &quot;approve&quot;}]}), config=cfg)
+```
+
+## 常见坑
+- 忘了 `state_schema`：`return {&quot;calls&quot;: 1}` 不报错，但键直接消失。这是最难查的一类坑。
+- 扩展字段要标 `NotRequired` 或给默认值，否则第一次进钩子读不到就 `KeyError`。
+- state 字段活在 state 里，不在中间件实例上。结果读 `response[&quot;calls&quot;]`，不是 `middleware.calls`。
+- `wrap_model_call` 忘了 `return handler(request)`，模型就不会被调用。
+- `wrap_tool_call` 的 `except` 里要自己造 `ToolMessage`，`tool_call_id` 取 `request.tool_call[&quot;id&quot;]`。
+- `ToolRetryMiddleware` 重试完仍会抛异常。想彻底兜住就用 `wrap_tool_call` 自己接。
+- 限流的 `exit_behavior`：`&#39;continue&#39;` 把限制做成正常消息让流程走下去，`&#39;error&#39;` 直接抛 `ModelCallLimitExceededError` 或 `ToolCallLimitExceededError`。
+- `HumanInTheLoopMiddleware` 的 `decisions` 长度必须等于挂起的工具调用数。给多给少都会 `ValueError`。
+- `SummarizationMiddleware` 的摘要在每次调模型前重算，不写回 state。最终 state 的条数和进模型的条数对不上。
+</textarea>
+<script>
+(() => {
+  const root = document.documentElement;
+  const cycle = (list, cur) => list[(list.indexOf(cur) + 1) % list.length];
+  const label = (btn, value) => {
+    const map = JSON.parse(btn.dataset.labels || '{}');
+    btn.textContent = map[value] || value;
+  };
+  const bind = (name, attr, values) => {
+    const btn = document.querySelector(`[data-am="${name}"]`);
+    if (!btn) return;
+    label(btn, root.getAttribute(attr));
+    btn.addEventListener('click', () => {
+      const next = cycle(values, root.getAttribute(attr));
+      root.setAttribute(attr, next);
+      label(btn, next);
+    });
+  };
+  bind('theme', 'data-theme', ['blueprint', 'shadcn']);
+  bind('mode', 'data-mode', ['auto', 'light', 'dark']);
+
+  const copyBtn = document.querySelector('[data-am="copy"]');
+  copyBtn?.addEventListener('click', async () => {
+    const nodes = document.querySelectorAll('#am-source');
+    const text = nodes[nodes.length - 1]?.value ?? '';
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const ta = Object.assign(document.createElement('textarea'), { value: text });
+      document.body.append(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    const original = copyBtn.textContent;
+    copyBtn.textContent = copyBtn.dataset.done;
+    setTimeout(() => { copyBtn.textContent = original; }, 1400);
+  });
+})();
+(() => {
+// Pure planner for justified ("photo wall") rows on sheet pages. No DOM access.
+//
+// This file must stay inlinable into the page script: top-level declarations only, no imports, and the exports are
+// `planLayout` and the constants the DOM adapter shares (STEP, MAX_SCALE, MIN_SCALE). The page build strips the `export ` keyword,
+// and test/layout-plan.test.js checks that this still works.
+//
+// planLayout({ width, gap, cols, panels }) -> { rows: [{ columns: [{ panels: [index, ...], width }], height }] }
+//
+// Input (all lengths in px):
+//   width   container width
+//   gap     space between columns, and between two panels stacked in one column
+//   cols    most columns in one row (the planner never uses more than MAX_COLUMNS, but spans stay shares of `cols`)
+//   panels  one entry per panel, in reading order:
+//     samples   [{ w, h }] panel height at sampled widths, ascending by w (heights between samples are interpolated)
+//     minWidth  narrowest feasible width (clamped to `width`)
+//     maxWidth  widest useful width; beyond it the panel only gains empty space (default: no limit)
+//     natural   natural diagram width for a diagram-only panel (default: none)
+//     pad       panel width not used by the diagram (padding and border; default 0)
+//     span      the author's width hint in grid columns (default 1); span >= cols keeps the panel alone in its row
+//
+// Output: { rows, maxScale }. Rows are in reading order; a row is a list of columns (at most `cols`); a column holds one panel or two
+// consecutive panels, stacked. For integer inputs the column widths plus the gaps between them equal `width`.
+// Rows are chosen by dynamic programming over break points; widths by a search in STEP px steps. Cost per row:
+//   H = tallest column; waste = sum((H - columnHeight) * columnWidth) + sum over diagrams wider than maxWidth of (w - maxWidth) * h
+//   dev = sum(((w - preferred) / oneColumn)^2) + SCALE_WEIGHT * sum over diagrams of (ln(scale) / ln(MAX_SCALE))^2
+//   cost = waste / 1000 + PREF_WEIGHT * dev * H
+// Scale band: diagrams on one page stay at similar sizes. With the result's `maxScale` as the diagram size limit, a diagram is
+// shown at scale min(maxScale, (width - pad) / natural). The planner tries a few bands [lo, lo * BAND_RATIO] (lo in BAND_LOS) and
+// keeps the cheapest plan in which no diagram is narrower than scale lo and none is shown above the band's top, so the largest and
+// smallest diagram scale on the page differ by at most BAND_RATIO. A panel wider than its diagram's top size keeps the diagram at
+// that size, and the page script must set the diagram's max-width to natural * maxScale. The band starts no higher than the
+// largest scale the page allows the least roomy diagram, so one wide diagram lowers the band for the others.
+// If no band is feasible the plan is made without a band (maxScale = MAX_SCALE); if no plan fits (or the input is unusable) the
+// result is a single column: one panel per row at the full width.
+
+const STEP = 10;
+const MAX_SCALE = 1.25;
+const MIN_SCALE = 0.75; // the narrowest a diagram is shown, as a share of its natural width
+const MAX_COLUMNS = 6; // rows with more columns are unreadable, and the search grows steeply with the column count
+const BAND_RATIO = 1.25; // the largest and smallest diagram scale on a page differ by at most this
+const BAND_LOS = [MIN_SCALE, 0.85, 0.95, 1]; // lower ends tried for the band; lo * BAND_RATIO is the upper end (1.25 means no upper limit)
+const SCALE_WEIGHT = 3;
+const PREF_WEIGHT = 0.15;
+
+function heightAt(samples, w) {
+  const i = samples.findIndex((s) => s.w >= w);
+  if (i === -1) return samples[samples.length - 1].h;
+  if (i === 0) return samples[0].h;
+  const a = samples[i - 1];
+  const b = samples[i];
+  return a.h + ((b.h - a.h) * (w - a.w)) / (b.w - a.w);
+}
+
+// Every way to split `len` consecutive panels into columns of 1 or 2 panels, as lists of column sizes.
+function splits(len) {
+  if (len === 0) return [[]];
+  return [1, 2].filter((k) => k <= len).flatMap((k) => splits(len - k).map((rest) => [k, ...rest]));
+}
+
+function singleColumn(width, panels) {
+  return { rows: panels.map((_, i) => ({ columns: [{ panels: [i], width }], height: 0 })) };
+}
+
+function planLayout({ width, gap = 0, cols = 3, panels }) {
+  const usable = Number.isFinite(width) && width > 0 && panels.every((p) => Array.isArray(p.samples) && p.samples.length > 0);
+  if (!usable) return singleColumn(width, panels);
+
+  // `cols` stays the unit of the author's spans; no row gets more than MAX_COLUMNS columns however large `cols` is.
+  const maxColumns = Math.min(cols, MAX_COLUMNS);
+  const oneColumn = Math.max(1, (width - gap * (cols - 1)) / cols);
+  // Per-panel limits. With a band [lo, lo * BAND_RATIO], a diagram is no narrower than scale lo and shown at most at the top of the
+  // band: a wider panel keeps it at that size and gains empty space, which the cost counts as waste.
+  const prepare = (lo) => panels.map((p) => {
+    const pad = p.pad ?? 0;
+    const diagram = lo > 0 && p.natural > 0;
+    const scaleCap = diagram ? Math.min(MAX_SCALE, lo * BAND_RATIO) : MAX_SCALE;
+    return {
+      ...p,
+      minWidth: Math.min(width, Math.max(Math.ceil(p.minWidth || 0), diagram ? Math.ceil(p.natural * lo + pad) : 0)),
+      maxWidth: Math.min(p.maxWidth ?? Infinity, diagram ? p.natural * scaleCap + pad : Infinity),
+      scaleCap,
+      pad,
+      preferred: Math.min(width, (p.span ?? 1) * oneColumn + ((p.span ?? 1) - 1) * gap),
+      alone: (p.span ?? 1) >= cols,
+    };
+  });
+  let info = prepare(0);
+  // Beyond its maxWidth a panel only gains empty space, so its height stops changing there (matters when a band lowers maxWidth).
+  const heightOf = (p, w) => heightAt(p.samples, Math.min(w, p.maxWidth));
+  const columnHeight = (col, w) => col.reduce((h, k) => h + heightOf(info[k], w), 0) + gap * (col.length - 1);
+
+  function bestColumns(columns) {
+    const avail = width - gap * (columns.length - 1);
+    const mins = columns.map((c) => Math.max(...c.map((k) => info[k].minWidth)));
+    const minsFrom = mins.map((_, n) => mins.slice(n).reduce((s, w) => s + w, 0));
+    if (minsFrom[0] > avail) return null;
+    let best = null;
+    const evaluate = (ws) => {
+      const hs = ws.map((w, n) => columnHeight(columns[n], w));
+      const H = Math.max(...hs);
+      let waste = 0;
+      let dev = 0;
+      ws.forEach((w, n) => {
+        waste += (H - hs[n]) * w;
+        for (const k of columns[n]) {
+          const p = info[k];
+          if (w > p.maxWidth) waste += (w - p.maxWidth) * heightOf(p, w);
+          dev += ((w - p.preferred) / oneColumn) ** 2;
+          if (p.natural > 0) {
+            const scale = Math.min(p.scaleCap, Math.max(w - p.pad, 1) / p.natural);
+            dev += SCALE_WEIGHT * (Math.log(scale) / Math.log(MAX_SCALE)) ** 2;
+          }
+        }
+      });
+      const cost = waste / 1000 + PREF_WEIGHT * dev * H;
+      if (!best || cost < best.cost) best = { cost, ws, height: H, columns };
+    };
+    const choose = (n, used, ws) => {
+      if (n === columns.length - 1) {
+        const w = avail - used;
+        if (w >= mins[n]) evaluate([...ws, w]);
+        return;
+      }
+      for (let w = mins[n]; used + w + minsFrom[n + 1] <= avail; w += STEP) choose(n + 1, used + w, [...ws, w]);
+    };
+    choose(0, 0, []);
+    return best;
+  }
+
+  // Best columns for one row of panels i..j.
+  function bestRow(i, j) {
+    if (j > i && info.slice(i, j + 1).some((p) => p.alone)) return null;
+    let best = null;
+    for (const split of splits(j - i + 1)) {
+      if (split.length > maxColumns) continue;
+      let next = i;
+      const columns = split.map((size) => Array.from({ length: size }, () => next++));
+      const r = bestColumns(columns);
+      if (r && (!best || r.cost < best.cost)) best = r;
+    }
+    return best;
+  }
+
+  // Row breaks in reading order, for the band set up in `info`. A row holds at most 2 * maxColumns panels. Null if nothing fits.
+  function solve() {
+    const n = panels.length;
+    const total = Array(n + 1).fill(Infinity);
+    const from = Array(n + 1).fill(-1);
+    const chosen = Array(n + 1).fill(null);
+    total[0] = 0;
+    for (let j = 1; j <= n; j++) {
+      for (let i = Math.max(0, j - 2 * maxColumns); i < j; i++) {
+        if (total[i] === Infinity) continue;
+        const r = bestRow(i, j - 1);
+        if (r && total[i] + r.cost < total[j]) {
+          total[j] = total[i] + r.cost;
+          from[j] = i;
+          chosen[j] = r;
+        }
+      }
+    }
+    if (total[n] === Infinity) return null;
+    const rows = [];
+    for (let j = n; j > 0; j = from[j]) {
+      const r = chosen[j];
+      rows.unshift({ columns: r.columns.map((panelsInColumn, c) => ({ panels: panelsInColumn, width: r.ws[c] })), height: r.height });
+    }
+    return { rows, cost: total[n] };
+  }
+
+  let best = null;
+  const diagrams = panels.filter((p) => p.natural > 0);
+  if (diagrams.length > 1) {
+    // No diagram can be shown larger than the page allows, so the band cannot start above the smallest of those limits.
+    const reach = Math.min(...diagrams.map((p) => Math.min(MAX_SCALE, Math.max(width - (p.pad ?? 0), 1) / p.natural)));
+    for (const lo of new Set([...BAND_LOS.filter((x) => x < reach), reach])) {
+      info = prepare(lo);
+      const r = solve();
+      if (r && (!best || r.cost < best.cost)) best = { ...r, maxScale: Math.min(MAX_SCALE, lo * BAND_RATIO) };
+    }
+    info = prepare(0);
+  }
+  best ??= solve();
+  return best ? { rows: best.rows, maxScale: best.maxScale ?? MAX_SCALE } : singleColumn(width, panels);
+}
+
+// DOM adapter for the sheet's justified ("photo wall") layout. Not a module: compose.js puts it after src/runtime/layout-plan.js
+// (which defines planLayout and the shared STEP, MAX_SCALE, MIN_SCALE) inside one function scope of the page script.
+//
+// It measures every panel at sampled widths, asks planLayout for rows and column widths, and applies them with flexbox.
+// The rendered HTML keeps the plain CSS grid: with JavaScript off, at the single-column breakpoint, or while printing, the grid is what
+// shows (the planned widths belong to the screen width, so print never gets a mix of the two); after printing the layout comes back.
+
+const grid = document.querySelector('.am-grid');
+const panels = grid ? [...grid.children].filter((el) => el.classList.contains('am-panel')) : [];
+
+if (panels.length > 1) {
+  const SINGLE_COLUMN = '(max-width: 760px)'; // the single-column breakpoint in src/themes/base.css
+  const TWO_COLUMNS = '(max-width: 1100px)'; // below this the CSS grid has two columns
+  const SAMPLE_STEP = 20; // width sampling step, px; the planner interpolates between samples
+  const TEXT_MIN = 260; // text keeps at least about 16 CJK characters per line
+  const TABLE_COL_MIN = 96; // per table column, px
+  const DIAGRAM_MIN = 160;
+  const RESIZE_DELAY = 150;
+  const OVERFLOWING = '.am-table-wrap, .am-diagram, .am-annot-scroll, pre';
+
+  const original = new Map([grid, ...panels, ...grid.querySelectorAll('.am-diagram > svg')].map((el) => [el, el.getAttribute('style')]));
+  const restoreStyle = (el) => (original.get(el) === null ? el.removeAttribute('style') : el.setAttribute('style', original.get(el)));
+
+  // Back to the plain grid markup and styles.
+  const restore = () => {
+    for (const box of grid.querySelectorAll(':scope > .am-col')) box.replaceWith(...box.children);
+    for (const el of original.keys()) restoreStyle(el);
+  };
+
+  // The author's width hint, rendered as data-span only when the author wrote one. The inline grid-column is the no-JavaScript fallback
+  // and may hold spans the server added, so it is never read here.
+  const spanHint = (el) => Number(el.dataset.span) || 1;
+  const diagramOnly = (el) => {
+    const body = el.querySelector(':scope > .am-panel-body');
+    return body && body.children.length === 1 ? body.querySelector(':scope > .am-diagram > svg') : null;
+  };
+  const naturalWidth = (svg) => Number(svg.getAttribute('width')) || 0;
+
+  // Height (and, for panels with tables or code, the narrowest width without sideways scrolling) at sampled widths.
+  // Only one panel is displayed while it is measured, so each width change lays out that panel alone.
+  function measure(width) {
+    grid.style.display = 'block';
+    for (const el of panels) {
+      el.style.display = 'none';
+      el.style.boxSizing = 'border-box';
+      for (const svg of el.querySelectorAll('.am-diagram > svg')) {
+        svg.style.width = '100%';
+        svg.style.maxWidth = `${naturalWidth(svg) * MAX_SCALE}px`;
+      }
+    }
+    const info = panels.map((el) => {
+      const svg = diagramOnly(el);
+      const svgs = [...el.querySelectorAll('.am-diagram > svg')];
+      const scrollers = el.querySelectorAll(OVERFLOWING);
+      const tableCols = Math.max(0, ...[...el.querySelectorAll('table tr:first-child')].map((tr) => tr.children.length));
+      el.style.display = '';
+      el.style.width = `${width}px`;
+      const pad = svg ? el.offsetWidth - svg.parentElement.clientWidth : 0;
+      const natural = svg ? naturalWidth(svg) : 0;
+      const shrunk = Math.max(0, ...svgs.map((s) => naturalWidth(s) * MIN_SCALE)) + (svg ? pad : 34);
+      const floor = svg ? Math.max(DIAGRAM_MIN, natural * MIN_SCALE + pad) : Math.max(TEXT_MIN, shrunk, tableCols * TABLE_COL_MIN + 34);
+      const from = Math.min(width, Math.floor(floor / STEP) * STEP);
+      const samples = [];
+      let fits = null;
+      for (let w = from; ; w += SAMPLE_STEP) {
+        w = Math.min(w, width);
+        el.style.width = `${w}px`;
+        if (fits === null && !svg && scrollers.length && ![...scrollers].some((s) => s.scrollWidth > s.clientWidth + 1)) fits = w;
+        samples.push({ w, h: el.offsetHeight });
+        if (w === width) break;
+      }
+      el.style.display = 'none';
+      return {
+        samples,
+        minWidth: svg ? floor : Math.max(floor, fits ?? (scrollers.length ? width : 0)),
+        maxWidth: svg ? natural * MAX_SCALE + pad : Infinity,
+        natural,
+        pad,
+        span: spanHint(el),
+      };
+    });
+    for (const el of panels) {
+      el.style.display = '';
+      el.style.width = '';
+    }
+    return info;
+  }
+
+  // Each column gets a fixed width. A row adds up to the full width, so flex-wrap breaks rows by itself.
+  // Stacked panels go into a column wrapper whose last panel absorbs the extra height.
+  function apply(plan, gap) {
+    grid.style.display = 'flex';
+    grid.style.flexWrap = 'wrap';
+    grid.style.alignItems = 'stretch';
+    grid.style.gap = `${gap}px`;
+    for (const el of panels) {
+      el.style.gridColumn = '';
+      el.style.gridRow = '';
+      el.style.flex = '0 0 auto';
+    }
+    for (const row of plan.rows) {
+      for (const col of row.columns) {
+        const width = `${col.width}px`;
+        if (col.panels.length === 1) {
+          panels[col.panels[0]].style.width = width;
+          continue;
+        }
+        const box = document.createElement('div');
+        box.className = 'am-col';
+        box.style.cssText = `width:${width};flex:0 0 auto;display:flex;flex-direction:column;gap:${gap}px`;
+        panels[col.panels[0]].before(box);
+        for (const k of col.panels) {
+          panels[k].style.width = '';
+          box.append(panels[k]);
+        }
+        panels[col.panels[col.panels.length - 1]].style.flex = '1 1 auto';
+      }
+    }
+  }
+
+  // Diagram-only panels show their diagram at most at the top of the page's scale band; a wider panel gains empty space instead.
+  function capDiagrams(maxScale) {
+    for (const el of panels) {
+      const svg = diagramOnly(el);
+      if (svg) svg.style.maxWidth = `${naturalWidth(svg) * maxScale}px`;
+    }
+  }
+
+  const containerWidth = () => Math.floor(grid.getBoundingClientRect().width);
+
+  function justify() {
+    if (printing || printQuery.matches) return;
+    try {
+      // A vertical scrollbar can appear or vanish once the rows change height; plan again if the width moved.
+      let planned = -1;
+      for (let pass = 0; pass < 3 && planned !== containerWidth(); pass++) {
+        restore();
+        if (matchMedia(SINGLE_COLUMN).matches) return;
+        planned = containerWidth();
+        const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+        const cols = Math.max(1, Number(getComputedStyle(grid).getPropertyValue('--cols')) || 3);
+        const plan = planLayout({ width: planned, gap, cols: matchMedia(TWO_COLUMNS).matches ? Math.min(cols, 2) : cols, panels: measure(planned) });
+        apply(plan, gap);
+        capDiagrams(plan.maxScale);
+      }
+      // The width never settled: columns planned for another width would overflow or leave gaps, so show the plain grid.
+      if (planned !== containerWidth()) restore();
+    } catch {
+      restore();
+    }
+  }
+
+  // Printing: back to the plain grid (spans and all), and the layout again afterwards. Browsers disagree on which of the
+  // `beforeprint` event and the print media query change fires first, or at all, so listen to both; both are idempotent.
+  // While `printing` is set (beforeprint to afterprint) justify() does nothing, so a late resize cannot bring flex widths into the print layout.
+  let printing = false;
+  const printQuery = matchMedia('print');
+  let timer = 0;
+  const later = () => {
+    clearTimeout(timer);
+    timer = setTimeout(justify, RESIZE_DELAY);
+  };
+  const toPrint = () => {
+    clearTimeout(timer);
+    restore();
+  };
+  justify();
+  addEventListener('resize', later);
+  addEventListener('beforeprint', () => {
+    printing = true;
+    toPrint();
+  });
+  addEventListener('afterprint', () => {
+    printing = false;
+    later();
+  });
+  printQuery.addEventListener('change', (e) => (e.matches ? toPrint() : later()));
+  // Late changes to panel heights: web fonts arriving, and images inside the grid finishing their load (load does not bubble, so capture it).
+  document.fonts?.ready.then(later);
+  grid.addEventListener('load', later, true);
+  // Switching theme changes paddings and fonts, hence panel heights.
+  document.querySelector('[data-am="theme"]')?.addEventListener('click', later);
+}
+})();
+</script>
+</body>
+</html>

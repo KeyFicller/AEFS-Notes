@@ -12,11 +12,11 @@
   "explain_bubble_width" : 600,
   "explain_font_size" : 20,
   "explain_model" : "deepseek-flash",
-  "explain_prompt" : "你是AI领域专家，通俗地为学生解释「{简写}」。若是简写\/缩写，必须先展开英文全称（或通行全名），再解释。必须严格按下面三段输出，段与段之间空一行，不要合并成一段：\n\n一句话解释：\n（一句话说明它是什么）\n\n举例：\n（1～2个具体例子）\n\n总结：\n（一句收束，点明为什么要记住它）",
+  "explain_prompt" : "你是AI领域专家，通俗地为学生解释「{简写}」，必要时带上LangChain 和 LangGraph 实践。若是简写\/缩写，必须先展开英文全称（或通行全名），再解释。必须严格按下面三段输出，段与段之间空一行，不要合并成一段：\n\n一句话解释：\n（一句话说明它是什么）\n\n举例：\n（1～2个具体例子）\n\n总结：\n（一句收束，点明为什么要记住它）",
   "hover_exit_seconds" : 1,
   "inbox_hostname" : "squeak-emerald-jogging.ngrok-free.dev",
   "inbox_port" : 8765,
   "inbox_tunnel" : true,
   "study_mode" : "annotate",
-  "zoom" : 0.5
+  "zoom" : 0.6038797669491526
 }
