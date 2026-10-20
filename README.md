@@ -26,8 +26,8 @@
 
 |                                                    |                                                   |                                                         |
 | -------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------- |
-| ![](assets/preview/nb-svm.webp) 03 · SVM 决策边界      | ![](assets/preview/nb-activations.webp) 04 · 激活函数 | ![](assets/preview/nb-object-detection.webp) 05 · 目标检测  |
-| ![](assets/preview/nb-segmentation.webp) 05 · 语义分割 | ![](assets/preview/nb-gans.webp) 05 · GAN 生成样本    | ![](assets/preview/nb-autoregressive.webp) 09 · 自回归图像生成 |
+| [![](assets/preview/nb-svm.webp)](notes/jupyter_books/03_Machine_Learning/05_SVM/code.ipynb) 03 · SVM 决策边界      | [![](assets/preview/nb-activations.webp)](notes/jupyter_books/04_Deep_Learning/04_Activation_Functions/code.ipynb) 04 · 激活函数 | [![](assets/preview/nb-object-detection.webp)](notes/jupyter_books/05_Computer_Vision/06_Object_Detection/code.ipynb) 05 · 目标检测  |
+| [![](assets/preview/nb-segmentation.webp)](notes/jupyter_books/05_Computer_Vision/07_Semantic_Segmentation/code.ipynb) 05 · 语义分割 | [![](assets/preview/nb-gans.webp)](notes/jupyter_books/05_Computer_Vision/09_GANs/code.ipynb) 05 · GAN 生成样本    | [![](assets/preview/nb-autoregressive.webp)](notes/jupyter_books/09_Genrative_AI/15_Visual_AutoRegressive/code.ipynb) 09 · 自回归图像生成 |
 
 ## 其他
 
