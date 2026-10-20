@@ -1,39 +1,40 @@
+
+
 # AEFS Notes
 
-![大肥鱼探头出卡](assets/show_me.png)
+**AI Engineering from Scratch** 的个人学习仓库：先跟着 Jupyter 章节跑练习，学完再为每课出一张中文备忘卡。
 
-AEFS（AI Engineering from Scratch）课程的个人学习仓库：每课一张中文备忘卡，配套 Jupyter 章节和可运行的练习代码。
+![备忘卡](https://img.shields.io/badge/%E5%A4%87%E5%BF%98%E5%8D%A1-501%20%2F%20509-2ea44f?style=flat-square)
+![phase](https://img.shields.io/badge/phase-20-1d5fbf?style=flat-square)
+![API 速查](https://img.shields.io/badge/API%20%E9%80%9F%E6%9F%A5-33-8250df?style=flat-square)
+![capstone](https://img.shields.io/badge/capstone-5-d29922?style=flat-square)
 
-## 里面有什么
 
-| 目录 | 内容 |
-|------|------|
-| `notes/cards/` | 510 课的中文备忘卡（PNG），按 20 个 phase 分目录 |
-| `notes/progress.md` | 出卡进度表：日期、课程、卡片路径、评分、尝试次数 |
-| `notes/jupyter_books/` | 按 phase 整理的 Jupyter 章节 |
-| `codes/` | 练习代码：27 个 Python 标准库模块、LangChain、LangGraph、PyTorch、Docker、并发专题、MCP |
-| `codes/summary/` | 33 份按主题分组的 API 速查页（HTML） |
-| `codes/capstone/` | 5 个 capstone 项目 |
-| `deskpet/` | 桌面挂件：翻卡片，用 DeepSeek 解释缩写 |
 
-## 三个入口
+## 卡片长这样
 
-- **看卡片** — 先查 `notes/progress.md` 定位课程，再进 `notes/cards/<phase>/<lesson>/`
-- **查 API** — 打开 `codes/index.html` 导航页，点进 `codes/summary/*.html`
-- **跑练习** — 每个主题按章节分目录，核心是 `qa.ipynb`
+|                                                     |                                                              |                                                                   |
+| --------------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------- |
+| ![](assets/preview/01-linear-algebra.webp) 线性代数直觉   | ![](assets/preview/02-self-attention.webp) 自注意力从零实现          | ![](assets/preview/03-pre-training-mini-gpt.webp) 预训练 mini-GPT    |
+| ![](assets/preview/04-mcp-fundamentals.webp) MCP 基础 | ![](assets/preview/05-supervisor-pattern.webp) Supervisor 编排 | ![](assets/preview/06-terminal-coding-agent.webp) 终端 Coding Agent |
 
-## 卡片是怎么来的
+每张卡把一课的要点压成一页：定义 → 直觉 → 公式/代码 → 考点。这里是缩略图，原图见 `notes/cards/`。
 
-由 `.cursor/skills/aefs-lesson-memo` 生成：按模板出图 → 用 rubric（`evaluator.md`）打分 → 不达标就重试，结果写回 `notes/progress.md`。当前 501 课通过，8 课重试到上限（`exhaust`）。
+## Jupyter 视图
 
-## 使用
+`notes/jupyter_books/` 里有 222 个 notebook。下面都是从里面直接跑出来的输出，点图进原 notebook：
 
-仓库带 git 子模块（若干 Cursor skill），克隆时记得递归：
+|                                                    |                                                   |                                                         |
+| -------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------- |
+| ![](assets/preview/nb-svm.webp) 03 · SVM 决策边界      | ![](assets/preview/nb-activations.webp) 04 · 激活函数 | ![](assets/preview/nb-object-detection.webp) 05 · 目标检测  |
+| ![](assets/preview/nb-segmentation.webp) 05 · 语义分割 | ![](assets/preview/nb-gans.webp) 05 · GAN 生成样本    | ![](assets/preview/nb-autoregressive.webp) 09 · 自回归图像生成 |
 
-```bash
-git clone --recursive <repo-url>
-```
+## 其他
 
-## 说明
+### 桌面挂件
 
-课程内容与题目版权归 AEFS 上游，本仓库只放个人笔记、卡片和练习代码。
+`deskpet/` 是只 macOS 桌面挂件：趴在桌面上翻 `notes/cards/` 的卡片，也可以划词选一个缩写，让它用 DeepSeek 展开解释。
+
+|                                                                    |                                                                 |
+| ------------------------------------------------------------------ | --------------------------------------------------------------- |
+| ![悬停翻卡](assets/preview/deskpet-card.webp) 悬停 → 翻一张 notes/cards 的卡片 | ![划词解释](assets/preview/deskpet-explain.webp) 划词 → DeepSeek 展开解释 |
