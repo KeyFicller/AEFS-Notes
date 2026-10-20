@@ -11,8 +11,8 @@ AEFS（AI Engineering from Scratch）课程的个人学习仓库：每课一张�
 | `notes/cards/` | 510 课的中文备忘卡（PNG），按 20 个 phase 分目录 |
 | `notes/progress.md` | 出卡进度表：日期、课程、卡片路径、评分、尝试次数 |
 | `notes/jupyter_books/` | 按 phase 整理的 Jupyter 章节 |
-| `codes/` | 练习代码：27 个 Python 标准库模块、LangChain、LangGraph、PyTorch、Docker、MCP |
-| `codes/summary/` | 32 份按主题分组的 API 速查页（HTML） |
+| `codes/` | 练习代码：27 个 Python 标准库模块、LangChain、LangGraph、PyTorch、Docker、并发专题、MCP |
+| `codes/summary/` | 33 份按主题分组的 API 速查页（HTML） |
 | `codes/capstone/` | 5 个 capstone 项目 |
 | `deskpet/` | 桌面挂件：翻卡片，用 DeepSeek 解释缩写 |
 
