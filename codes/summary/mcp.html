@@ -444,17 +444,17 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools / resources / prompts</p><div class="am-head-meta"><span><b>source</b>codes/mcp/</span></div></header>
+<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools / resources / prompts / Context progress</p><div class="am-head-meta"><span><b>source</b>codes/mcp/</span></div></header>
 <div class="am-doc-layout">
 <nav class="am-toc" aria-label="目录"><a href="#panel-A">A · Overview</a><a href="#panel-B">B · FastMCP surface</a><a href="#panel-C">C · Lab shape</a><a href="#panel-D">D · Pitfalls</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
 <header class="am-panel-head"><span class="am-panel-id">A</span><h2>Overview</h2></header>
 <div class="am-panel-body"><div class="am-md"><p>Model Context Protocol (MCP) lets a host talk to a tool server. Agents care about three steps first: connect / negotiate, <code>tools/list</code>, <code>tools/call</code>.</p>
-<p>Practice track: <code>codes/mcp/</code>. Stages 1–2 use <strong>FastMCP + Pydantic</strong>. You write typed <code>@mcp.tool</code> / <code>@mcp.resource</code> / <code>@mcp.prompt</code> callables; the framework owns JSON Schema generation and the MCP wire protocol (default era <code>2026-07-28</code>).</p>
+<p>Practice track: <code>codes/mcp/</code>. Stages 1–3 use <strong>FastMCP + Pydantic</strong>. You write typed <code>@mcp.tool</code> / <code>@mcp.resource</code> / <code>@mcp.prompt</code> callables (and inject <code>Context</code> for progress); the framework owns JSON Schema generation and the MCP wire protocol (default era <code>2026-07-28</code>).</p>
 <ul>
 <li>Do not hand-roll JSON-RPC envelopes or <code>inputSchema</code> dicts in this lab.</li>
 <li>Type hints + <code>pydantic.Field</code> become the schema hosts advertise to models.</li>
-<li><code>Client(mcp)</code> negotiates the protocol when the async context enters, then exposes tools / resources / prompts list+call.</li>
+<li><code>Client(mcp)</code> negotiates the protocol when the async context enters, then exposes tools / resources / prompts list+call; pass <code>progress_handler</code> to observe mid-call progress.</li>
 </ul>
 </div></div>
 </section>
@@ -470,6 +470,8 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <tr><td><code>mcp.run()</code></td><td>Default stdio transport for desktop hosts / Inspector</td></tr>
 <tr><td><code>@mcp.resource(uri)</code></td><td>Static resource; <code>{param}</code> in the URI makes a template</td></tr>
 <tr><td><code>@mcp.prompt</code></td><td>Reusable prompt template; args from annotations / Field</td></tr>
+<tr><td><code>ctx: Context</code></td><td>Injected into tools; <strong>not</strong> part of <code>input_schema</code></td></tr>
+<tr><td><code>await ctx.report_progress(progress, total, message=...)</code></td><td>Absolute progress (not deltas) via <code>notifications/progress</code></td></tr>
 </tbody></table></div>
 <h3>Client</h3>
 <div class="am-table-wrap"><table>
@@ -483,6 +485,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <tr><td><code>await client.list_resources()</code> / <code>read_resource(uri)</code></td><td>Discover + read resource contents</td></tr>
 <tr><td><code>await client.list_resource_templates()</code></td><td>URI templates with placeholders</td></tr>
 <tr><td><code>await client.list_prompts()</code> / <code>get_prompt(name, args)</code></td><td>Discover + render a prompt</td></tr>
+<tr><td><code>Client(..., progress_handler=...)</code></td><td>Receive mid-call <code>notifications/progress</code></td></tr>
 </tbody></table></div>
 </div></div>
 </section>
@@ -492,6 +495,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <ul>
 <li><code>01_fastmcp_tools/</code> — <code>echo</code> / <code>add</code> tools; list → call</li>
 <li><code>02_resources_prompts/</code> — <code>lab://greeting</code>, <code>note://{slug}</code>, <code>critique</code> prompt</li>
+<li><code>03_context_progress/</code> — <code>count_up</code> with <code>Context.report_progress</code></li>
 <li>each stage: <code>server.py</code>, <code>client.py</code>, <code>qa.ipynb</code></li>
 <li>shared deps: <code>codes/requirements.txt</code> (<code>fastmcp&gt;=4.1</code>)</li>
 </ul>
@@ -499,6 +503,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 python client.py
 python client.py read --uri note://alpha
 python client.py prompt --topic "MCP resources"
+python client.py --n 4                  # stage 3 progress
 </code></pre>
 <p><code>references/data-layer-protocol.ipynb</code> stays protocol reading, not the stage runtime.</p>
 </div></div>
@@ -510,6 +515,8 @@ python client.py prompt --topic "MCP resources"
 <li>Jupyter already has an event loop: use top-level <code>await</code> with <code>Client</code>; use <code>asyncio.run</code> only in plain scripts.</li>
 <li>Unknown tool names raise <code>ToolError</code> from the client — do not catch by parsing raw JSON-RPC error envelopes.</li>
 <li>Stick to current FastMCP defaults / the <code>2026-07-28</code> era; do not teach ancient protocol version constants.</li>
+<li><code>report_progress</code> takes <strong>absolute</strong> values (25 → 50 → 100), not deltas.</li>
+<li>Protocol logging (<code>notifications/message</code> / <code>ctx.info</code>) is deprecated in <code>2026-07-28</code> (SEP-2577) — prefer progress (or stderr / OpenTelemetry) in new labs.</li>
 </ul>
 </div></div>
 </section>
@@ -519,14 +526,14 @@ python client.py prompt --topic "MCP resources"
 <footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-07 10:32</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
 title: MCP API 速查
-subtitle: FastMCP + Pydantic tools / resources / prompts
+subtitle: FastMCP + Pydantic tools / resources / prompts / Context progress
 template: doc
 theme: blueprint
 source: codes/mcp/
 ---
 
 ## Overview
-Stages 1–2 use FastMCP + Pydantic. Framework owns schema + protocol (default `2026-07-28`). Loop: connect → tools / resources / prompts list+call.
+Stages 1–3 use FastMCP + Pydantic. Framework owns schema + protocol (default `2026-07-28`). Loop: connect → tools / resources / prompts list+call; progress via `Context.report_progress` + `progress_handler`.
 
 ## Server
 | API | Notes |
@@ -534,6 +541,8 @@ Stages 1–2 use FastMCP + Pydantic. Framework owns schema + protocol (default `
 | `FastMCP(name)` | Create server |
 | `@mcp.tool` | Typed callable → tool |
 | `@mcp.resource` / `@mcp.prompt` | Resources (static + URI templates) and prompts |
+| `ctx: Context` | Injected; not in `input_schema` |
+| `await ctx.report_progress(...)` | Absolute progress notifications |
 | `Annotated[T, Field(...)]` | Schema metadata |
 | `mcp.run()` | stdio transport |
 
@@ -541,8 +550,31 @@ Stages 1–2 use FastMCP + Pydantic. Framework owns schema + protocol (default `
 | API | Notes |
 | --- | --- |
 | `Client(mcp)` | In-process |
+| `Client(..., progress_handler=...)` | Mid-call progress notifications |
 | `await client.list_tools()` | tools/list |
 | `await client.call_tool(name, args)` | tools/call |
+| `await client.list_resources()` / `read_resource` | resources |
+| `await client.list_prompts()` / `get_prompt` | prompts |
+
+## Lab shape
+- `01_fastmcp_tools/` — echo / add tools
+- `02_resources_prompts/` — greeting, note://{slug}, critique prompt
+- `03_context_progress/` — count_up + Context.report_progress
+- each stage: server.py, client.py, qa.ipynb
+- shared deps: `codes/requirements.txt` (`fastmcp>=4.1`)
+
+```
+pip install -r ../../requirements.txt
+python client.py --n 4
+```
+
+## Pitfalls
+- Prefer flat Annotated params over nested Pydantic model args.
+- Jupyter: top-level await; scripts: asyncio.run.
+- ToolError from the client — do not parse raw JSON-RPC envelopes.
+- Stick to 2026-07-28 / current FastMCP defaults.
+- report_progress takes absolute values, not deltas.
+- Protocol logging is deprecated in 2026-07-28 (SEP-2577); prefer progress.
 </textarea>
 <script>
 (() => {
