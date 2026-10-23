@@ -444,17 +444,17 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools / resources / prompts / Context progress</p><div class="am-head-meta"><span><b>source</b>codes/mcp/</span></div></header>
+<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools / resources / prompts / Context progress / structured output</p><div class="am-head-meta"><span><b>source</b>codes/mcp/</span></div></header>
 <div class="am-doc-layout">
 <nav class="am-toc" aria-label="目录"><a href="#panel-A">A · Overview</a><a href="#panel-B">B · FastMCP surface</a><a href="#panel-C">C · Lab shape</a><a href="#panel-D">D · Pitfalls</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
 <header class="am-panel-head"><span class="am-panel-id">A</span><h2>Overview</h2></header>
 <div class="am-panel-body"><div class="am-md"><p>Model Context Protocol (MCP) lets a host talk to a tool server. Agents care about three steps first: connect / negotiate, <code>tools/list</code>, <code>tools/call</code>.</p>
-<p>Practice track: <code>codes/mcp/</code>. Stages 1–3 use <strong>FastMCP + Pydantic</strong>. You write typed <code>@mcp.tool</code> / <code>@mcp.resource</code> / <code>@mcp.prompt</code> callables (and inject <code>Context</code> for progress); the framework owns JSON Schema generation and the MCP wire protocol (default era <code>2026-07-28</code>).</p>
+<p>Practice track: <code>codes/mcp/</code>. Stages 1–4 use <strong>FastMCP + Pydantic</strong>. You write typed <code>@mcp.tool</code> / <code>@mcp.resource</code> / <code>@mcp.prompt</code> callables (inject <code>Context</code> for progress; return Pydantic models for <code>output_schema</code>); the framework owns JSON Schema generation and the MCP wire protocol (default era <code>2026-07-28</code>).</p>
 <ul>
 <li>Do not hand-roll JSON-RPC envelopes or <code>inputSchema</code> dicts in this lab.</li>
 <li>Type hints + <code>pydantic.Field</code> become the schema hosts advertise to models.</li>
-<li><code>Client(mcp)</code> negotiates the protocol when the async context enters, then exposes tools / resources / prompts list+call; pass <code>progress_handler</code> to observe mid-call progress.</li>
+<li><code>Client(mcp)</code> negotiates the protocol when the async context enters, then exposes tools / resources / prompts list+call; pass <code>progress_handler</code> to observe mid-call progress; read <code>output_schema</code> / <code>structured_content</code> for typed results.</li>
 </ul>
 </div></div>
 </section>
@@ -472,6 +472,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <tr><td><code>@mcp.prompt</code></td><td>Reusable prompt template; args from annotations / Field</td></tr>
 <tr><td><code>ctx: Context</code></td><td>Injected into tools; <strong>not</strong> part of <code>input_schema</code></td></tr>
 <tr><td><code>await ctx.report_progress(progress, total, message=...)</code></td><td>Absolute progress (not deltas) via <code>notifications/progress</code></td></tr>
+<tr><td><code>-> SomeModel</code> (Pydantic return)</td><td>Advertises <code>output_schema</code>; call fills <code>structured_content</code></td></tr>
 </tbody></table></div>
 <h3>Client</h3>
 <div class="am-table-wrap"><table>
@@ -486,6 +487,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <tr><td><code>await client.list_resource_templates()</code></td><td>URI templates with placeholders</td></tr>
 <tr><td><code>await client.list_prompts()</code> / <code>get_prompt(name, args)</code></td><td>Discover + render a prompt</td></tr>
 <tr><td><code>Client(..., progress_handler=...)</code></td><td>Receive mid-call <code>notifications/progress</code></td></tr>
+<tr><td><code>tool.output_schema</code> / <code>result.structured_content</code></td><td>Typed result schema + payload from a Pydantic (or dict) return</td></tr>
 </tbody></table></div>
 </div></div>
 </section>
@@ -496,6 +498,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <li><code>01_fastmcp_tools/</code> — <code>echo</code> / <code>add</code> tools; list → call</li>
 <li><code>02_resources_prompts/</code> — <code>lab://greeting</code>, <code>note://{slug}</code>, <code>critique</code> prompt</li>
 <li><code>03_context_progress/</code> — <code>count_up</code> with <code>Context.report_progress</code></li>
+<li><code>04_structured_output/</code> — <code>sum_pair</code> / <code>label_topic</code> return Pydantic models</li>
 <li>each stage: <code>server.py</code>, <code>client.py</code>, <code>qa.ipynb</code></li>
 <li>shared deps: <code>codes/requirements.txt</code> (<code>fastmcp&gt;=4.1</code>)</li>
 </ul>
@@ -504,6 +507,7 @@ python client.py
 python client.py read --uri note://alpha
 python client.py prompt --topic "MCP resources"
 python client.py --n 4                  # stage 3 progress
+python client.py sum --a 2 --b 3       # stage 4 structured
 </code></pre>
 <p><code>references/data-layer-protocol.ipynb</code> stays protocol reading, not the stage runtime.</p>
 </div></div>
@@ -517,6 +521,8 @@ python client.py --n 4                  # stage 3 progress
 <li>Stick to current FastMCP defaults / the <code>2026-07-28</code> era; do not teach ancient protocol version constants.</li>
 <li><code>report_progress</code> takes <strong>absolute</strong> values (25 → 50 → 100), not deltas.</li>
 <li>Protocol logging (<code>notifications/message</code> / <code>ctx.info</code>) is deprecated in <code>2026-07-28</code> (SEP-2577) — prefer progress (or stderr / OpenTelemetry) in new labs.</li>
+<li>Server-initiated sampling / imperative elicitation need a back-channel dropped in <code>2026-07-28</code> (SEP-2577 / SEP-2322) — prefer structured returns, or call an LLM in-process.</li>
+<li>Prefer a Pydantic return model when you want a precise <code>output_schema</code>; a plain <code>dict</code> still fills <code>structured_content</code> with a loose object schema.</li>
 </ul>
 </div></div>
 </section>
@@ -526,14 +532,14 @@ python client.py --n 4                  # stage 3 progress
 <footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-07 10:32</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
 title: MCP API 速查
-subtitle: FastMCP + Pydantic tools / resources / prompts / Context progress
+subtitle: FastMCP + Pydantic tools / resources / prompts / Context progress / structured output
 template: doc
 theme: blueprint
 source: codes/mcp/
 ---
 
 ## Overview
-Stages 1–3 use FastMCP + Pydantic. Framework owns schema + protocol (default `2026-07-28`). Loop: connect → tools / resources / prompts list+call; progress via `Context.report_progress` + `progress_handler`.
+Stages 1–4 use FastMCP + Pydantic. Framework owns schema + protocol (default `2026-07-28`). Loop: connect → list+call; progress via Context; structured results via Pydantic returns → output_schema / structured_content.
 
 ## Server
 | API | Notes |
@@ -543,6 +549,7 @@ Stages 1–3 use FastMCP + Pydantic. Framework owns schema + protocol (default `
 | `@mcp.resource` / `@mcp.prompt` | Resources (static + URI templates) and prompts |
 | `ctx: Context` | Injected; not in `input_schema` |
 | `await ctx.report_progress(...)` | Absolute progress notifications |
+| `-> SomeModel` (Pydantic return) | output_schema + structured_content |
 | `Annotated[T, Field(...)]` | Schema metadata |
 | `mcp.run()` | stdio transport |
 
@@ -551,6 +558,7 @@ Stages 1–3 use FastMCP + Pydantic. Framework owns schema + protocol (default `
 | --- | --- |
 | `Client(mcp)` | In-process |
 | `Client(..., progress_handler=...)` | Mid-call progress notifications |
+| `tool.output_schema` / `result.structured_content` | Typed results |
 | `await client.list_tools()` | tools/list |
 | `await client.call_tool(name, args)` | tools/call |
 | `await client.list_resources()` / `read_resource` | resources |
@@ -560,12 +568,14 @@ Stages 1–3 use FastMCP + Pydantic. Framework owns schema + protocol (default `
 - `01_fastmcp_tools/` — echo / add tools
 - `02_resources_prompts/` — greeting, note://{slug}, critique prompt
 - `03_context_progress/` — count_up + Context.report_progress
+- `04_structured_output/` — sum_pair / label_topic Pydantic returns
 - each stage: server.py, client.py, qa.ipynb
 - shared deps: `codes/requirements.txt` (`fastmcp>=4.1`)
 
 ```
 pip install -r ../../requirements.txt
 python client.py --n 4
+python client.py sum --a 2 --b 3
 ```
 
 ## Pitfalls
@@ -575,6 +585,8 @@ python client.py --n 4
 - Stick to 2026-07-28 / current FastMCP defaults.
 - report_progress takes absolute values, not deltas.
 - Protocol logging is deprecated in 2026-07-28 (SEP-2577); prefer progress.
+- Server-initiated sampling / imperative elicitation unavailable on 2026-07-28; prefer structured returns.
+- Pydantic return → precise output_schema; plain dict still fills structured_content.
 </textarea>
 <script>
 (() => {
