@@ -34,6 +34,11 @@ from pydantic import Field
 
 mcp = FastMCP("lab-tool-annotations")
 
+# title (annotations.title) is a human UI label (Inspector / host chrome).
+# description comes from the function docstring and, together with `name`,
+# is what hosts feed the model for tool selection — title does not replace it.
+# `name` (the Python function name by default) is the tools/call id.
+
 # In-memory scratch notes for the demo tools.
 _NOTES: dict[str, str] = {
     "alpha": "first note",

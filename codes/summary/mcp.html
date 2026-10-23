@@ -535,6 +535,7 @@ python client.py list                  # stage 6 annotations
 <li>Completion handlers should return <code>None</code> (empty candidates) for unhandled refs — not raise; multi-arg prompts need <code>context_arguments</code> for already-filled values.</li>
 <li><code>ToolAnnotations</code> are host UX hints, not enforcement — a client can still call a <code>destructive_hint</code> tool; gate in the host (and optionally inside the tool, e.g. a <code>confirm</code> arg).</li>
 <li>Do not confuse Python type annotations (schema) with MCP <code>ToolAnnotations</code> (behavior hints). FastMCP may also attach keys under <code>meta["fastmcp"]</code> — leave them alone.</li>
+<li>Model tool routing uses <code>description</code> (function docstring) + <code>name</code>; <code>annotations.title</code> is a human display label — it does not replace the docstring for selection.</li>
 </ul>
 </div></div>
 </section>
@@ -611,6 +612,7 @@ python client.py list
 - Completion handler: return None for unhandled refs; use context_arguments for multi-arg prompts.
 - ToolAnnotations are host UX hints, not enforcement; optionally gate inside the tool too.
 - Type annotations ≠ ToolAnnotations; ignore FastMCP keys under meta["fastmcp"].
+- Model routing: description (docstring) + name; annotations.title is UI-only, not a docstring substitute.
 </textarea>
 <script>
 (() => {

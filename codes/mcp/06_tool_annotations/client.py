@@ -43,7 +43,8 @@ async def list_tools() -> None:
         print("tools/list →", [t.name for t in tools])
         for t in tools:
             print(f"  {t.name}")
-            print(f"    title →", getattr(t, "title", None))
+            print(f"    description →", t.description)  # model-facing (docstring)
+            print(f"    title →", getattr(t, "title", None))  # UI label (annotations.title)
             print(f"    annotations →", _ann_dict(t))
             print(f"    meta →", getattr(t, "meta", None))
 
