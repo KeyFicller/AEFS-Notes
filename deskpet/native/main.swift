@@ -1237,6 +1237,7 @@ final class HoverView: NSView {
     var onDragMoved: (() -> Void)?
     var onDragEnded: (() -> Void)?
     var onMarking: ((Bool) -> Void)?
+    var onSearchMemo: (() -> Void)?
     var onTextDrop: ((String) -> Void)?
     var onTextDragHover: ((Bool) -> Void)?
     var acceptsTextDrop = false {
@@ -1599,6 +1600,10 @@ final class HoverView: NSView {
         let settings = NSMenuItem(title: "设置…", action: #selector(openSettings), keyEquivalent: ",")
         settings.target = self
         menu.addItem(settings)
+        let memo = NSMenuItem(title: "检索备忘…", action: #selector(searchMemo), keyEquivalent: "f")
+        memo.keyEquivalentModifierMask = [.command, .shift]
+        memo.target = self
+        menu.addItem(memo)
         let copyInbox = NSMenuItem(title: "复制收件箱地址", action: #selector(copyInboxURL), keyEquivalent: "")
         copyInbox.target = self
         menu.addItem(copyInbox)
@@ -1617,6 +1622,7 @@ final class HoverView: NSView {
     }
 
     @objc private func openSettings() { onSettings?() }
+    @objc private func searchMemo() { onSearchMemo?() }
     @objc private func copyInboxURL() { onCopyInbox?() }
     @objc private func requestAccessibilityMenu() { onRequestAccessibility?() }
     @objc private func undoStudyMenu() { undoStudy() }
@@ -1907,6 +1913,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var config: Config!
     private var configURL: URL!
     private var settings: SettingsController?
+    private var memoSearch: MemoSearchPanel?
+    private var memoPreview: MemoPreviewPanel?
     private var cardImageSize = NSSize.zero
     private let explainClient = ExplainClient()
     private var explainTerm = ""
@@ -1966,6 +1974,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.syncHover()
         }
         petView.onSettings = { [weak self] in self?.openSettings() }
+        petView.onSearchMemo = { [weak self] in self?.openMemoSearch() }
         petView.onCopyInbox = { [weak self] in self?.copyInboxURL() }
         petView.onRequestAccessibility = { [weak self] in self?.requestAccessibility() }
         petView.onDragMoved = { [weak self] in self?.updateDockWhileDragging() }
@@ -1986,6 +1995,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self?.syncHover()
         }
         cardView.onSettings = { [weak self] in self?.openSettings() }
+        cardView.onSearchMemo = { [weak self] in self?.openMemoSearch() }
         cardView.onCopyInbox = { [weak self] in self?.copyInboxURL() }
         cardView.onRequestAccessibility = { [weak self] in self?.requestAccessibility() }
 
@@ -2551,6 +2561,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
+    }
+
+    private func openMemoSearch() {
+        if memoSearch == nil {
+            let panel = MemoSearchPanel(root: deskpetRoot().deletingLastPathComponent())
+            panel.onOpen = { [weak self] url in self?.openMemoPreview(url) }
+            memoSearch = panel
+        }
+        memoSearch?.show(near: petPanel.frame)
+    }
+
+    private func openMemoPreview(_ url: URL) {
+        if memoPreview == nil {
+            memoPreview = MemoPreviewPanel()
+        }
+        memoPreview?.show(url: url)
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        // The helper holds both models in RAM; leaving it orphaned would keep ~1.5GB around.
+        memoSearch?.stop()
     }
 
     private func openSettings() {
