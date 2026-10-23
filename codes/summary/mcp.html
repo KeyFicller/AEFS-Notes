@@ -444,17 +444,17 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools / resources / prompts / Context progress / structured output / completions</p><div class="am-head-meta"><span><b>source</b>codes/mcp/</span></div></header>
+<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools / resources / prompts / Context progress / structured output / completions / tool annotations</p><div class="am-head-meta"><span><b>source</b>codes/mcp/</span></div></header>
 <div class="am-doc-layout">
 <nav class="am-toc" aria-label="目录"><a href="#panel-A">A · Overview</a><a href="#panel-B">B · FastMCP surface</a><a href="#panel-C">C · Lab shape</a><a href="#panel-D">D · Pitfalls</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
 <header class="am-panel-head"><span class="am-panel-id">A</span><h2>Overview</h2></header>
 <div class="am-panel-body"><div class="am-md"><p>Model Context Protocol (MCP) lets a host talk to a tool server. Agents care about three steps first: connect / negotiate, <code>tools/list</code>, <code>tools/call</code>.</p>
-<p>Practice track: <code>codes/mcp/</code>. Stages 1–5 use <strong>FastMCP + Pydantic</strong>. You write typed <code>@mcp.tool</code> / <code>@mcp.resource</code> / <code>@mcp.prompt</code> callables (inject <code>Context</code> for progress; return Pydantic models for <code>output_schema</code>; register <code>@mcp.completion</code> for argument autocomplete); the framework owns JSON Schema generation and the MCP wire protocol (default era <code>2026-07-28</code>).</p>
+<p>Practice track: <code>codes/mcp/</code>. Stages 1–6 use <strong>FastMCP + Pydantic</strong>. You write typed <code>@mcp.tool</code> / <code>@mcp.resource</code> / <code>@mcp.prompt</code> callables (inject <code>Context</code> for progress; return Pydantic models for <code>output_schema</code>; register <code>@mcp.completion</code> for argument autocomplete; pass <code>annotations</code> / <code>meta</code> for host UX hints); the framework owns JSON Schema generation and the MCP wire protocol (default era <code>2026-07-28</code>).</p>
 <ul>
 <li>Do not hand-roll JSON-RPC envelopes or <code>inputSchema</code> dicts in this lab.</li>
 <li>Type hints + <code>pydantic.Field</code> become the schema hosts advertise to models.</li>
-<li><code>Client(mcp)</code> negotiates the protocol when the async context enters, then exposes tools / resources / prompts list+call; pass <code>progress_handler</code> to observe mid-call progress; read <code>output_schema</code> / <code>structured_content</code> for typed results; call <code>complete(...)</code> for prompt / template argument autocomplete.</li>
+<li><code>Client(mcp)</code> negotiates the protocol when the async context enters, then exposes tools / resources / prompts list+call; pass <code>progress_handler</code> to observe mid-call progress; read <code>output_schema</code> / <code>structured_content</code> for typed results; call <code>complete(...)</code> for prompt / template argument autocomplete; read <code>tool.annotations</code> / <code>tool.meta</code> for behavior hints.</li>
 </ul>
 </div></div>
 </section>
@@ -465,7 +465,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <thead><tr><th>API</th><th>Notes</th></tr></thead>
 <tbody>
 <tr><td><code>FastMCP(name)</code></td><td>Create the server; <code>name</code> shows up in <code>server_info</code></td></tr>
-<tr><td><code>@mcp.tool</code></td><td>Register a typed callable; docstring → description; annotations → schema</td></tr>
+<tr><td><code>@mcp.tool</code></td><td>Register a typed callable; docstring → description; type hints → input schema</td></tr>
 <tr><td><code>Annotated[T, Field(description=...)]</code></td><td>Pydantic field metadata the host reads via <code>input_schema</code></td></tr>
 <tr><td><code>mcp.run()</code></td><td>Default stdio transport for desktop hosts / Inspector</td></tr>
 <tr><td><code>@mcp.resource(uri)</code></td><td>Static resource; <code>{param}</code> in the URI makes a template</td></tr>
@@ -474,6 +474,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <tr><td><code>await ctx.report_progress(progress, total, message=...)</code></td><td>Absolute progress (not deltas) via <code>notifications/progress</code></td></tr>
 <tr><td><code>-> SomeModel</code> (Pydantic return)</td><td>Advertises <code>output_schema</code>; call fills <code>structured_content</code></td></tr>
 <tr><td><code>@mcp.completion</code></td><td>Handler for <code>completion/complete</code> (prompt args + URI-template params)</td></tr>
+<tr><td><code>@mcp.tool(..., annotations=..., meta=...)</code></td><td><code>ToolAnnotations</code> behavior hints + free-form <code>_meta</code> on <code>tools/list</code></td></tr>
 </tbody></table></div>
 <h3>Client</h3>
 <div class="am-table-wrap"><table>
@@ -490,6 +491,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <tr><td><code>Client(..., progress_handler=...)</code></td><td>Receive mid-call <code>notifications/progress</code></td></tr>
 <tr><td><code>tool.output_schema</code> / <code>result.structured_content</code></td><td>Typed result schema + payload from a Pydantic (or dict) return</td></tr>
 <tr><td><code>await client.complete(ref, argument, context_arguments=...)</code></td><td>Prompt / resource-template argument autocomplete</td></tr>
+<tr><td><code>tool.annotations</code> / <code>tool.meta</code></td><td>Behavior hints (<code>read_only_hint</code>, …) + host <code>_meta</code> from <code>tools/list</code></td></tr>
 </tbody></table></div>
 </div></div>
 </section>
@@ -502,6 +504,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <li><code>03_context_progress/</code> — <code>count_up</code> with <code>Context.report_progress</code></li>
 <li><code>04_structured_output/</code> — <code>sum_pair</code> / <code>label_topic</code> return Pydantic models</li>
 <li><code>05_completions/</code> — <code>essay</code> prompt + <code>note://{slug}</code> with <code>@mcp.completion</code></li>
+<li><code>06_tool_annotations/</code> — <code>peek_note</code> / <code>append_note</code> / <code>wipe_note</code> with <code>ToolAnnotations</code> + <code>meta</code></li>
 <li>each stage: <code>server.py</code>, <code>client.py</code>, <code>qa.ipynb</code></li>
 <li>shared deps: <code>codes/requirements.txt</code> (<code>fastmcp&gt;=4.1</code>)</li>
 </ul>
@@ -512,6 +515,7 @@ python client.py prompt --topic "MCP resources"
 python client.py --n 4                  # stage 3 progress
 python client.py sum --a 2 --b 3       # stage 4 structured
 python client.py genre --value s       # stage 5 completions
+python client.py list                  # stage 6 annotations
 </code></pre>
 <p><code>references/data-layer-protocol.ipynb</code> stays protocol reading, not the stage runtime.</p>
 </div></div>
@@ -529,6 +533,8 @@ python client.py genre --value s       # stage 5 completions
 <li>Prefer a Pydantic return model when you want a precise <code>output_schema</code>; a plain <code>dict</code> still fills <code>structured_content</code> with a loose object schema.</li>
 <li>Structured output here is for <strong>Python-authored</strong> FastMCP tools. C++-exported tools (CppReflectKit) need a hand-written Python result model to match schema — often not worth forcing; this lab is not a reflect-kit prescription.</li>
 <li>Completion handlers should return <code>None</code> (empty candidates) for unhandled refs — not raise; multi-arg prompts need <code>context_arguments</code> for already-filled values.</li>
+<li><code>ToolAnnotations</code> are host UX hints, not enforcement — a client can still call a <code>destructive_hint</code> tool; gate in the host (and optionally inside the tool, e.g. a <code>confirm</code> arg).</li>
+<li>Do not confuse Python type annotations (schema) with MCP <code>ToolAnnotations</code> (behavior hints). FastMCP may also attach keys under <code>meta["fastmcp"]</code> — leave them alone.</li>
 </ul>
 </div></div>
 </section>
@@ -538,14 +544,14 @@ python client.py genre --value s       # stage 5 completions
 <footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-07 10:32</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
 title: MCP API 速查
-subtitle: FastMCP + Pydantic tools / resources / prompts / Context progress / structured output / completions / completions
+subtitle: FastMCP + Pydantic tools / resources / prompts / Context progress / structured output / completions / tool annotations
 template: doc
 theme: blueprint
 source: codes/mcp/
 ---
 
 ## Overview
-Stages 1–5 use FastMCP + Pydantic. Framework owns schema + protocol (default `2026-07-28`). Loop: connect → list+call; progress via Context; structured results via Pydantic returns; argument autocomplete via `@mcp.completion` / `client.complete`.
+Stages 1–6 use FastMCP + Pydantic. Framework owns schema + protocol (default `2026-07-28`). Loop: connect → list+call; progress via Context; structured results via Pydantic returns; argument autocomplete via `@mcp.completion` / `client.complete`; host UX via `annotations` / `meta` on tools/list.
 
 ## Server
 | API | Notes |
@@ -557,6 +563,7 @@ Stages 1–5 use FastMCP + Pydantic. Framework owns schema + protocol (default `
 | `await ctx.report_progress(...)` | Absolute progress notifications |
 | `-> SomeModel` (Pydantic return) | output_schema + structured_content |
 | `@mcp.completion` | completion/complete for prompt args + URI templates |
+| `@mcp.tool(..., annotations=..., meta=...)` | ToolAnnotations + free-form _meta |
 | `Annotated[T, Field(...)]` | Schema metadata |
 | `mcp.run()` | stdio transport |
 
@@ -567,6 +574,7 @@ Stages 1–5 use FastMCP + Pydantic. Framework owns schema + protocol (default `
 | `Client(..., progress_handler=...)` | Mid-call progress notifications |
 | `tool.output_schema` / `result.structured_content` | Typed results |
 | `await client.complete(ref, argument, ...)` | Prompt / template autocomplete |
+| `tool.annotations` / `tool.meta` | Behavior hints + _meta |
 | `await client.list_tools()` | tools/list |
 | `await client.call_tool(name, args)` | tools/call |
 | `await client.list_resources()` / `read_resource` | resources |
@@ -578,6 +586,7 @@ Stages 1–5 use FastMCP + Pydantic. Framework owns schema + protocol (default `
 - `03_context_progress/` — count_up + Context.report_progress
 - `04_structured_output/` — sum_pair / label_topic Pydantic returns
 - `05_completions/` — essay + note://{slug} with @mcp.completion
+- `06_tool_annotations/` — peek/append/wipe with ToolAnnotations + meta
 - each stage: server.py, client.py, qa.ipynb
 - shared deps: `codes/requirements.txt` (`fastmcp>=4.1`)
 
@@ -586,6 +595,7 @@ pip install -r ../../requirements.txt
 python client.py --n 4
 python client.py sum --a 2 --b 3
 python client.py genre --value s
+python client.py list
 ```
 
 ## Pitfalls
@@ -599,6 +609,8 @@ python client.py genre --value s
 - Pydantic return → precise output_schema; plain dict still fills structured_content.
 - Structured output fits Python-authored FastMCP tools; C++/CppReflectKit tools need a hand-written Python result twin — do not force it on reflect-kit.
 - Completion handler: return None for unhandled refs; use context_arguments for multi-arg prompts.
+- ToolAnnotations are host UX hints, not enforcement; optionally gate inside the tool too.
+- Type annotations ≠ ToolAnnotations; ignore FastMCP keys under meta["fastmcp"].
 </textarea>
 <script>
 (() => {
