@@ -9,6 +9,11 @@ Server-initiated sampling / imperative elicitation need a back-channel that
 the `2026-07-28` era dropped (SEP-2577 / SEP-2322). Structured output stays
 current and teachable on the same FastMCP + Pydantic stack — no extra deps.
 
+Scope: **Python-authored** tools in this lab. C++-exported tools (CppReflectKit)
+need an explicit Python result model to match `output_schema`; that friction is
+why reflect-kit should not force structured_output — this stage is not a
+prescription for that path.
+
 Run as a stdio process (desktop hosts spawn this file):
 
     python server.py

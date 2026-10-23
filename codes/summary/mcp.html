@@ -523,6 +523,7 @@ python client.py sum --a 2 --b 3       # stage 4 structured
 <li>Protocol logging (<code>notifications/message</code> / <code>ctx.info</code>) is deprecated in <code>2026-07-28</code> (SEP-2577) — prefer progress (or stderr / OpenTelemetry) in new labs.</li>
 <li>Server-initiated sampling / imperative elicitation need a back-channel dropped in <code>2026-07-28</code> (SEP-2577 / SEP-2322) — prefer structured returns, or call an LLM in-process.</li>
 <li>Prefer a Pydantic return model when you want a precise <code>output_schema</code>; a plain <code>dict</code> still fills <code>structured_content</code> with a loose object schema.</li>
+<li>Structured output here is for <strong>Python-authored</strong> FastMCP tools. C++-exported tools (CppReflectKit) need a hand-written Python result model to match schema — often not worth forcing; this lab is not a reflect-kit prescription.</li>
 </ul>
 </div></div>
 </section>
@@ -587,6 +588,7 @@ python client.py sum --a 2 --b 3
 - Protocol logging is deprecated in 2026-07-28 (SEP-2577); prefer progress.
 - Server-initiated sampling / imperative elicitation unavailable on 2026-07-28; prefer structured returns.
 - Pydantic return → precise output_schema; plain dict still fills structured_content.
+- Structured output fits Python-authored FastMCP tools; C++/CppReflectKit tools need a hand-written Python result twin — do not force it on reflect-kit.
 </textarea>
 <script>
 (() => {

@@ -23,7 +23,15 @@ from server import mcp
 
 
 def _as_mapping(result: Any) -> Any:
-    """Prefer structured_content; fall back to result.data."""
+    """Prefer structured_content; fall back to result.data.
+
+    This helper fits **Python-authored** FastMCP tools that return a Pydantic
+    model (or dict). C++-exported MCP tools (e.g. CppReflectKit) do not get a
+    free matching result type on the Python side — without a hand-written
+    schema twin, forcing ``output_schema`` is usually not worth it; that is
+    why reflect-kit should not mandate structured_output. This lab teaches the
+    Python path only, not a C++/reflect-kit prescription.
+    """
     structured = getattr(result, "structured_content", None)
     if structured is not None:
         return structured
