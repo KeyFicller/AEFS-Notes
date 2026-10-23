@@ -444,7 +444,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools / resources / prompts</p><div class="am-head-meta"><span><b>source</b>codes/mcp/index.md</span></div></header>
+<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools / resources / prompts</p><div class="am-head-meta"><span><b>source</b>codes/mcp/</span></div></header>
 <div class="am-doc-layout">
 <nav class="am-toc" aria-label="目录"><a href="#panel-A">A · Overview</a><a href="#panel-B">B · FastMCP surface</a><a href="#panel-C">C · Lab shape</a><a href="#panel-D">D · Pitfalls</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
@@ -492,9 +492,10 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <ul>
 <li><code>01_fastmcp_tools/</code> — <code>echo</code> / <code>add</code> tools; list → call</li>
 <li><code>02_resources_prompts/</code> — <code>lab://greeting</code>, <code>note://{slug}</code>, <code>critique</code> prompt</li>
-<li>each stage: <code>server.py</code>, <code>client.py</code>, <code>requirements.txt</code> (<code>fastmcp&gt;=4.1</code>), <code>qa.ipynb</code></li>
+<li>each stage: <code>server.py</code>, <code>client.py</code>, <code>qa.ipynb</code></li>
+<li>shared deps: <code>codes/requirements.txt</code> (<code>fastmcp&gt;=4.1</code>)</li>
 </ul>
-<pre><code>pip install -r requirements.txt
+<pre><code>pip install -r ../../requirements.txt   # from a stage dir
 python client.py
 python client.py read --uri note://alpha
 python client.py prompt --topic "MCP resources"
@@ -521,7 +522,7 @@ title: MCP API 速查
 subtitle: FastMCP + Pydantic tools / resources / prompts
 template: doc
 theme: blueprint
-source: codes/mcp/index.md
+source: codes/mcp/
 ---
 
 ## Overview

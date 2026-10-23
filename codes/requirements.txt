@@ -1,0 +1,2 @@
+# Shared deps for codes/ practice tracks (not capstone/, not docker/app/).
+fastmcp>=4.1
