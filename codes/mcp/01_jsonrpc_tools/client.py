@@ -71,7 +71,7 @@ def demo(tool: str, arguments: dict[str, Any]) -> None:
         init = client.request(
             "initialize",
             {
-                "protocolVersion": "2024-11-05",
+                "protocolVersion": "2026-07-28",
                 "capabilities": {},
                 "clientInfo": {"name": "lab-tools-client", "version": "0.1.0"},
             },

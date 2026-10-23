@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 
-PROTOCOL_VERSION = "2024-11-05"
+PROTOCOL_VERSION = "2026-07-28"
 
 
 @dataclass
