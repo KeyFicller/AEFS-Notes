@@ -352,10 +352,11 @@ final class MemoSearchPanel: NSObject {
     private func render(query: String, hits: [MemoHit]) {
         guard !hits.isEmpty else {
             results.show(rows: [])
-            status.stringValue = "没有命中「\(query)」"
+            status.stringValue = "没有足够相关的备忘：换个说法，或把话题说具体些"
             return
         }
-        status.stringValue = "「\(query)」命中 \(hits.count) 张"
+        // 只说「按相关度取前 N 张」，不说「命中」：排第一也可能只是相对不那么不相关。
+        status.stringValue = "「\(query)」按相关度取前 \(hits.count) 张"
         results.show(rows: hits.map { hit in
             let row = MemoRow(hit: hit)
             row.onClick = { [weak self] in self?.onOpen?(hit.url) }

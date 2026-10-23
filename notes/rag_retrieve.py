@@ -24,6 +24,35 @@
 - 多义词：查「怎么降低幻觉」时 04-activation-functions 会挤进前列，因为它写的是
   「无激活则深度是幻觉」，词面完全匹配但语义不是一回事。
 
+## 门禁（排除不相关）
+
+语义与 BM25 两路各卡一个原始分下限，两路都过才出结果（BM25_GATE / SEMANTIC_GATE）。
+不用融合分卡，是因为 RRF 只留名次、丢掉幅度，而幅度才携带「有多像」的信息。
+
+实测（12 条合法 + 8 条无关 query）：
+
+    策略                    合法全留   无关漏进
+    融合分阈值 0.029           ✓        5/8
+    OR 门禁                   ✓        3/8
+    AND 门禁（当前）            ✓        2/8
+
+2/8 是这条思路的上限，不是没调好：「量子纠缠是什么」的视觉 / BM25 / 余弦
+（9.35 / 8.69 / 0.433）全都高于合法的「高斯泼溅」（8.10 / 7.98 / 0.425）。
+任何只看各通道单调阈值的门禁，只能在放过一个与错杀一个之间选。
+真要分干净得靠训过的 cross-encoder 重排序，代价是每次 query 多几百毫秒。
+
+视觉那一路不进门的理由：它的 MaxSim 与相关性反向，「唐诗三百首」12.0 高过
+「langfuse 观测」8.2——MaxSim 是 query 每个 token 对全卡 patch 取 max 再求和，
+query 越长基线越高，且任意 token 都能咬上某块无关 patch。BM25 也有同样的毛病：
+「怎么 / 什么 / 天气」在卡面语料里本来就有。z 分数与三路一致性同样分不开
+（无关的「今天天气怎么样」能拿到 2 路一致）。
+
+语义那侧缝隙只有 0.015（无关最高 0.410 / 合法最低 0.425），是整套门禁最脆的一环。
+样本仅 20 条 query，补样本后必须重测。
+
+注意返回的仍是「按分排序的前 N 张」，排第一不等于相关——它只是这次相对最高的一张。
+所以 UI 说的是「按相关度取前 N 张」，不说「命中 N 张」。
+
     python notes/rag_retrieve.py --index        # 首次建索引，506 张约 37 分钟（4.2s/张）
     python notes/rag_retrieve.py "评测怎么做"    # 检索
     python notes/rag_retrieve.py -k 3 "A2A 协议"
@@ -69,7 +98,7 @@ VISION_MODEL = "vidore/colSmol-500M"
 TEXT_MODEL = "BAAI/bge-small-zh-v1.5"
 # 换视觉模型必须重建索引：patch 数和维度都会变，混着用不报错但结果是错的。
 INDEX_VERSION = 1
-TOP_K = 5
+TOP_K = 5         # 最多给几张；实际张数会因阈值而更少
 LESSON_CHARS = 1200
 CANDIDATES = 60  # 每路给融合器多少名次
 RRF_K = 60       # RRF 的平滑常数，取原论文值
@@ -274,18 +303,50 @@ class TextChannels:
         self.rels = rels
         self.ready = True
 
-    def rankings(self, query: str) -> list[list[str]]:
+    def rankings(self, query: str) -> tuple[list[list[str]], float, float]:
+        """返回 (两路名次, BM25 top1, 余弦 top1)。后两个是门禁要用的原始分。"""
         if not self.ready:
-            return []
-        text = [self.by_anchor[c.anchor] for c, _ in self.bm25.search(lexical(query), k=CANDIDATES)]
+            return [], 0.0, 0.0
+        hits = self.bm25.search(lexical(query), k=CANDIDATES)
+        text = [self.by_anchor[c.anchor] for c, _ in hits]
         qv = _load_text().encode([self.prefix + query], normalize_embeddings=True)[0]
-        order = (self.vectors @ qv).argsort()[::-1][:CANDIDATES]
-        return [text, [self.rels[i] for i in order]]
+        cos = self.vectors @ qv
+        order = cos.argsort()[::-1][:CANDIDATES]
+        return ([text, [self.rels[i] for i in order]],
+                float(hits[0][1]) if hits else 0.0,
+                float(cos[order[0]]))
 
 
 # ------------------------------------------
 # 检索
 # ------------------------------------------
+
+# 门禁：语义与 BM25 两路各自卡一个原始分下限，两路都过才出结果。
+#
+# 为什么不用融合分卡：RRF 只留名次、丢掉了幅度，而幅度才携带「有多像」的信息；
+# 且融合分的上界由权重决定，和话题是否相关没有直接关系。
+#
+# 实测（12 条合法 + 8 条无关）：
+#   融合分阈值 0.029   合法全留，无关漏进 5/8
+#   OR 门禁            合法全留，无关漏进 3/8
+#   AND 门禁（本实现）   合法全留，无关漏进 2/8
+#
+# 2/8 是这条思路的上限，不是调参没调好：
+# 「量子纠缠是什么」的 vis/bm25/余弦 全都高于合法的「高斯泼溅」
+# （9.35/8.69/0.433 vs 8.10/7.98/0.425），两者在每条通道上都可分但方向相反——
+# 任何只看各通道单调阈值的门禁，要么放过一个、要么错杀另一个。
+# 视觉那一路不进门的理由：它的 MaxSim 与相关性反向，实测「唐诗三百首」12.0
+# 高过「langfuse 观测」8.2（见 docstring）。
+#
+# 阈值取在两段的缝隙中间，不贴边：
+#   BM25  无关最高 6.32（股票走势预测） / 合法最低 7.14（RAG 怎么切块）
+#   语义  无关最高 0.410（今天天气怎么样）/ 合法最低 0.425（高斯泼溅）
+# 语义那侧缝隙只有 0.015，是这套门禁最脆的一环；样本仅 20 条，补样本后必重测。
+BM25_GATE = 6.7
+SEMANTIC_GATE = 0.417
+
+MIN_HIT_SCORE = 0.022    # 单张卡低于这个值，说明只有一路点到它，当偶然命中丢掉
+
 
 def search(query: str, entries: dict, channels: TextChannels, k: int,
            patches_f32: dict | None = None) -> list[tuple[str, float]]:
@@ -293,7 +354,14 @@ def search(query: str, entries: dict, channels: TextChannels, k: int,
 
     if patches_f32 is None:
         patches_f32 = {rel: e["patches"].to(torch.float32) for rel, e in entries.items()}
-    ranked = [visual_ranking(query, entries, patches_f32)] + channels.rankings(query)
+    chan_rank, bm25_top, cos_top = channels.rankings(query)
+
+    # 文本/语义的 meta 缺失时（新 clone）这两路本来就没原料，门禁整体跳过，
+    # 退化成只靠视觉那一路，此时不设门槛——宁可能搜到，也别什么都说没有。
+    if channels.ready and (bm25_top < BM25_GATE or cos_top < SEMANTIC_GATE):
+        return []
+
+    ranked = [visual_ranking(query, entries, patches_f32)] + chan_rank
 
     # 加权 RRF：三路分数量纲完全不同（MaxSim 求和无上界，BM25 有 idf 加权，
     # 余弦在 0–1 之间），只能按名次融合。权重见 WEIGHTS。
@@ -301,11 +369,12 @@ def search(query: str, entries: dict, channels: TextChannels, k: int,
     for hits, weight in zip(ranked, WEIGHTS):
         for rank, rel in enumerate(hits):
             fused[rel] += weight / (RRF_K + rank + 1)
-    return sorted(fused.items(), key=lambda x: -x[1])[:k]
+    hits = sorted(fused.items(), key=lambda x: -x[1])[:k]
+    return [(rel, score) for rel, score in hits if score >= MIN_HIT_SCORE]
 
 
 def evaluate(entries: dict, channels: TextChannels) -> None:
-    hits = top1 = 0
+    hits = top1 = rejected = 0
     started = time.time()
     for query, gold in GOLD:
         ranked = [rel for rel, _ in search(query, entries, channels, 10)]
@@ -313,8 +382,13 @@ def evaluate(entries: dict, channels: TextChannels) -> None:
         rank = ranked.index(gold_rel) + 1 if gold_rel in ranked else None
         hits += 1 if rank and rank <= 5 else 0
         top1 += 1 if rank == 1 else 0
+        if not ranked:
+            rejected += 1
+            print(f"{query:22s} rank=-   被门禁判为无关")
+            continue
         print(f"{query:22s} rank={rank}  top1={ranked[0].split('/')[-1][:42]}")
     print(f"\ntop1 = {top1}/{len(GOLD)}   hit@5 = {hits}/{len(GOLD)}   "
+          f"被门禁拒掉 {rejected}/{len(GOLD)}   "
           f"({(time.time() - started) / len(GOLD):.1f}s/query)")
 
 
@@ -326,7 +400,7 @@ def label_of(rel: str) -> tuple[str, str]:
     return slug, phase
 
 
-def serve(k: int = 6) -> None:
+def serve(k: int = TOP_K) -> None:
     """常驻检索进程：按行读 query，按行吐 JSON。
 
     DeskPet 右键「检索备忘」走这条路。每次新开进程要重载两个模型（约 6s），
@@ -396,7 +470,12 @@ def main() -> None:
     if not channels.ready:
         print("（没有 *.meta.txt，文本与语义两路已关闭，只剩视觉）", file=sys.stderr)
 
-    for rank, (rel, _) in enumerate(search(query, entries, channels, k), 1):
+    results = search(query, entries, channels, k)
+    if not results:
+        print(f"（没有足够相关的备忘：没过门禁 BM25≥{BM25_GATE} / 语义≥{SEMANTIC_GATE}）",
+              file=sys.stderr)
+        return
+    for rank, (rel, _) in enumerate(results, 1):
         print(f"{rank}. {rel}")
 
 
