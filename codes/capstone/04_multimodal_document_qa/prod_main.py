@@ -10,7 +10,6 @@ demo_main.py 用假 hash 向量和写死 CORPUS 把 late interaction 跑通；�
 - doc_prune / max_sim     -> 继续用 demo_main 的。langchain 没有 MaxSim，
                              VectorStore 是一文档一向量，接不上 late interaction
 - Index.retrieve 打印 top-k -> 同样 MaxSim 召回，再走 LCEL 让模型带着 citation 回答
-- 检索的 bug（for t in query 按字符切）-> 这里 tokenize 后再 embed，按词
 
 诚实说明（和 01「PyTorch 不在这条链路」、02「DeepSeek 没有 embeddings」同类）：
 

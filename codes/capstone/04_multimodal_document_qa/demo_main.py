@@ -5,7 +5,6 @@ Multimodal Document QA
 """
 
 from dataclasses import dataclass, field
-from pydoc import pager
 import re
 import random
 import math
@@ -78,7 +77,7 @@ class Index:
         self.pages.append(page)
 
     def retrieve(self, query: str, k: int = 8) -> list[tuple[Page, float]]:
-        q_tokens = [hash_embed(t) for t in query]
+        q_tokens = [hash_embed(t) for t in tokenize(query)]
         scored = [(pg, max_sim_score(q_tokens, pg.patches)) for pg in self.pages]
         scored.sort(key=lambda x: -x[1])
         return scored[:k]
@@ -124,7 +123,7 @@ def main() -> None:
     ]
 
     for q in queries:
-        print(f"\Q: {q}")
+        print(f"\nQ: {q}")
         hits = idx.retrieve(q, k = 3)
         for pg, score in hits:
             print(f"   score={score:+.3f} {pg.doc_id} p.{pg.page_num}")
