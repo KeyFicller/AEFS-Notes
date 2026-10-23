@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="Answer me with HTML 0.4.9">
-<title>并发速查</title>
+<meta name="generator" content="Answer me with HTML 0.4.11">
+<title>并发速查 · 夯实</title>
 <style>
 html[data-theme="blueprint"], html[data-theme="blueprint"][data-mode="light"] {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -144,14 +144,81 @@ html[data-theme="shadcn"][data-mode="auto"] {
 }
 }
 
+html[data-theme="paper"], html[data-theme="paper"][data-mode="light"] {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", serif;
+  --radius: 2px;
+  --shadow: none;
+  --bw: 1px;
+  --head-font: var(--font-serif);
+  --bg: #f5f2ea;
+  --paper: #fdfbf6;
+  --ink: #1f1c17;
+  --ink-2: #57514a;
+  --ink-3: #8c867b;
+  --line: #cbc3b4;
+  --line-2: #e5dfd3;
+  --fill: #f3eee4;
+  --accent: #8c2f1e;
+  --accent-bg: #f5e5df;
+  --ok: #2e6a3b;
+  --ok-bg: #e4efe5;
+  --err: #a3251b;
+  --err-bg: #f7e3e0;
+  --warn: #7f5300;
+  --warn-bg: #f6ecd6;
+  --head-bg: #1f1c17;
+  --head-fg: #fdfbf6;
+}
+html[data-theme="paper"][data-mode="dark"] {
+  --bg: #15130f;
+  --paper: #1c1a15;
+  --ink: #ebe5d8;
+  --ink-2: #b5ad9e;
+  --ink-3: #7b7467;
+  --line: #4a443a;
+  --line-2: #2d2a24;
+  --fill: #242119;
+  --accent: #e59a7d;
+  --accent-bg: #3a2219;
+  --ok: #8cc79a;
+  --ok-bg: #1c3122;
+  --err: #f0928a;
+  --err-bg: #3a1d1a;
+  --warn: #e3b866;
+  --warn-bg: #352a13;
+  --head-bg: #ebe5d8;
+  --head-fg: #15130f;
+}
+@media (prefers-color-scheme: dark) {
+html[data-theme="paper"][data-mode="auto"] {
+  --bg: #15130f;
+  --paper: #1c1a15;
+  --ink: #ebe5d8;
+  --ink-2: #b5ad9e;
+  --ink-3: #7b7467;
+  --line: #4a443a;
+  --line-2: #2d2a24;
+  --fill: #242119;
+  --accent: #e59a7d;
+  --accent-bg: #3a2219;
+  --ok: #8cc79a;
+  --ok-bg: #1c3122;
+  --err: #f0928a;
+  --err-bg: #3a1d1a;
+  --warn: #e3b866;
+  --warn-bg: #352a13;
+  --head-bg: #ebe5d8;
+  --head-fg: #15130f;
+}
+}
+
 html[lang="ja"][data-theme][data-mode] {
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, "Noto Sans CJK JP", "Noto Sans JP", "PingFang SC", "Microsoft YaHei", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
-html[lang="ja"][data-theme="3b1b"][data-mode] {
-  --v-title-font: "CMU Serif", "Latin Modern Roman", "Iowan Old Style", "Palatino", "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Serif JP", "Songti SC", serif;
-}
 
-/* Answer me with HTML base — uses theme variables only, never hard-coded colors (theme tokens: themes/index.js). Exception: the var() fallbacks of diagrams (flow / sequence) equal the blueprint light tokens, guarded by a test. */
+/* Answer me with HTML base — uses theme variables only, never hard-coded colors (theme tokens and decorations: themes/<name>.js). Exception: the var() fallbacks of diagrams (flow / sequence) equal the blueprint light tokens, guarded by a test. */
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
@@ -171,9 +238,20 @@ code, pre, kbd { font-family: var(--font-mono); }
 }
 .am-btn:hover { border-color: var(--ink-3); }
 .am-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Theme and mode lists: a label and a native select inside one button-like box */
+.am-pick {
+  display: flex; align-items: center; gap: 6px; font: 12px/1 var(--font-sans); color: var(--ink-2); background: var(--paper);
+  border: 1px solid var(--line-2); border-radius: var(--radius); padding: 0 4px 0 10px;
+}
+.am-pick:hover { border-color: var(--ink-3); }
+.am-pick:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.am-pick select {
+  font: inherit; color: var(--ink); background: transparent; border: 0; padding: 6px 2px; cursor: pointer; outline: none;
+}
+.am-pick option { color: var(--ink); background: var(--paper); }
 
 /* ── Header ───────────────────────────────── */
-.am-head { margin: 0 0 20px; padding-right: 260px; }
+.am-head { margin: 0 0 20px; padding-right: 300px; }
 .am-head h1 { margin: 0; font-size: 24px; line-height: 1.25; letter-spacing: -0.01em; }
 .am-sub { margin: 4px 0 0; color: var(--ink-2); }
 .am-head-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 12px; color: var(--ink-2); }
@@ -188,13 +266,6 @@ code, pre, kbd { font-family: var(--font-mono); }
   gap: 20px; align-items: start;
 }
 .am-ruler { display: none; }
-html[data-theme="blueprint"] .am-frame { border: 1px solid var(--line); padding: 30px; }
-html[data-theme="blueprint"] .am-frame::before {
-  content: ""; position: absolute; inset: 18px; border: 1px solid var(--line); pointer-events: none;
-}
-html[data-theme="blueprint"] .am-ruler {
-  display: flex; position: absolute; font: 10px/1 var(--font-mono); color: var(--ink-3);
-}
 .am-ruler span { flex: 1; display: flex; align-items: center; justify-content: center; }
 .am-ruler--top, .am-ruler--bottom { left: 18px; right: 18px; height: 18px; }
 .am-ruler--top { top: 0; }
@@ -217,8 +288,6 @@ html[data-theme="blueprint"] .am-ruler {
   display: flex; align-items: center; justify-content: center; min-width: 34px; padding: 0 8px;
   background: var(--head-bg); color: var(--head-fg); font-weight: 600; font-size: 14px;
 }
-html[data-theme="shadcn"] .am-panel-id { border-radius: 6px; min-width: 24px; height: 24px; margin: 9px 0 9px 14px; font-size: 12px; }
-html[data-theme="shadcn"] .am-panel-head { border-bottom-width: 1px; }
 .am-panel-head h2 { margin: 0; padding: 7px 12px; font-size: 15px; font-weight: 600; flex: 1; display: flex; align-items: center; }
 .am-panel-meta { align-self: center; padding: 0 12px; font: 11px/1.3 var(--font-mono); color: var(--ink-2); text-align: right; }
 .am-panel-body { padding: 14px 16px 16px; }
@@ -278,7 +347,6 @@ html[data-theme="shadcn"] .am-panel-head { border-bottom-width: 1px; }
 .am-kv dt { font: 11px/1.4 var(--font-mono); color: var(--ink-2); }
 .am-kv dd { margin: 2px 0 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
 .am-kv-cell--wide dd { font-size: 17px; font-weight: 600; }
-html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var(--radius); overflow: hidden; }
 
 /* ── timeline ────────────────────────────── */
 .am-timeline { list-style: none; margin: 0; padding: 0; }
@@ -414,8 +482,6 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
   .am-head { padding-right: 0; }
   .am-grid { grid-template-columns: minmax(0, 1fr); }
   .am-grid > .am-panel.am-span-wide { grid-column: auto !important; }
-  html[data-theme="blueprint"] .am-frame { padding: 0; border: 0; }
-  html[data-theme="blueprint"] .am-frame::before, html[data-theme="blueprint"] .am-ruler { display: none; }
   .am-doc-layout { grid-template-columns: minmax(0, 1fr); }
   .am-toc { position: static; }
   .am-timeline--h { grid-template-columns: minmax(0, 1fr); }
@@ -435,26 +501,46 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 .am-panel--bare > .am-panel-body { padding: 0; }
 .am-panel--bare .am-kv { background: var(--paper); }
 
+
+html[data-theme="blueprint"] .am-frame { border: 1px solid var(--line); padding: 30px; }
+html[data-theme="blueprint"] .am-frame::before {
+  content: ""; position: absolute; inset: 18px; border: 1px solid var(--line); pointer-events: none;
+}
+html[data-theme="blueprint"] .am-ruler {
+  display: flex; position: absolute; font: 10px/1 var(--font-mono); color: var(--ink-3);
+}
+@media (max-width: 760px) {
+  html[data-theme="blueprint"] .am-frame { padding: 0; border: 0; }
+  html[data-theme="blueprint"] .am-frame::before, html[data-theme="blueprint"] .am-ruler { display: none; }
+}
+
+html[data-theme="shadcn"] .am-panel-id { border-radius: 6px; min-width: 24px; height: 24px; margin: 9px 0 9px 14px; font-size: 12px; }
+html[data-theme="shadcn"] .am-panel-head { border-bottom-width: 1px; }
+html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var(--radius); overflow: hidden; }
+
+html[data-theme="paper"][lang="ja"][data-mode] { --font-serif: "Iowan Old Style", Palatino, Georgia, "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif CJK JP", "Noto Serif JP", "Songti SC", serif; }
+html[data-theme="paper"] .am-head h1, html[data-theme="paper"] .am-panel-head h2, html[data-theme="paper"] .am-md, html[data-theme="paper"] .am-intro, html[data-theme="paper"] .am-callout { font-family: var(--font-serif); }
+html[data-theme="paper"] .am-head h1 { font-weight: 600; letter-spacing: 0; }
+html[data-theme="paper"] .am-md p, html[data-theme="paper"] .am-md li, html[data-theme="paper"] .am-md blockquote, html[data-theme="paper"] .am-intro { font-size: 15.5px; line-height: 1.75; }
+html[data-theme="paper"] .am-md p { margin-bottom: 12px; }
+html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 </style>
 </head>
 <body>
 <div class="am-toolbar">
-<button class="am-btn" type="button" data-am="theme" data-labels="{&quot;blueprint&quot;:&quot;主题：图纸&quot;,&quot;shadcn&quot;:&quot;主题：卡片&quot;}">主题：图纸</button>
-<button class="am-btn" type="button" data-am="mode" data-labels="{&quot;auto&quot;:&quot;明暗：跟随系统&quot;,&quot;light&quot;:&quot;明暗：亮&quot;,&quot;dark&quot;:&quot;明暗：暗&quot;}">明暗：跟随系统</button>
+<label class="am-pick">主题<select data-am="theme"><option value="blueprint" selected>图纸</option><option value="shadcn">卡片</option><option value="paper">纸张</option></select></label>
+<label class="am-pick">明暗<select data-am="mode"><option value="auto" selected>跟随系统</option><option value="light">亮</option><option value="dark">暗</option></select></label>
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>并发速查</h1><p class="am-sub">线程、进程、协程怎么选</p><div class="am-head-meta"><span><b>source</b>codes/concurrency/cheat_api.md</span></div></header>
+<header class="am-head"><h1>并发速查 · 夯实</h1><p class="am-sub">线程、进程、协程怎么选</p><div class="am-head-meta"><span><b>source</b>codes/concurrency</span></div></header>
 <div class="am-doc-layout">
-<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 速览</a><a href="#panel-B">B · 四个候选</a><a href="#panel-C">C · 实测：两种瓶颈，两种结论</a><a href="#panel-D">D · GIL 限制的是什么</a><a href="#panel-E">E · asyncio 骨架</a><a href="#panel-F">F · 限流：一次只放 N 个</a><a href="#panel-G">G · 进程池的硬约束</a><a href="#panel-H">H · 笔记本两个坑</a><a href="#panel-I">I · 常见坑</a><a href="#panel-J">J · 什么时候别并发</a><a href="#panel-K">K · 练习</a></nav><div class="am-doc-body">
+<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · 速览</a><a href="#panel-B">B · 四个候选</a><a href="#panel-C">C · 实测：两种瓶颈，两种结论</a><a href="#panel-D">D · GIL 限制的是什么</a><a href="#panel-E">E · 竞态与锁</a><a href="#panel-F">F · asyncio 骨架</a><a href="#panel-G">G · 限流：一次只放 N 个</a><a href="#panel-H">H · 失败与超时</a><a href="#panel-I">I · 进程池的硬约束</a><a href="#panel-J">J · 笔记本两个坑</a><a href="#panel-K">K · 常见坑</a><a href="#panel-L">L · 什么时候别并发</a><a href="#panel-M">M · 默写口令</a><a href="#panel-N">N · 练习</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
 <header class="am-panel-head"><span class="am-panel-id">A</span><h2>速览</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>并发不是「多加线程」。先看瓶颈在烧 CPU 还是在等 I/O，再决定用哪个工具。</p>
+<div class="am-panel-body"><div class="am-md"><p>先看瓶颈在烧 CPU 还是在等 I/O，再决定用哪个工具。两分钟复盘：<code>codes/concurrency/review.md</code>。</p>
 </div>
-<figure class="am-diagram am-flow"><svg viewBox="0 0 507 264" width="507" height="264" role="img" aria-label="流程图：一份活、瓶颈在哪?、ProcessPool、ThreadPool、asyncio、直接串行" xmlns="http://www.w3.org/2000/svg"><defs><marker id="am1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="am-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs><g></g><g><g data-step="0"><path class="am-edge" d="M241.3,49 L241.3,60.5 Q241.3,72 241.3,83.5 L241.3,95" marker-end="url(#am1-arrow)"/></g><g data-step="1"><path class="am-edge" d="M279.7,134.6 L359.8,158.8 Q440,183 440,199 L440,215" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="415.8" y="174" width="48.4" height="18" rx="3"/><text x="440" y="183" text-anchor="middle" dominant-baseline="central">烧 CPU</text></g></g><g data-step="2"><path class="am-edge" d="M261.2,142.5 L282,162.7 Q302.7,183 302.7,199 L302.7,215" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="280.2" y="174" width="45" height="18" rx="3"/><text x="302.7" y="183" text-anchor="middle" dominant-baseline="central">等 I/O</text></g></g><g data-step="3"><path class="am-edge" d="M221.4,142.5 L200.6,162.7 Q179.9,183 179.9,199 L179.9,215" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="122.9" y="174" width="114" height="18" rx="3"/><text x="179.9" y="183" text-anchor="middle" dominant-baseline="central">等 I/O，而且很多路</text></g></g><g data-step="4"><path class="am-edge" d="M204.4,135.2 L132.2,159.1 Q60,183 60,199 L60,215" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="26.3" y="174" width="67.5" height="18" rx="3"/><text x="60" y="183" text-anchor="middle" dominant-baseline="central">只有一两个</text></g></g></g><g><g class="am-node am-node--round" data-key="一份活" data-step="0"><rect class="am-node-shape" x="201.8" y="14" width="79" height="35" rx="17.5"/><text x="241.3" y="31.5" text-anchor="middle" dominant-baseline="central">一份活</text></g><g class="am-node am-node--diamond" data-key="瓶颈在哪?" data-step="0"><polygon class="am-node-shape" points="241.3,95 306.8,123 241.3,151 175.8,123"/><text x="241.3" y="123" text-anchor="middle" dominant-baseline="central">瓶颈在哪?</text></g><g class="am-node am-node--rect" data-key="ProcessPool" data-step="1"><rect class="am-node-shape" x="387.5" y="215" width="105" height="35" rx="3"/><text x="440" y="232.5" text-anchor="middle" dominant-baseline="central">ProcessPool</text></g><g class="am-node am-node--rect" data-key="ThreadPool" data-step="2"><rect class="am-node-shape" x="253.8" y="215" width="97.7" height="35" rx="3"/><text x="302.7" y="232.5" text-anchor="middle" dominant-baseline="central">ThreadPool</text></g><g class="am-node am-node--rect" data-key="asyncio" data-step="3"><rect class="am-node-shape" x="142" y="215" width="75.8" height="35" rx="3"/><text x="179.9" y="232.5" text-anchor="middle" dominant-baseline="central">asyncio</text></g><g class="am-node am-node--round" data-key="直接串行" data-step="4"><rect class="am-node-shape" x="14" y="215" width="92" height="35" rx="17.5"/><text x="60" y="232.5" text-anchor="middle" dominant-baseline="central">直接串行</text></g></g></svg></figure>
-<div class="am-md"><p>三种写法都能跑通「任务并行」，但只有一种能真正加速当前瓶颈。选错的代价是多写代码、多踩坑，速度一点没变。</p>
-<p>练习见 <code>codes/concurrency/qa.ipynb</code>，负载在 <code>codes/concurrency/bench.py</code>。</p>
-</div></div>
+<figure class="am-diagram am-flow"><svg viewBox="0 0 507 264" width="507" height="264" role="img" aria-label="流程图：一份活、瓶颈在哪?、ProcessPool、ThreadPool、asyncio、直接串行" xmlns="http://www.w3.org/2000/svg"><defs><marker id="am1-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="am-arrow" d="M0,0 L10,5 L0,10 z"/></marker></defs><g></g><g><g data-step="0"><path class="am-edge" d="M241.3,49 L241.3,60.5 Q241.3,72 241.3,83.5 L241.3,95" marker-end="url(#am1-arrow)"/></g><g data-step="1"><path class="am-edge" d="M279.7,134.6 L359.8,158.8 Q440,183 440,199 L440,215" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="415.8" y="174" width="48.4" height="18" rx="3"/><text x="440" y="183" text-anchor="middle" dominant-baseline="central">烧 CPU</text></g></g><g data-step="2"><path class="am-edge" d="M261.2,142.5 L282,162.7 Q302.7,183 302.7,199 L302.7,215" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="280.2" y="174" width="45" height="18" rx="3"/><text x="302.7" y="183" text-anchor="middle" dominant-baseline="central">等 I/O</text></g></g><g data-step="3"><path class="am-edge" d="M221.4,142.5 L200.6,162.7 Q179.9,183 179.9,199 L179.9,215" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="122.9" y="174" width="114" height="18" rx="3"/><text x="179.9" y="183" text-anchor="middle" dominant-baseline="central">等 I/O，而且很多路</text></g></g><g data-step="4"><path class="am-edge" d="M204.4,135.2 L132.2,159.1 Q60,183 60,199 L60,215" marker-end="url(#am1-arrow)"/><g class="am-edge-label"><rect x="26.3" y="174" width="67.5" height="18" rx="3"/><text x="60" y="183" text-anchor="middle" dominant-baseline="central">只有一两个</text></g></g></g><g><g class="am-node am-node--round" data-key="一份活" data-step="0"><rect class="am-node-shape" x="201.8" y="14" width="79" height="35" rx="17.5"/><text x="241.3" y="31.5" text-anchor="middle" dominant-baseline="central">一份活</text></g><g class="am-node am-node--diamond" data-key="瓶颈在哪?" data-step="0"><polygon class="am-node-shape" points="241.3,95 306.8,123 241.3,151 175.8,123"/><text x="241.3" y="123" text-anchor="middle" dominant-baseline="central">瓶颈在哪?</text></g><g class="am-node am-node--rect" data-key="ProcessPool" data-step="1"><rect class="am-node-shape" x="387.5" y="215" width="105" height="35" rx="3"/><text x="440" y="232.5" text-anchor="middle" dominant-baseline="central">ProcessPool</text></g><g class="am-node am-node--rect" data-key="ThreadPool" data-step="2"><rect class="am-node-shape" x="253.8" y="215" width="97.7" height="35" rx="3"/><text x="302.7" y="232.5" text-anchor="middle" dominant-baseline="central">ThreadPool</text></g><g class="am-node am-node--rect" data-key="asyncio" data-step="3"><rect class="am-node-shape" x="142" y="215" width="75.8" height="35" rx="3"/><text x="179.9" y="232.5" text-anchor="middle" dominant-baseline="central">asyncio</text></g><g class="am-node am-node--round" data-key="直接串行" data-step="4"><rect class="am-node-shape" x="14" y="215" width="92" height="35" rx="17.5"/><text x="60" y="232.5" text-anchor="middle" dominant-baseline="central">直接串行</text></g></g></svg></figure></div>
 </section>
 <section class="am-panel" id="panel-B">
 <header class="am-panel-head"><span class="am-panel-id">B</span><h2>四个候选</h2></header>
@@ -462,214 +548,154 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <thead>
 <tr>
 <th>写法</th>
-<th>并发单元</th>
 <th>能加速什么</th>
 <th>代价</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>串行</td>
-<td>无</td>
 <td>什么都不加速</td>
 <td>慢，但最好调</td>
 </tr>
 <tr>
 <td><code>ThreadPoolExecutor</code></td>
-<td>线程</td>
 <td>I/O 密集</td>
 <td>受 GIL 限制，CPU 活不加速</td>
 </tr>
 <tr>
 <td><code>ProcessPoolExecutor</code></td>
-<td>进程</td>
 <td>CPU 密集</td>
 <td>启动贵，数据要能 pickle</td>
 </tr>
 <tr>
 <td><code>asyncio</code></td>
-<td>协程</td>
 <td>海量 I/O</td>
 <td>全链路得是异步的</td>
 </tr>
-<tr>
-<td><code>InterpreterPoolExecutor</code></td>
-<td>子解释器</td>
-<td>CPU 密集</td>
-<td>3.14 新增，生态还在跟进</td>
-</tr>
 </tbody></table></div>
-<p><code>InterpreterPoolExecutor</code> 和进程池解决同一个问题：绕开 GIL。它比进程轻，但模块导入和对象传递的约束更多。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-C">
 <header class="am-panel-head"><span class="am-panel-id">C</span><h2>实测：两种瓶颈，两种结论</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>同一台机器（10 核），<code>bench.cpu_work</code> 每次约 0.12 秒。</p>
-<div class="am-table-wrap"><table>
+<div class="am-panel-body"><div class="am-md"><div class="am-table-wrap"><table>
 <thead>
 <tr>
 <th>场景</th>
 <th>串行</th>
 <th>线程</th>
 <th>进程</th>
-<th>子解释器</th>
 </tr>
 </thead>
 <tbody><tr>
 <td>4 次 CPU 计算</td>
-<td>0.46s</td>
-<td>0.46s</td>
-<td>0.19s</td>
-<td>0.15s</td>
+<td>~0.5s</td>
+<td>~0.5s</td>
+<td>~0.2s</td>
 </tr>
 <tr>
-<td>8 次 0.2s 网络等待</td>
-<td>1.63s</td>
-<td>0.21s</td>
-<td>—</td>
+<td>8 次 0.2s 等待</td>
+<td>~1.6s</td>
+<td>~0.2s</td>
 <td>—</td>
 </tr>
 </tbody></table></div>
 <ul>
-<li>CPU 密集：加线程耗时不变。线程之间在抢同一把 GIL。</li>
-<li>I/O 密集：8 个线程把 1.63 秒压到 0.21 秒。等待时 GIL 是放开的。</li>
-<li>CPU 密集换成进程，4 个任务从 0.46 秒到 0.19 秒。没有到 4 倍，因为进程启动和结果回传都要时间。</li>
+<li>CPU 密集：加线程耗时不变。</li>
+<li>I/O 密集：8 个线程把等待压到一批的时间。</li>
 </ul>
 </div></div>
 </section>
 <section class="am-panel" id="panel-D">
 <header class="am-panel-head"><span class="am-panel-id">D</span><h2>GIL 限制的是什么</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>GIL 是解释器级别的锁。同一时刻只有一个线程在跑 Python 字节码。</p>
-<ul>
-<li>纯 Python 运算全程拿着 GIL，多线程只能轮流跑。</li>
-<li>阻塞的 I/O 会主动放开 GIL，这时别的线程可以进来。</li>
-<li><code>numpy</code>、<code>hashlib</code>、<code>zlib</code> 这类 C 扩展在重活里也会放开 GIL。</li>
-</ul>
-<p>推论：如果你的 CPU 活已经被 <code>numpy</code> 向量化，线程也可能有效，先量再说。</p>
+<div class="am-panel-body"><div class="am-md"><p>同一时刻只有一个线程在跑 Python 字节码。阻塞 I/O 会主动放开 GIL。<code>numpy</code> 等 C 扩展在重活里也会放开——先量再说。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-E">
-<header class="am-panel-head"><span class="am-panel-id">E</span><h2>asyncio 骨架</h2></header>
-<div class="am-panel-body"><pre class="am-code"><code data-lang="python">async def call(i): ...
-
-async def main():
-    results = await asyncio.gather(*[call(i) for i in range(9)])
-    return results</code></pre>
-<div class="am-md"><div class="am-table-wrap"><table>
-<thead>
-<tr>
-<th>需求</th>
-<th>写法</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>一起等，按输入顺序收</td>
-<td><code>await asyncio.gather(*coros)</code></td>
-</tr>
-<tr>
-<td>谁先回来先处理</td>
-<td><code>async for f in asyncio.as_completed(coros)</code></td>
-</tr>
-<tr>
-<td>单个超时</td>
-<td><code>await asyncio.wait_for(coro, timeout=0.2)</code></td>
-</tr>
-<tr>
-<td>整段超时</td>
-<td><code>async with asyncio.timeout(0.2):</code></td>
-</tr>
-<tr>
-<td>一个失败不影响别人</td>
-<td><code>gather(..., return_exceptions=True)</code></td>
-</tr>
-<tr>
-<td>失败就取消整组</td>
-<td><code>async with asyncio.TaskGroup() as tg:</code></td>
-</tr>
-</tbody></table></div>
-<p><code>gather</code> 默认遇到第一个异常就往外抛。此时其余任务还在后台跑，没人收结果。要一条条report，就加 <code>return_exceptions=True</code>。</p>
+<header class="am-panel-head"><span class="am-panel-id">E</span><h2>竞态与锁</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>读-改-写中间一旦让出，无锁必丢计数。<code>with threading.Lock():</code> 是标配；能不共享状态就别共享。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-F">
-<header class="am-panel-head"><span class="am-panel-id">F</span><h2>限流：一次只放 N 个</h2></header>
+<header class="am-panel-head"><span class="am-panel-id">F</span><h2>asyncio 骨架</h2></header>
+<div class="am-panel-body"><pre class="am-code"><code data-lang="python">async def call(i): ...
+
+results = await asyncio.gather(*[call(i) for i in range(9)])
+# 谁先好先处理：asyncio.as_completed(...)
+# 阻塞库：await asyncio.to_thread(blocking_fn, arg)</code></pre></div>
+</section>
+<section class="am-panel" id="panel-G">
+<header class="am-panel-head"><span class="am-panel-id">G</span><h2>限流：一次只放 N 个</h2></header>
 <div class="am-panel-body"><pre class="am-code"><code data-lang="python">sem = asyncio.Semaphore(3)
 
 async def one(i):
     async with sem:
-        return await call(i)
-
-await asyncio.gather(*[one(i) for i in range(9)])</code></pre>
-<div class="am-md"><p>9 个 0.2 秒的请求，上限 3 个，实测 0.60 秒。正好是三批。</p>
-<p>调模型接口必须有这一层。没有它，<code>gather</code> 会一次性打满服务端。</p>
-</div></div>
-</section>
-<section class="am-panel" id="panel-G">
-<header class="am-panel-head"><span class="am-panel-id">G</span><h2>进程池的硬约束</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>子进程是新解释器，它重新 import 你的模块，拿不到父进程的内存。</p>
-<ul>
-<li>传给进程池的函数必须定义在<strong>模块级</strong>，不能是闭包，也不能在笔记本单元格里定义。</li>
-<li>参数和返回值必须能 pickle。连接对象、生成器、lambda 都传不过去。</li>
-<li>脚本入口要写 <code>if __name__ == &quot;__main__&quot;:</code>，不然 spawn 会无限递归。</li>
-<li>macOS 和 Windows 默认用 spawn，Linux 默认 fork。spawn 更严格，按它写才跨平台。</li>
-</ul>
-<p>笔记本里报的是 <code>BrokenProcessPool</code>。真正的原因（<code>AttributeError</code>）在子进程的 stderr 里，往上翻第一条 Traceback。</p>
+        return await call(i)</code></pre>
+<div class="am-md"><p>9 × 0.2s、上限 3 → 约 0.60s，峰值 3。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-H">
-<header class="am-panel-head"><span class="am-panel-id">H</span><h2>笔记本两个坑</h2></header>
-<div class="am-panel-body"><pre class="am-code"><code data-lang="python">asyncio.run(main())
-# RuntimeError: asyncio.run() cannot be called from a running event loop</code></pre>
-<div class="am-md"><p>Jupyter 的内核已经有一个在跑的事件循环。单元格里直接用顶层 <code>await</code>，不要再包一层 <code>asyncio.run</code>。</p>
-<p>第二个坑是进程池：</p>
-</div>
-<pre class="am-code"><code data-lang="python">def work(n): ...          # 定义在单元格里
-ex.map(work, [1, 2])      # BrokenProcessPool</code></pre>
-<div class="am-md"><p>把它挪进 <code>bench.py</code> 这种可导入的模块，问题就没了。</p>
-</div></div>
+<header class="am-panel-head"><span class="am-panel-id">H</span><h2>失败与超时</h2></header>
+<div class="am-panel-body"><pre class="am-code"><code data-lang="python">results = await asyncio.gather(*coros, return_exceptions=True)
+await asyncio.wait_for(coro, timeout=0.2)</code></pre></div>
 </section>
 <section class="am-panel" id="panel-I">
-<header class="am-panel-head"><span class="am-panel-id">I</span><h2>常见坑</h2></header>
-<div class="am-panel-body"><div class="am-md"><ul>
-<li>协程里调 <code>time.sleep</code> 或同步 <code>requests</code>。整个事件循环停住，5 个 0.2 秒的任务要 1.02 秒。</li>
-<li>用线程池算 CPU 活。耗时和串行一模一样，还多了一层调度开销。</li>
-<li><code>gather</code> 不用 <code>return_exceptions</code>，一个失败就丢掉全部结果。</li>
-<li><code>create_task</code> 的返回值不保存。任务可能被垃圾回收，提前取消。</li>
-<li>进程池里传 lambda 或闭包。序列化阶段就失败。</li>
-<li>给 I/O 任务开几百个线程。内存和上下文切换都扛不住，换 <code>asyncio</code> 或加信号量。</li>
-<li>用 <code>asyncio.run</code> 嵌在已有循环里。笔记本、FastAPI、Jupyter 都会踩到。</li>
-</ul>
+<header class="am-panel-head"><span class="am-panel-id">I</span><h2>进程池的硬约束</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>函数必须在模块级；入口写 <code>if __name__ == &quot;__main__&quot;:</code>。笔记本单元格里的 <code>def</code> 子进程看不到。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-J">
-<header class="am-panel-head"><span class="am-panel-id">J</span><h2>什么时候别并发</h2></header>
-<div class="am-panel-body"><div class="am-md"><ul>
-<li>只有一个请求。并发没有收益，只多一层代码。</li>
-<li>任务之间有严格顺序。并发要靠信号量或队列把顺序再加回来，不如写清楚。</li>
-<li>数量很少、每次很快。线程池的启动开销可能比省下的时间还多。</li>
-</ul>
-<p>并发是放大吞吐的工具，不是提速单次调用的工具。</p>
-</div></div>
+<header class="am-panel-head"><span class="am-panel-id">J</span><h2>笔记本两个坑</h2></header>
+<div class="am-panel-body"><pre class="am-code"><code data-lang="python">asyncio.run(main())          # 错：笔记本已有事件循环 → 直接 await
+pool.map(work_defined_here)  # 错：用 bench 里的模块级函数</code></pre></div>
 </section>
 <section class="am-panel" id="panel-K">
-<header class="am-panel-head"><span class="am-panel-id">K</span><h2>练习</h2></header>
-<div class="am-panel-body"><div class="am-md"><p><code>codes/concurrency/qa.ipynb</code> 有 7 道题：GIL 实测、I/O 实测、信号量限流、完成顺序、失败处理、阻塞陷阱、笔记本两个坑。</p>
-<p><code>codes/concurrency/check.py</code> 把结论逐条量一遍并断言，约 8 秒。</p>
+<header class="am-panel-head"><span class="am-panel-id">K</span><h2>常见坑</h2></header>
+<div class="am-panel-body"><div class="am-md"><ul>
+<li>用线程去加速纯 Python CPU 活</li>
+<li>协程里调 <code>time.sleep</code> / 同步 HTTP</li>
+<li><code>gather</code> 一次打几千个请求，没有 Semaphore</li>
+<li>共享计数不加锁</li>
+<li>把「我测过没问题」当成无竞态的证据</li>
+</ul>
+</div></div>
+</section>
+<section class="am-panel" id="panel-L">
+<header class="am-panel-head"><span class="am-panel-id">L</span><h2>什么时候别并发</h2></header>
+<div class="am-panel-body"><div class="am-md"><p>只有一两件事；还在调逻辑；瓶颈其实是算法或单次调用本身。</p>
+</div></div>
+</section>
+<section class="am-panel" id="panel-M">
+<header class="am-panel-head"><span class="am-panel-id">M</span><h2>默写口令</h2></header>
+<div class="am-panel-body"><div class="am-md"><ol>
+<li>CPU ×4，线程快吗？→ 不快。</li>
+<li>I/O ×8 ×0.2s，线程？→ ≈0.2s。</li>
+<li>无锁 8000？→ ≪8000；加锁 =8000。</li>
+<li>Semaphore(3)×9×0.2？→ ≈0.6s，峰值 3。</li>
+<li>协程 time.sleep×5？→ ≈1s。</li>
+</ol>
+</div></div>
+</section>
+<section class="am-panel" id="panel-N">
+<header class="am-panel-head"><span class="am-panel-id">N</span><h2>练习</h2></header>
+<div class="am-panel-body"><div class="am-md"><p><code>qa.ipynb</code>：GIL、I/O、竞态、限流、完成顺序、失败/超时、阻塞陷阱、笔记本坑、默写自测。</p>
+<p><code>python codes/concurrency/check.py</code>：12 条断言，约 10 秒。</p>
 </div></div>
 </section>
 </div>
 </div>
 </main>
-<footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-20 14:38</footer>
+<footer class="am-colophon">Generated by Answer me with HTML 0.4.11 · 2026-10-24 00:11</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
-title: 并发速查
+title: 并发速查 · 夯实
 subtitle: 线程、进程、协程怎么选
 template: doc
 theme: blueprint
-source: codes/concurrency/cheat_api.md
+source: codes/concurrency
 ---
 
 ## 速览
 
-并发不是「多加线程」。先看瓶颈在烧 CPU 还是在等 I/O，再决定用哪个工具。
+先看瓶颈在烧 CPU 还是在等 I/O，再决定用哪个工具。两分钟复盘：`codes/concurrency/review.md`。
 
 ```flow
 (一份活) -&gt; {瓶颈在哪?}
@@ -679,65 +705,42 @@ source: codes/concurrency/cheat_api.md
 {瓶颈在哪?} -&gt; (直接串行): 只有一两个
 ```
 
-三种写法都能跑通「任务并行」，但只有一种能真正加速当前瓶颈。选错的代价是多写代码、多踩坑，速度一点没变。
-
-练习见 `codes/concurrency/qa.ipynb`，负载在 `codes/concurrency/bench.py`。
-
 ## 四个候选
 
-| 写法 | 并发单元 | 能加速什么 | 代价 |
-| --- | --- | --- | --- |
-| 串行 | 无 | 什么都不加速 | 慢，但最好调 |
-| `ThreadPoolExecutor` | 线程 | I/O 密集 | 受 GIL 限制，CPU 活不加速 |
-| `ProcessPoolExecutor` | 进程 | CPU 密集 | 启动贵，数据要能 pickle |
-| `asyncio` | 协程 | 海量 I/O | 全链路得是异步的 |
-| `InterpreterPoolExecutor` | 子解释器 | CPU 密集 | 3.14 新增，生态还在跟进 |
-
-`InterpreterPoolExecutor` 和进程池解决同一个问题：绕开 GIL。它比进程轻，但模块导入和对象传递的约束更多。
+| 写法 | 能加速什么 | 代价 |
+| --- | --- | --- |
+| 串行 | 什么都不加速 | 慢，但最好调 |
+| `ThreadPoolExecutor` | I/O 密集 | 受 GIL 限制，CPU 活不加速 |
+| `ProcessPoolExecutor` | CPU 密集 | 启动贵，数据要能 pickle |
+| `asyncio` | 海量 I/O | 全链路得是异步的 |
 
 ## 实测：两种瓶颈，两种结论
 
-同一台机器（10 核），`bench.cpu_work` 每次约 0.12 秒。
+| 场景 | 串行 | 线程 | 进程 |
+| --- | --- | --- | --- |
+| 4 次 CPU 计算 | ~0.5s | ~0.5s | ~0.2s |
+| 8 次 0.2s 等待 | ~1.6s | ~0.2s | — |
 
-| 场景 | 串行 | 线程 | 进程 | 子解释器 |
-| --- | --- | --- | --- | --- |
-| 4 次 CPU 计算 | 0.46s | 0.46s | 0.19s | 0.15s |
-| 8 次 0.2s 网络等待 | 1.63s | 0.21s | — | — |
-
-- CPU 密集：加线程耗时不变。线程之间在抢同一把 GIL。
-- I/O 密集：8 个线程把 1.63 秒压到 0.21 秒。等待时 GIL 是放开的。
-- CPU 密集换成进程，4 个任务从 0.46 秒到 0.19 秒。没有到 4 倍，因为进程启动和结果回传都要时间。
+- CPU 密集：加线程耗时不变。
+- I/O 密集：8 个线程把等待压到一批的时间。
 
 ## GIL 限制的是什么
 
-GIL 是解释器级别的锁。同一时刻只有一个线程在跑 Python 字节码。
+同一时刻只有一个线程在跑 Python 字节码。阻塞 I/O 会主动放开 GIL。`numpy` 等 C 扩展在重活里也会放开——先量再说。
 
-- 纯 Python 运算全程拿着 GIL，多线程只能轮流跑。
-- 阻塞的 I/O 会主动放开 GIL，这时别的线程可以进来。
-- `numpy`、`hashlib`、`zlib` 这类 C 扩展在重活里也会放开 GIL。
+## 竞态与锁
 
-推论：如果你的 CPU 活已经被 `numpy` 向量化，线程也可能有效，先量再说。
+读-改-写中间一旦让出，无锁必丢计数。`with threading.Lock():` 是标配；能不共享状态就别共享。
 
 ## asyncio 骨架
 
 ```python
 async def call(i): ...
 
-async def main():
-    results = await asyncio.gather(*[call(i) for i in range(9)])
-    return results
+results = await asyncio.gather(*[call(i) for i in range(9)])
+# 谁先好先处理：asyncio.as_completed(...)
+# 阻塞库：await asyncio.to_thread(blocking_fn, arg)
 ```
-
-| 需求 | 写法 |
-| --- | --- |
-| 一起等，按输入顺序收 | `await asyncio.gather(*coros)` |
-| 谁先回来先处理 | `async for f in asyncio.as_completed(coros)` |
-| 单个超时 | `await asyncio.wait_for(coro, timeout=0.2)` |
-| 整段超时 | `async with asyncio.timeout(0.2):` |
-| 一个失败不影响别人 | `gather(..., return_exceptions=True)` |
-| 失败就取消整组 | `async with asyncio.TaskGroup() as tg:` |
-
-`gather` 默认遇到第一个异常就往外抛。此时其余任务还在后台跑，没人收结果。要一条条report，就加 `return_exceptions=True`。
 
 ## 限流：一次只放 N 个
 
@@ -747,87 +750,64 @@ sem = asyncio.Semaphore(3)
 async def one(i):
     async with sem:
         return await call(i)
-
-await asyncio.gather(*[one(i) for i in range(9)])
 ```
 
-9 个 0.2 秒的请求，上限 3 个，实测 0.60 秒。正好是三批。
+9 × 0.2s、上限 3 → 约 0.60s，峰值 3。
 
-调模型接口必须有这一层。没有它，`gather` 会一次性打满服务端。
+## 失败与超时
+
+```python
+results = await asyncio.gather(*coros, return_exceptions=True)
+await asyncio.wait_for(coro, timeout=0.2)
+```
 
 ## 进程池的硬约束
 
-子进程是新解释器，它重新 import 你的模块，拿不到父进程的内存。
-
-- 传给进程池的函数必须定义在**模块级**，不能是闭包，也不能在笔记本单元格里定义。
-- 参数和返回值必须能 pickle。连接对象、生成器、lambda 都传不过去。
-- 脚本入口要写 `if __name__ == &quot;__main__&quot;:`，不然 spawn 会无限递归。
-- macOS 和 Windows 默认用 spawn，Linux 默认 fork。spawn 更严格，按它写才跨平台。
-
-笔记本里报的是 `BrokenProcessPool`。真正的原因（`AttributeError`）在子进程的 stderr 里，往上翻第一条 Traceback。
+函数必须在模块级；入口写 `if __name__ == &quot;__main__&quot;:`。笔记本单元格里的 `def` 子进程看不到。
 
 ## 笔记本两个坑
 
 ```python
-asyncio.run(main())
-# RuntimeError: asyncio.run() cannot be called from a running event loop
+asyncio.run(main())          # 错：笔记本已有事件循环 → 直接 await
+pool.map(work_defined_here)  # 错：用 bench 里的模块级函数
 ```
-
-Jupyter 的内核已经有一个在跑的事件循环。单元格里直接用顶层 `await`，不要再包一层 `asyncio.run`。
-
-第二个坑是进程池：
-
-```python
-def work(n): ...          # 定义在单元格里
-ex.map(work, [1, 2])      # BrokenProcessPool
-```
-
-把它挪进 `bench.py` 这种可导入的模块，问题就没了。
 
 ## 常见坑
 
-- 协程里调 `time.sleep` 或同步 `requests`。整个事件循环停住，5 个 0.2 秒的任务要 1.02 秒。
-- 用线程池算 CPU 活。耗时和串行一模一样，还多了一层调度开销。
-- `gather` 不用 `return_exceptions`，一个失败就丢掉全部结果。
-- `create_task` 的返回值不保存。任务可能被垃圾回收，提前取消。
-- 进程池里传 lambda 或闭包。序列化阶段就失败。
-- 给 I/O 任务开几百个线程。内存和上下文切换都扛不住，换 `asyncio` 或加信号量。
-- 用 `asyncio.run` 嵌在已有循环里。笔记本、FastAPI、Jupyter 都会踩到。
+- 用线程去加速纯 Python CPU 活
+- 协程里调 `time.sleep` / 同步 HTTP
+- `gather` 一次打几千个请求，没有 Semaphore
+- 共享计数不加锁
+- 把「我测过没问题」当成无竞态的证据
 
 ## 什么时候别并发
 
-- 只有一个请求。并发没有收益，只多一层代码。
-- 任务之间有严格顺序。并发要靠信号量或队列把顺序再加回来，不如写清楚。
-- 数量很少、每次很快。线程池的启动开销可能比省下的时间还多。
+只有一两件事；还在调逻辑；瓶颈其实是算法或单次调用本身。
 
-并发是放大吞吐的工具，不是提速单次调用的工具。
+## 默写口令
+
+1. CPU ×4，线程快吗？→ 不快。
+2. I/O ×8 ×0.2s，线程？→ ≈0.2s。
+3. 无锁 8000？→ ≪8000；加锁 =8000。
+4. Semaphore(3)×9×0.2？→ ≈0.6s，峰值 3。
+5. 协程 time.sleep×5？→ ≈1s。
 
 ## 练习
 
-`codes/concurrency/qa.ipynb` 有 7 道题：GIL 实测、I/O 实测、信号量限流、完成顺序、失败处理、阻塞陷阱、笔记本两个坑。
+`qa.ipynb`：GIL、I/O、竞态、限流、完成顺序、失败/超时、阻塞陷阱、笔记本坑、默写自测。
 
-`codes/concurrency/check.py` 把结论逐条量一遍并断言，约 8 秒。
+`python codes/concurrency/check.py`：12 条断言，约 10 秒。
 </textarea>
 <script>
 (() => {
   const root = document.documentElement;
-  const cycle = (list, cur) => list[(list.indexOf(cur) + 1) % list.length];
-  const label = (btn, value) => {
-    const map = JSON.parse(btn.dataset.labels || '{}');
-    btn.textContent = map[value] || value;
-  };
-  const bind = (name, attr, values) => {
-    const btn = document.querySelector(`[data-am="${name}"]`);
-    if (!btn) return;
-    label(btn, root.getAttribute(attr));
-    btn.addEventListener('click', () => {
-      const next = cycle(values, root.getAttribute(attr));
-      root.setAttribute(attr, next);
-      label(btn, next);
-    });
-  };
-  bind('theme', 'data-theme', ['blueprint', 'shadcn']);
-  bind('mode', 'data-mode', ['auto', 'light', 'dark']);
+  // Each toolbar list sets one root attribute; its options name the values, so the runtime names no theme or mode.
+  for (const [name, attr] of [['theme', 'data-theme'], ['mode', 'data-mode']]) {
+    const select = document.querySelector(`select[data-am="${name}"]`);
+    if (!select) continue;
+    select.value = root.getAttribute(attr);
+    select.addEventListener('change', () => root.setAttribute(attr, select.value));
+  }
 
   const copyBtn = document.querySelector('[data-am="copy"]');
   copyBtn?.addEventListener('click', async () => {

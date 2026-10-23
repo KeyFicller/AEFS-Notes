@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """并发专题的自检：把 qa.ipynb 里的结论逐条量一遍。
 
+入门层要过的关：CPU/I/O 选型、竞态+锁、限流、失败/超时、
+as_completed 顺序、同步阻塞毁掉并发。
+
 耗时断言给的是宽区间，机器忙的时候也不会误报；真正防的是「结论写反了」。
-全部通过约 8 秒。
+全部通过约 10 秒。
 """
 
 from __future__ import annotations
 
 import asyncio
 import sys
+import threading
 import time
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from pathlib import Path
@@ -60,6 +64,49 @@ def cpu_and_io() -> None:
           f"串行 {serial_io:.2f}s，线程 {threads_io:.2f}s")
 
 
+def race_and_lock() -> None:
+    """读-改-写中间让出一次，无锁必丢；加锁后等于期望。"""
+
+    def bump_unlocked(counter: list[int], n: int) -> None:
+        for _ in range(n):
+            current = counter[0]
+            time.sleep(0)  # yield so another thread can interleave
+            counter[0] = current + 1
+
+    unlocked = [0]
+    threads = [
+        threading.Thread(target=bump_unlocked, args=(unlocked, 2000))
+        for _ in range(4)
+    ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    check(
+        "无锁竞态会丢计数",
+        unlocked[0] < 8000,
+        f"期望 8000，实得 {unlocked[0]}",
+    )
+
+    lock = threading.Lock()
+
+    def bump_locked(counter: list[int], n: int) -> None:
+        for _ in range(n):
+            with lock:
+                counter[0] += 1
+
+    locked = [0]
+    threads = [
+        threading.Thread(target=bump_locked, args=(locked, 2000))
+        for _ in range(4)
+    ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    check("加锁后计数正确", locked[0] == 8000, f"期望 8000，实得 {locked[0]}")
+
+
 def semaphore_cap() -> None:
     async def run() -> list[int]:
         sem = asyncio.Semaphore(3)
@@ -82,6 +129,26 @@ def semaphore_cap() -> None:
     check("Semaphore 真的限住并发", peak <= 3, f"峰值并发 {peak}")
     check("限流总耗时约等于三批", 0.55 <= elapsed <= 1.2,
           f"9 个 0.2s 请求、上限 3 个，用时 {elapsed:.2f}s，收了 {count} 个")
+
+
+def as_completed_order() -> None:
+    async def finish(name: str, delay: float) -> str:
+        await asyncio.sleep(delay)
+        return name
+
+    async def collect() -> list[str]:
+        coros = [finish("a", 0.3), finish("b", 0.1), finish("c", 0.2)]
+        out: list[str] = []
+        for fut in asyncio.as_completed(coros):
+            out.append(await fut)
+        return out
+
+    order = asyncio.run(collect())
+    check(
+        "as_completed 按完成顺序",
+        order[0] == "b" and set(order) == {"a", "b", "c"},
+        f"得到 {order}，最快的 b 应先回来",
+    )
 
 
 def failure_handling() -> None:
@@ -130,7 +197,9 @@ def blocking_in_async() -> None:
 
 def main() -> int:
     cpu_and_io()
+    race_and_lock()
     semaphore_cap()
+    as_completed_order()
     failure_handling()
     blocking_in_async()
     if failures:
