@@ -3,17 +3,18 @@
 Exercises live in `codes/mcp/{stage}/qa.ipynb`. When a stage needs files on
 disk, that stage directory is the workspace.
 
-This track starts from the wire: JSON-RPC messages in, tool results out. The
-`references/` notebook sketches a newer discover / subscription shape; stage 1
-implements the stable tools loop that agents actually call today.
+Stage 1 uses **FastMCP + Pydantic**: you write typed tool functions; the
+framework owns JSON Schema generation and the MCP protocol (default era
+`2026-07-28`). The conceptual loop stays `connect → list_tools → call_tool`
+— the same initialize / tools/list / tools/call agents rely on, without
+hand-rolling envelopes.
 
 | Stage | Directory | Focus |
 | --- | --- | --- |
-| 1 | `01_jsonrpc_tools` | NDJSON JSON-RPC over stdio, `initialize`, `tools/list`, `tools/call`, register a tool |
-| 2 | *(planned)* `02_content_length_stdio` | Upgrade framing to MCP Content-Length headers |
-| 3 | *(planned)* `03_resources_prompts` | `resources/list` / `read`, `prompts/list` / `get` |
-| 4 | *(planned)* `04_official_sdk` | Same server shape on the official MCP Python SDK |
+| 1 | `01_fastmcp_tools` | FastMCP server, Pydantic/`Field` schemas, Client list/call loop |
+| 2 | *(planned)* `02_resources_prompts` | `resources` / `prompts` on the same FastMCP server |
+| 3 | *(planned)* `03_stdio_host` | Run `server.py` under a real desktop host / Inspector |
+| 4 | *(planned)* `04_http_remote` | HTTP transport for a remote MCP endpoint |
 
-Honesty note: stage 1 is a **teaching subset**, not a full MCP server. It keeps
-the method names and result shapes close to MCP so later stages can swap the
-transport without rewriting the tool handlers.
+Honesty note: stage 1 is still a **lab**. It teaches the tools loop on
+FastMCP defaults; it is not a production deployment guide.

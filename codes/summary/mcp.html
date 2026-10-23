@@ -444,45 +444,40 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">JSON-RPC tools loop for agents</p><div class="am-head-meta"><span><b>source</b>codes/mcp/index.md</span></div></header>
+<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools loop</p><div class="am-head-meta"><span><b>source</b>codes/mcp/index.md</span></div></header>
 <div class="am-doc-layout">
-<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · Overview</a><a href="#panel-B">B · Methods</a><a href="#panel-C">C · Lab shape</a><a href="#panel-D">D · Pitfalls</a></nav><div class="am-doc-body">
+<nav class="am-toc" aria-label="目录"><a href="#panel-A">A · Overview</a><a href="#panel-B">B · FastMCP surface</a><a href="#panel-C">C · Lab shape</a><a href="#panel-D">D · Pitfalls</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
 <header class="am-panel-head"><span class="am-panel-id">A</span><h2>Overview</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>Model Context Protocol (MCP) lets a host talk to a tool server over a framed JSON-RPC transport. Agents care about three calls first: <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>.</p>
-<p>Practice track: <code>codes/mcp/</code>. Stage 1 (<code>01_jsonrpc_tools</code>) uses NDJSON over stdio so every message is one printable line. Real MCP stdio uses Content-Length framing — planned as stage 2.</p>
+<div class="am-panel-body"><div class="am-md"><p>Model Context Protocol (MCP) lets a host talk to a tool server. Agents care about three steps first: connect / negotiate, <code>tools/list</code>, <code>tools/call</code>.</p>
+<p>Practice track: <code>codes/mcp/</code>. Stage 1 (<code>01_fastmcp_tools</code>) uses <strong>FastMCP + Pydantic</strong>. You write typed <code>@mcp.tool</code> functions; the framework owns JSON Schema generation and the MCP wire protocol (default era <code>2026-07-28</code>).</p>
 <ul>
-<li>Request / response share an <code>id</code>. Notifications omit <code>id</code>.</li>
-<li>Tool results are <code>content</code> lists, usually <code>{"type":"text","text":"..."}</code>.</li>
-<li>Handlers stay ordinary Python callables; the protocol only ships their inputs and outputs.</li>
+<li>Do not hand-roll JSON-RPC envelopes or <code>inputSchema</code> dicts in this lab.</li>
+<li>Type hints + <code>pydantic.Field</code> become the schema hosts advertise to models.</li>
+<li><code>Client(mcp)</code> negotiates the protocol when the async context enters, then exposes <code>list_tools</code> / <code>call_tool</code>.</li>
 </ul>
 </div></div>
 </section>
 <section class="am-panel" id="panel-B">
-<header class="am-panel-head"><span class="am-panel-id">B</span><h2>Methods</h2></header>
-<div class="am-panel-body"><div class="am-md"><h3>Session</h3>
+<header class="am-panel-head"><span class="am-panel-id">B</span><h2>FastMCP surface</h2></header>
+<div class="am-panel-body"><div class="am-md"><h3>Server</h3>
 <div class="am-table-wrap"><table>
-<thead><tr><th>Method</th><th>Direction</th><th>Notes</th></tr></thead>
+<thead><tr><th>API</th><th>Notes</th></tr></thead>
 <tbody>
-<tr><td><code>initialize</code></td><td>client → server</td><td>Negotiate <code>protocolVersion</code>, read <code>capabilities</code> / <code>serverInfo</code></td></tr>
-<tr><td><code>notifications/initialized</code></td><td>client → server</td><td>Notification (no <code>id</code>); server is ready for ordinary calls</td></tr>
+<tr><td><code>FastMCP(name)</code></td><td>Create the server; <code>name</code> shows up in <code>server_info</code></td></tr>
+<tr><td><code>@mcp.tool</code></td><td>Register a typed callable; docstring → description; annotations → schema</td></tr>
+<tr><td><code>Annotated[T, Field(description=...)]</code></td><td>Pydantic field metadata the host reads via <code>input_schema</code></td></tr>
+<tr><td><code>mcp.run()</code></td><td>Default stdio transport for desktop hosts / Inspector</td></tr>
 </tbody></table></div>
-<h3>Tools</h3>
+<h3>Client</h3>
 <div class="am-table-wrap"><table>
-<thead><tr><th>Method</th><th>Important fields</th><th>Notes</th></tr></thead>
+<thead><tr><th>API</th><th>Notes</th></tr></thead>
 <tbody>
-<tr><td><code>tools/list</code></td><td><code>result.tools[].name</code> / <code>description</code> / <code>inputSchema</code></td><td>JSON Schema for arguments; host uses this to bind tools</td></tr>
-<tr><td><code>tools/call</code></td><td><code>params.name</code>, <code>params.arguments</code></td><td>Returns <code>content[]</code>; set <code>isError</code> when the tool itself failed</td></tr>
-</tbody></table></div>
-<h3>JSON-RPC envelope</h3>
-<div class="am-table-wrap"><table>
-<thead><tr><th>Field</th><th>Notes</th></tr></thead>
-<tbody>
-<tr><td><code>jsonrpc</code></td><td>Always <code>"2.0"</code></td></tr>
-<tr><td><code>id</code></td><td>Correlate request/response; omit on notifications</td></tr>
-<tr><td><code>method</code></td><td>e.g. <code>tools/list</code></td></tr>
-<tr><td><code>params</code></td><td>Object; may be empty</td></tr>
-<tr><td><code>result</code> / <code>error</code></td><td>Mutually exclusive on responses</td></tr>
+<tr><td><code>Client(mcp)</code></td><td>In-process transport for labs / tests</td></tr>
+<tr><td><code>Client(Path("server.py"))</code></td><td>STDIO subprocess — same API as in-process</td></tr>
+<tr><td><code>client.protocol_version</code></td><td>Negotiated era; FastMCP 4 defaults toward <code>2026-07-28</code></td></tr>
+<tr><td><code>await client.list_tools()</code></td><td>Conceptual <code>tools/list</code>; read <code>.name</code> / <code>.input_schema</code></td></tr>
+<tr><td><code>await client.call_tool(name, args)</code></td><td>Conceptual <code>tools/call</code>; use <code>result.content</code> / <code>result.data</code></td></tr>
 </tbody></table></div>
 </div></div>
 </section>
@@ -490,146 +485,57 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <header class="am-panel-head"><span class="am-panel-id">C</span><h2>Lab shape</h2></header>
 <div class="am-panel-body"><div class="am-md"><p>Stage 1 files:</p>
 <ul>
-<li><code>server.py</code> — stdin loop, <code>handle()</code>, <code>TOOLS</code> registry</li>
-<li><code>client.py</code> — spawn server, <code>request</code> / <code>notify</code></li>
-<li><code>qa.ipynb</code> — parse list results, dispatch calls, drive the live server</li>
+<li><code>server.py</code> — <code>FastMCP</code> + <code>echo</code> / <code>add</code> tools</li>
+<li><code>client.py</code> — <code>Client(mcp)</code> demo of list → call</li>
+<li><code>requirements.txt</code> — <code>fastmcp&gt;=4.1</code></li>
+<li><code>qa.ipynb</code> — inspect schemas, build a tool, drive the live server, register <code>mul</code></li>
 </ul>
-<pre><code>python client.py
+<pre><code>pip install -r requirements.txt
+python client.py
 python client.py add --a 2 --b 3
 </code></pre>
-<p><code>references/data-layer-protocol.ipynb</code> sketches a newer discover / subscription shape; keep it as protocol reading, not as the stage-1 runtime.</p>
+<p><code>references/data-layer-protocol.ipynb</code> stays protocol reading, not the stage-1 runtime.</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-D">
 <header class="am-panel-head"><span class="am-panel-id">D</span><h2>Pitfalls</h2></header>
 <div class="am-panel-body"><div class="am-md"><ul>
-<li>Notifications must not expect a response — if you <code>readline</code> after <code>notifications/initialized</code>, the client hangs.</li>
-<li>Unknown tool names should surface as JSON-RPC / tool errors, not an uncaught traceback that kills the server process.</li>
-<li>NDJSON is for learning. Do not assume a production MCP host accepts one-JSON-per-line without Content-Length headers.</li>
-<li><code>inputSchema</code> is for the host / model. The lab server does not validate arguments unless you add that yourself.</li>
+<li>Prefer flat <code>Annotated</code> parameters over nesting a whole Pydantic model as one argument — hosts usually call tools with flat JSON objects.</li>
+<li>Jupyter already has an event loop: use top-level <code>await</code> with <code>Client</code>; use <code>asyncio.run</code> only in plain scripts.</li>
+<li>Unknown tool names raise <code>ToolError</code> from the client — do not catch by parsing raw JSON-RPC error envelopes.</li>
+<li>Stick to current FastMCP defaults / the <code>2026-07-28</code> era; do not teach ancient protocol version constants.</li>
 </ul>
 </div></div>
+</section>
 </section>
 </div></div>
 </main>
 <footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-07 10:32</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
-title: json API 速查
-
-subtitle: 读写 JSON
-
+title: MCP API 速查
+subtitle: FastMCP + Pydantic tools loop
 template: doc
 theme: blueprint
-source: codes/python_stdlibs/json/cheat_api.md
+source: codes/mcp/index.md
 ---
 
-## 速览
-按主题分组的常用 API。签名与默认值对照本机 `Python 3.14.6` 核对，`=` 后面是默认值，没写默认值的表示必填。练习见 `qa.ipynb`，模块清单一览见 `../stdlib.md`。
+## Overview
+Stage 1 (`01_fastmcp_tools`) uses FastMCP + Pydantic. Framework owns schema + protocol (default `2026-07-28`). Conceptual loop: connect → list_tools → call_tool.
 
-约定：
+## Server
+| API | Notes |
+| --- | --- |
+| `FastMCP(name)` | Create server |
+| `@mcp.tool` | Typed callable → tool |
+| `Annotated[T, Field(...)]` | Schema metadata |
+| `mcp.run()` | stdio transport |
 
-- `dumps` / `loads` 面向字符串，`dump` / `load` 面向文件对象，多出来的第一个参数就是文件。
-- JSON 只有 6 种类型：object、array、string、number、boolean、null；Python 的类型要多，映射不上的部分靠 `default=`。
-
-## API 速查
-### 序列化（Python → JSON）
-| 名称 | 常用关键字参数 | 说明 |
-| --- | --- | --- |
-| `dumps` | `obj`、`skipkeys=False`、`ensure_ascii=True`、`check_circular=True`、`allow_nan=True`、`cls=None`、`indent=None`、`separators=None`、`default=None`、`sort_keys=False` | 返回 JSON 字符串 |
-| `dump` | `obj`、`fp` + 上面全部 | 写进文件对象，注意 `fp` 是第二个位置参数 |
-| `JSONEncoder` | `skipkeys=False`、`ensure_ascii=True`、`sort_keys=False`、`indent=None`、`separators=None`、`default=None` | 编码器类；继承并重写 `default` 可支持自定义类型 |
-
-### 反序列化（JSON → Python）
-| 名称 | 常用关键字参数 | 说明 |
-| --- | --- | --- |
-| `loads` | `s`、`cls=None`、`object_hook=None`、`parse_float=None`、`parse_int=None`、`parse_constant=None`、`object_pairs_hook=None` | 从字符串解析；`s` 可以是 `str` / `bytes` / `bytearray` |
-| `load` | `fp` + 上面全部 | 从文件对象读并解析 |
-| `JSONDecoder` | `object_hook=None`、`parse_float=None`、`parse_int=None`、`parse_constant=None`、`strict=True`、`object_pairs_hook=None` | 解码器类 |
-| `JSONDecodeError` | — | `ValueError` 子类，带 `.msg`、`.doc`、`.pos`、`.lineno`、`.colno` |
-
-### 常用编码选项
-| 名称 | 常用取值 | 说明 |
-| --- | --- | --- |
-| `ensure_ascii` | `False` | 设 `False` 才保留中文等非 ASCII 字符，否则转成 `\uXXXX` |
-| `indent` | `2` / `4` | 缩进格式化，方便人读；会明显变长 |
-| `separators` | `(&quot;, &quot;, &quot;: &quot;)` / `(&quot;,&quot;, &quot;:&quot;)` | 默认紧凑给 `(&quot;, &quot;, &quot;: &quot;)`；`indent` 非空时默认变成 `(&quot;,&quot; , &quot;: &quot;)` |
-| `sort_keys` | `True` | 按键排序输出，便于 diff 和比对 |
-| `skipkeys` | `True` | 遇到非法的 key 类型跳过而不是报错 |
-| `allow_nan` | `False` | 默认允许 `NaN`/`Infinity`，但这不是标准 JSON；要和别的语言互通就关掉 |
-| `default` | 函数 | 遇到不可序列化对象时调用，返回可序列化的替代值 |
-| `object_pairs_hook` | 函数 | 接收键值对列表，可用来去重、保持顺序或自定义类型 |
-
-## 使用用例
-### 1. 字典和文本互转
-```python
-import json
-text = json.dumps(data, ensure_ascii=False)
-print(text)
-print(json.loads(text)[&quot;name&quot;])
-```
-
-### 2. 写进文件再读出来
-```python
-import json
-with path.open(&quot;w&quot;, encoding=&quot;utf-8&quot;) as handle:
-    json.dump(data, handle, ensure_ascii=False, indent=4)
-with path.open(encoding=&quot;utf-8&quot;) as handle:
-    print(json.load(handle)[&quot;age&quot;])
-```
-
-### 3. 文本不合法
-```python
-import json
-try:
-    json.loads(raw)
-except json.JSONDecodeError as exc:
-    print(type(exc).__name__)
-```
-
-### 4. 一组对象
-```python
-import json
-loaded = json.loads(json.dumps(data, ensure_ascii=False))
-print(loaded[1][&quot;name&quot;])
-```
-
-### 5. 键按字母序
-```python
-import json
-print(json.dumps(data, sort_keys=True))
-```
-
-### 6. 日期不能直接写进去
-```python
-import json
-text = json.dumps(data, default=lambda value: value.isoformat())
-print(text)
-```
-
-### 7. 一行一个 JSON
-```python
-import json
-for line in path.read_text(encoding=&quot;utf-8&quot;).splitlines():
-    print(json.loads(line)[&quot;name&quot;])
-```
-
-### 8. 读进来时收成坐标
-```python
-import json
-def as_point(obj):
-    return (obj[&quot;x&quot;], obj[&quot;y&quot;])
-print(json.loads(raw, object_hook=as_point))
-```
-
-## 常见坑
-- JSON 的 key 只能是字符串（数字等会被转换），`sort_keys=True` 遇到混合类型 key 会报错。
-- 元组会被当数组序列化成 list，反序列化拿不回元组；类型信息要靠约定自己还原。
-- `datetime`、`set`、自定义对象都不能直接序列化，要写 `default=` 或用 `JSONEncoder` 子类。
-- 写文件时记得 `encoding=&quot;utf-8&quot;` + `ensure_ascii=False`，否则中文会被转义，读出来还是正常的中文。
-- `json.dump` 不负责换行和编码；读 Windows 生成的带 BOM 文件用 `encoding=&quot;utf-8-sig&quot;`。
-- 浮点数走的是 `repr` 精度，超大整数也可能丢精度；要精确表示金额请用字符串或 `Decimal`。
-- `loads` 解析失败抛 `JSONDecodeError`，它同时是 `ValueError`；给用户的报错信息里带上 `.lineno` / `.colno` 更好定位。
-- `allow_nan=True` 写出的 `NaN` 不是合法 JSON，别的语言解析会失败；跨语言时设 `allow_nan=False`。
+## Client
+| API | Notes |
+| --- | --- |
+| `Client(mcp)` | In-process |
+| `await client.list_tools()` | tools/list |
+| `await client.call_tool(name, args)` | tools/call |
 </textarea>
 <script>
 (() => {
