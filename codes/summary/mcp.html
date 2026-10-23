@@ -444,17 +444,17 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools loop</p><div class="am-head-meta"><span><b>source</b>codes/mcp/index.md</span></div></header>
+<header class="am-head"><h1>MCP API 速查</h1><p class="am-sub">FastMCP + Pydantic tools / resources / prompts</p><div class="am-head-meta"><span><b>source</b>codes/mcp/</span></div></header>
 <div class="am-doc-layout">
 <nav class="am-toc" aria-label="目录"><a href="#panel-A">A · Overview</a><a href="#panel-B">B · FastMCP surface</a><a href="#panel-C">C · Lab shape</a><a href="#panel-D">D · Pitfalls</a></nav><div class="am-doc-body">
 <section class="am-panel" id="panel-A">
 <header class="am-panel-head"><span class="am-panel-id">A</span><h2>Overview</h2></header>
 <div class="am-panel-body"><div class="am-md"><p>Model Context Protocol (MCP) lets a host talk to a tool server. Agents care about three steps first: connect / negotiate, <code>tools/list</code>, <code>tools/call</code>.</p>
-<p>Practice track: <code>codes/mcp/</code>. Stage 1 (<code>01_fastmcp_tools</code>) uses <strong>FastMCP + Pydantic</strong>. You write typed <code>@mcp.tool</code> functions; the framework owns JSON Schema generation and the MCP wire protocol (default era <code>2026-07-28</code>).</p>
+<p>Practice track: <code>codes/mcp/</code>. Stages 1–2 use <strong>FastMCP + Pydantic</strong>. You write typed <code>@mcp.tool</code> / <code>@mcp.resource</code> / <code>@mcp.prompt</code> callables; the framework owns JSON Schema generation and the MCP wire protocol (default era <code>2026-07-28</code>).</p>
 <ul>
 <li>Do not hand-roll JSON-RPC envelopes or <code>inputSchema</code> dicts in this lab.</li>
 <li>Type hints + <code>pydantic.Field</code> become the schema hosts advertise to models.</li>
-<li><code>Client(mcp)</code> negotiates the protocol when the async context enters, then exposes <code>list_tools</code> / <code>call_tool</code>.</li>
+<li><code>Client(mcp)</code> negotiates the protocol when the async context enters, then exposes tools / resources / prompts list+call.</li>
 </ul>
 </div></div>
 </section>
@@ -468,6 +468,8 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <tr><td><code>@mcp.tool</code></td><td>Register a typed callable; docstring → description; annotations → schema</td></tr>
 <tr><td><code>Annotated[T, Field(description=...)]</code></td><td>Pydantic field metadata the host reads via <code>input_schema</code></td></tr>
 <tr><td><code>mcp.run()</code></td><td>Default stdio transport for desktop hosts / Inspector</td></tr>
+<tr><td><code>@mcp.resource(uri)</code></td><td>Static resource; <code>{param}</code> in the URI makes a template</td></tr>
+<tr><td><code>@mcp.prompt</code></td><td>Reusable prompt template; args from annotations / Field</td></tr>
 </tbody></table></div>
 <h3>Client</h3>
 <div class="am-table-wrap"><table>
@@ -478,23 +480,27 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <tr><td><code>client.protocol_version</code></td><td>Negotiated era; FastMCP 4 defaults toward <code>2026-07-28</code></td></tr>
 <tr><td><code>await client.list_tools()</code></td><td>Conceptual <code>tools/list</code>; read <code>.name</code> / <code>.input_schema</code></td></tr>
 <tr><td><code>await client.call_tool(name, args)</code></td><td>Conceptual <code>tools/call</code>; use <code>result.content</code> / <code>result.data</code></td></tr>
+<tr><td><code>await client.list_resources()</code> / <code>read_resource(uri)</code></td><td>Discover + read resource contents</td></tr>
+<tr><td><code>await client.list_resource_templates()</code></td><td>URI templates with placeholders</td></tr>
+<tr><td><code>await client.list_prompts()</code> / <code>get_prompt(name, args)</code></td><td>Discover + render a prompt</td></tr>
 </tbody></table></div>
 </div></div>
 </section>
 <section class="am-panel" id="panel-C">
 <header class="am-panel-head"><span class="am-panel-id">C</span><h2>Lab shape</h2></header>
-<div class="am-panel-body"><div class="am-md"><p>Stage 1 files:</p>
+<div class="am-panel-body"><div class="am-md"><p>Stage directories under <code>codes/mcp/</code>:</p>
 <ul>
-<li><code>server.py</code> — <code>FastMCP</code> + <code>echo</code> / <code>add</code> tools</li>
-<li><code>client.py</code> — <code>Client(mcp)</code> demo of list → call</li>
-<li><code>requirements.txt</code> — <code>fastmcp&gt;=4.1</code></li>
-<li><code>qa.ipynb</code> — inspect schemas, build a tool, drive the live server, register <code>mul</code></li>
+<li><code>01_fastmcp_tools/</code> — <code>echo</code> / <code>add</code> tools; list → call</li>
+<li><code>02_resources_prompts/</code> — <code>lab://greeting</code>, <code>note://{slug}</code>, <code>critique</code> prompt</li>
+<li>each stage: <code>server.py</code>, <code>client.py</code>, <code>qa.ipynb</code></li>
+<li>shared deps: <code>codes/requirements.txt</code> (<code>fastmcp&gt;=4.1</code>)</li>
 </ul>
-<pre><code>pip install -r requirements.txt
+<pre><code>pip install -r ../../requirements.txt   # from a stage dir
 python client.py
-python client.py add --a 2 --b 3
+python client.py read --uri note://alpha
+python client.py prompt --topic "MCP resources"
 </code></pre>
-<p><code>references/data-layer-protocol.ipynb</code> stays protocol reading, not the stage-1 runtime.</p>
+<p><code>references/data-layer-protocol.ipynb</code> stays protocol reading, not the stage runtime.</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-D">
@@ -513,20 +519,21 @@ python client.py add --a 2 --b 3
 <footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-07 10:32</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
 title: MCP API 速查
-subtitle: FastMCP + Pydantic tools loop
+subtitle: FastMCP + Pydantic tools / resources / prompts
 template: doc
 theme: blueprint
-source: codes/mcp/index.md
+source: codes/mcp/
 ---
 
 ## Overview
-Stage 1 (`01_fastmcp_tools`) uses FastMCP + Pydantic. Framework owns schema + protocol (default `2026-07-28`). Conceptual loop: connect → list_tools → call_tool.
+Stages 1–2 use FastMCP + Pydantic. Framework owns schema + protocol (default `2026-07-28`). Loop: connect → tools / resources / prompts list+call.
 
 ## Server
 | API | Notes |
 | --- | --- |
 | `FastMCP(name)` | Create server |
 | `@mcp.tool` | Typed callable → tool |
+| `@mcp.resource` / `@mcp.prompt` | Resources (static + URI templates) and prompts |
 | `Annotated[T, Field(...)]` | Schema metadata |
 | `mcp.run()` | stdio transport |
 
