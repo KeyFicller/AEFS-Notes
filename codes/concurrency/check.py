@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """并发专题的自检：把 qa.ipynb 里的结论逐条量一遍。
 
-入门层要过的关：CPU/I/O 选型、竞态+锁、限流、失败/超时、
+入门层：CPU/I/O 选型、竞态+锁、限流、失败/超时、
 as_completed 顺序、同步阻塞毁掉并发。
 
+进阶层：TaskGroup 结构化并发、取消 / shield、Queue 背压。
+
 耗时断言给的是宽区间，机器忙的时候也不会误报；真正防的是「结论写反了」。
-全部通过约 10 秒。
+全部通过约 12 秒。
 """
 
 from __future__ import annotations
@@ -195,6 +197,153 @@ def blocking_in_async() -> None:
     check("await 让出控制权", good < 0.4, f"5 个 0.2s：asyncio.sleep {good:.2f}s")
 
 
+
+def taskgroup_vs_gather() -> None:
+    """TaskGroup 失败会取消兄弟并抛 ExceptionGroup；gather 默认不取消兄弟。"""
+
+    async def tg_case() -> tuple[bool, int]:
+        late = False
+
+        async def slow() -> None:
+            nonlocal late
+            try:
+                await asyncio.sleep(1.0)
+                late = True
+            except asyncio.CancelledError:
+                raise
+
+        async def boom() -> None:
+            await asyncio.sleep(0.05)
+            raise ValueError("tg boom")
+
+        n_exc = 0
+        try:
+            async with asyncio.TaskGroup() as tg:
+                tg.create_task(slow())
+                tg.create_task(boom())
+        except* ValueError as eg:
+            n_exc = len(eg.exceptions)
+        return late, n_exc
+
+    late, n_exc = asyncio.run(tg_case())
+    check("TaskGroup 失败会取消兄弟任务", late is False, f"慢任务是否跑完 late={late}")
+    check("TaskGroup 抛 ExceptionGroup", n_exc == 1, f"ValueError 个数 {n_exc}")
+
+    async def gather_case() -> bool:
+        late = False
+
+        async def slow() -> str:
+            nonlocal late
+            await asyncio.sleep(0.2)
+            late = True
+            return "ok"
+
+        async def boom() -> None:
+            await asyncio.sleep(0.05)
+            raise ValueError("gather boom")
+
+        try:
+            await asyncio.gather(slow(), boom())
+        except ValueError:
+            pass
+        await asyncio.sleep(0.25)
+        return late
+
+    late_g = asyncio.run(gather_case())
+    check("gather 默认不取消兄弟任务", late_g is True, f"慢任务是否跑完 late={late_g}")
+
+
+def cancellation_and_shield() -> None:
+    async def cancel_one() -> bool:
+        started = asyncio.Event()
+        saw = False
+
+        async def long() -> None:
+            nonlocal saw
+            started.set()
+            try:
+                await asyncio.sleep(10)
+            except asyncio.CancelledError:
+                saw = True
+                raise
+
+        t = asyncio.create_task(long())
+        await started.wait()
+        t.cancel()
+        try:
+            await t
+        except asyncio.CancelledError:
+            pass
+        return saw and t.cancelled()
+
+    check(
+        "task.cancel 触发 CancelledError",
+        asyncio.run(cancel_one()),
+        "长任务应被取消且 cancelled() 为 True",
+    )
+
+    async def shielded() -> bool:
+        finished = asyncio.Event()
+
+        async def work() -> str:
+            await asyncio.sleep(0.15)
+            finished.set()
+            return "done"
+
+        try:
+            await asyncio.wait_for(asyncio.shield(work()), timeout=0.05)
+        except TimeoutError:
+            pass
+        await asyncio.sleep(0.2)
+        return finished.is_set()
+
+    check(
+        "shield 保住被保护的任务",
+        asyncio.run(shielded()),
+        "0.05s 超时后，被 shield 的 0.15s 任务仍应跑完",
+    )
+
+
+def queue_backpressure() -> None:
+    async def run() -> tuple[list[int], list[int]]:
+        q: asyncio.Queue[int | None] = asyncio.Queue(maxsize=2)
+        blocked: list[int] = []
+
+        async def producer() -> None:
+            for i in range(5):
+                t0 = time.perf_counter()
+                await q.put(i)
+                if time.perf_counter() - t0 > 0.02:
+                    blocked.append(i)
+            await q.put(None)
+
+        async def consumer() -> list[int]:
+            out: list[int] = []
+            await asyncio.sleep(0.05)  # let producer fill to maxsize
+            while True:
+                item = await q.get()
+                if item is None:
+                    break
+                out.append(item)
+                await asyncio.sleep(0.08)
+            return out
+
+        cons = asyncio.create_task(consumer())
+        prod = asyncio.create_task(producer())
+        out = await cons
+        await prod
+        return out, blocked
+
+    elapsed, (out, blocked) = timed(lambda: asyncio.run(run()))
+    check("Queue 按顺序交付", out == [0, 1, 2, 3, 4], f"得到 {out}")
+    check(
+        "Queue(maxsize) 会背压生产者",
+        len(blocked) >= 1,
+        f"被挡住的 put 序号 {blocked}，总耗时 {elapsed:.2f}s",
+    )
+
+
+
 def main() -> int:
     cpu_and_io()
     race_and_lock()
@@ -202,6 +351,9 @@ def main() -> int:
     as_completed_order()
     failure_handling()
     blocking_in_async()
+    taskgroup_vs_gather()
+    cancellation_and_shield()
+    queue_backpressure()
     if failures:
         print(f"\n{len(failures)} 项失败: {', '.join(failures)}")
         return 1
