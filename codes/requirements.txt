@@ -1,2 +1,5 @@
 # Shared deps for codes/ practice tracks (not capstone/, not docker/app/).
 fastmcp>=4.1
+fasta2a>=2.1
+uvicorn>=0.30
+httpx>=0.27
