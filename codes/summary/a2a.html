@@ -444,15 +444,19 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <button class="am-btn" type="button" data-am="copy" data-done="已复制 ✓">复制源稿</button>
 </div>
 <main class="am-doc">
-<header class="am-head"><h1>A2A API 速查</h1><p class="am-sub">AgentCard · SendMessage · task states · JSON-RPC / HTTP+JSON / gRPC（A2A 1.0.1）</p><div class="am-head-meta"><span><b>source</b>codes/a2a/</span></div></header>
+<header class="am-head"><h1>A2A API 速查</h1><p class="am-sub">AgentCard · SendMessage · FastA2A Worker · task states · JSON-RPC（A2A 1.0.1 + FastA2A）</p><div class="am-head-meta"><span><b>source</b>codes/a2a/</span></div></header>
 <div class="am-doc-layout">
 <nav class="am-toc" aria-label="目录"><a href="#panel-A">A · Overview</a><a href="#panel-B">B · Agent Card</a><a href="#panel-C">C · Message / Task</a><a href="#panel-D">D · Bindings</a><a href="#panel-E">E · Methods &amp; errors</a><a href="#panel-F">F · Lab shape</a></nav><div class="am-doc-body">
 
 <section class="am-panel" id="panel-A">
 <header class="am-panel-head"><span class="am-panel-id">A</span><h2>Overview</h2></header>
 <div class="am-panel-body"><div class="am-md">
-<p><strong>A2A (Agent2Agent) 1.0.1</strong> lets agents discover each other and delegate <strong>tasks</strong>. Practice track: <code>codes/a2a/</code>. Stage 1 is <strong>stdlib-only</strong> (same spirit as the upstream A2A 101 capture kit) so the wire stays visible.</p>
-<p>Contrast with the MCP track: <code>codes/mcp/</code> uses <strong>FastMCP + Pydantic</strong> and hides JSON-RPC. Here the lesson <em>is</em> the card path, the <code>A2A-Version</code> header, PascalCase methods, and <code>TASK_STATE_*</code> names.</p>
+<p><strong>A2A (Agent2Agent) 1.0.1</strong> lets agents discover each other and delegate <strong>tasks</strong>. Practice track: <code>codes/a2a/</code>. Two stages on purpose:</p>
+<ul>
+<li><strong>Stage 1</strong> (<code>01_agentcard_sendmessage/</code>) — <strong>stdlib-only</strong> (capture-kit spirit) so the wire stays visible: card path, <code>A2A-Version</code>, PascalCase <code>SendMessage</code>, <code>TASK_STATE_*</code>.</li>
+<li><strong>Stage 2</strong> (<code>02_fasta2a_server/</code>) — <strong>FastA2A + Pydantic</strong> (same teaching flip as MCP/FastMCP): framework owns JSON-RPC; you write a framework-agnostic <code>Worker</code> (no LLM / pydantic-ai bridge).</li>
+</ul>
+<p>MCP = tools for one agent. A2A = agent ↔ agent cards + task lifecycle. Stage 2's FastA2A currently speaks <code>message/send</code>, kebab-case states, and mints a <em>new</em> task per send (continue via <code>context_id</code>) — document the framework names; do not pretend they are the 1.0.1 capture-kit spellings.</p>
 <ul>
 <li><strong>MCP</strong> — tools / resources / prompts for <em>one</em> agent (host ↔ server).</li>
 <li><strong>A2A</strong> — agent ↔ agent: Agent Card → <code>SendMessage</code> → task lifecycle → artifacts.</li>
@@ -537,16 +541,15 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <header class="am-panel-head"><span class="am-panel-id">F</span><h2>Lab shape</h2></header>
 <div class="am-panel-body"><div class="am-md">
 <ul>
-<li><code>01_agentcard_sendmessage/</code> — discover card → <code>SendMessage</code> → <code>INPUT_REQUIRED</code> → follow-up → <code>COMPLETED</code> + artifact; version-header guard</li>
+<li><code>01_agentcard_sendmessage/</code> — stdlib wire: card → <code>SendMessage</code> → <code>INPUT_REQUIRED</code> → same-task follow-up → <code>COMPLETED</code>; <code>A2A-Version</code> guard</li>
+<li><code>02_fasta2a_server/</code> — FastA2A Worker: card → <code>message/send</code> → <code>input-required</code> → new-task follow-up on same <code>context_id</code> → <code>completed</code> + artifact</li>
 <li>each stage: <code>server.py</code>, <code>client.py</code>, <code>qa.ipynb</code>, <code>README.md</code></li>
-<li>deps: <strong>stdlib only</strong> for stage 1 — do not add a second requirements tree; leave <code>codes/requirements.txt</code> for MCP / other labs</li>
+<li>deps: stage 1 stdlib; stage 2 pins <code>fasta2a</code> / <code>uvicorn</code> / <code>httpx</code> in the shared <code>codes/requirements.txt</code> (no second requirements tree)</li>
 </ul>
-<pre><code>cd codes/a2a/01_agentcard_sendmessage
-python server.py
-python client.py
-python client.py --spawn
+<pre><code>cd codes/a2a/01_agentcard_sendmessage &amp;&amp; python client.py --spawn
+cd codes/a2a/02_fasta2a_server &amp;&amp; python client.py --spawn
 </code></pre>
-<p>Skipped on purpose in stage 1: streaming, HTTP+JSON / gRPC bindings, cancel / list / push, auth-required, official <code>a2a-sdk</code>. See the stage README.</p>
+<p>Skipped on purpose: streaming, HTTP+JSON / gRPC, push, auth-required, official <code>a2a-sdk</code>, and the <code>fasta2a[pydantic-ai]</code> bridge (keeps the lab off an LLM stack). See each stage README.</p>
 </div></div>
 </section>
 
@@ -555,14 +558,17 @@ python client.py --spawn
 <footer class="am-colophon">Generated by Answer me with HTML 0.4.9 · 2026-10-25</footer>
 <textarea id="am-source" hidden readonly aria-hidden="true">---
 title: A2A API 速查
-subtitle: AgentCard · SendMessage · task states · JSON-RPC / HTTP+JSON / gRPC
+subtitle: AgentCard · SendMessage · FastA2A Worker · task states · JSON-RPC
 template: doc
 theme: blueprint
 source: codes/a2a/
 ---
 
 ## Overview
-A2A (Agent2Agent) 1.0.1 lets agents discover each other and delegate **tasks**. Practice track: `codes/a2a/`. Stage 1 is **stdlib-only** (capture-kit style) so the wire stays visible — unlike `codes/mcp/` which uses FastMCP to hide the protocol.
+A2A (Agent2Agent) 1.0.1 lets agents discover each other and delegate **tasks**. Practice track: `codes/a2a/`.
+
+- Stage 1 (`01_agentcard_sendmessage/`) — **stdlib-only** so the wire stays visible (card path, `A2A-Version`, PascalCase `SendMessage`, `TASK_STATE_*`).
+- Stage 2 (`02_fasta2a_server/`) — **FastA2A + Pydantic** (MCP/FastMCP flip): framework owns JSON-RPC; you write a framework-agnostic `Worker` (no LLM / pydantic-ai bridge). FastA2A speaks `message/send`, kebab states, and a new task per send (`context_id` continuity).
 
 MCP = tools for one agent. A2A = agent-to-agent cards + task lifecycle.
 
@@ -612,14 +618,14 @@ MCP = tools for one agent. A2A = agent-to-agent cards + task lifecycle.
 | `-32004` | Message on terminal task | New task (+ optional `referenceTaskIds`) |
 
 ## Lab shape
-- `01_agentcard_sendmessage/` — card + SendMessage + INPUT_REQUIRED → COMPLETED
+- `01_agentcard_sendmessage/` — stdlib wire: card + SendMessage + INPUT_REQUIRED → COMPLETED
+- `02_fasta2a_server/` — FastA2A Worker: card + message/send + input-required → context follow-up → completed
 - each stage: `server.py`, `client.py`, `qa.ipynb`, `README.md`
-- deps: stdlib only for stage 1 (no change to `codes/requirements.txt`)
+- deps: stage 1 stdlib; stage 2 pins `fasta2a` / `uvicorn` / `httpx` in shared `codes/requirements.txt`
 
 ```
-cd codes/a2a/01_agentcard_sendmessage
-python server.py
-python client.py --spawn
+cd codes/a2a/01_agentcard_sendmessage && python client.py --spawn
+cd codes/a2a/02_fasta2a_server && python client.py --spawn
 ```
 </textarea>
 <script>
