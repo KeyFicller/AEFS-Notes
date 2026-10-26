@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AEFS FastAPI chat lab</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --bg:#f6f6f3; --paper:#fff; --ink:#16181d; --ink2:#4b5260; --line:#1d2026; --accent:#1d5fbf; --accent-bg:#e4ecf8; --err:#c62828; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#081322; --paper:#0d1c31; --ink:#e6edf7; --ink2:#a9b8cc; --line:#c9d6e8; --accent:#6ea8ff; --accent-bg:#16305a; --err:#ff7070; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 -apple-system,"Segoe UI","PingFang SC",sans-serif; }
+  main { max-width:720px; margin:0 auto; padding:16px; display:flex; flex-direction:column; height:100vh; }
+  h1 { font-size:16px; margin:0 0 8px; }
+  h1 small { color:var(--ink2); font-weight:400; }
+  #log { flex:1; overflow-y:auto; border:1.5px solid var(--line); background:var(--paper); padding:12px; }
+  .msg { margin:0 0 10px; padding:8px 10px; border:1px solid var(--line); white-space:pre-wrap; }
+  .user { background:var(--accent-bg); margin-left:15%; }
+  .assistant { margin-right:15%; }
+  .assistant.streaming::after { content:"▌"; color:var(--accent); animation:blink 1s steps(2) infinite; }
+  .error { color:var(--err); border-color:var(--err); }
+  .who { display:block; font-size:12px; color:var(--ink2); }
+  @keyframes blink { 50% { opacity:0 } }
+  form { display:flex; gap:8px; margin-top:10px; }
+  input { flex:1; padding:8px; border:1.5px solid var(--line); background:var(--paper); color:var(--ink); font:inherit; }
+  button { padding:8px 14px; border:1.5px solid var(--line); background:var(--ink); color:var(--bg); font:inherit; cursor:pointer; }
+  button:disabled { opacity:.4; cursor:default; }
+  #stop { background:var(--paper); color:var(--ink); }
+  #status { font-size:12px; color:var(--ink2); margin-top:6px; min-height:1.2em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>AEFS FastAPI chat lab <small>— POST /api/chat/stream · Server-Sent Events · no build step</small></h1>
+  <div id="log" aria-live="polite"></div>
+  <form id="form">
+    <input id="input" autocomplete="off" placeholder="Say something…" required maxlength="4000">
+    <button id="send" type="submit">Send</button>
+    <button id="stop" type="button" disabled>Stop</button>
+  </form>
+  <div id="status"></div>
+</main>
+<script>
+// The server is stateless, so the whole history lives here and is re-sent each turn.
+const history = [];
+const log = document.getElementById("log");
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+const sendBtn = document.getElementById("send");
+const stopBtn = document.getElementById("stop");
+const status = document.getElementById("status");
+let controller = null;
+
+function bubble(role, text) {
+  const el = document.createElement("div");
+  el.className = "msg " + role;
+  const who = document.createElement("span");
+  who.className = "who";
+  who.textContent = role;
+  const body = document.createElement("span");
+  body.className = "body";
+  body.textContent = text;
+  el.append(who, body);
+  log.append(el);
+  log.scrollTop = log.scrollHeight;
+  return { el, body };
+}
+
+// Parse an SSE byte stream by hand. EventSource is GET-only, and we need to POST a body.
+async function* sseFrames(response) {
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+  let buf = "";
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) return;
+    buf += value;
+    let i;
+    while ((i = buf.indexOf("\n\n")) >= 0) {
+      const frame = buf.slice(0, i);
+      buf = buf.slice(i + 2);
+      let event = "message", data = "";
+      for (const line of frame.split("\n")) {
+        if (line.startsWith("event: ")) event = line.slice(7);
+        else if (line.startsWith("data: ")) data += line.slice(6);
+      }
+      if (data) yield { event, data: JSON.parse(data) }; // skip `: keepalive` comment frames
+    }
+  }
+}
+
+function setBusy(busy) {
+  sendBtn.disabled = busy;
+  stopBtn.disabled = !busy;
+  input.disabled = busy;
+  if (!busy) input.focus();
+}
+
+form.addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = "";
+  history.push({ role: "user", content: text });
+  bubble("user", text);
+  const out = bubble("assistant", "");
+  out.el.classList.add("streaming");
+  status.textContent = "streaming…";
+  setBusy(true);
+  controller = new AbortController();
+  let reply = "", tokens = 0;
+  try {
+    const resp = await fetch("/api/chat/stream", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: history }),
+      signal: controller.signal,
+    });
+    if (!resp.ok) throw new Error("HTTP " + resp.status + " " + (await resp.text()));
+    for await (const { event, data } of sseFrames(resp)) {
+      if (event === "token") { reply += data.text; tokens++; out.body.textContent = reply; log.scrollTop = log.scrollHeight; }
+      else if (event === "done") status.textContent = "done · " + data.tokens + " tokens";
+      else if (event === "error") throw new Error(data.message);
+    }
+  } catch (err) {
+    if (err.name === "AbortError") {
+      status.textContent = "stopped after " + tokens + " tokens (connection closed; the server cancels its generator)";
+    } else {
+      out.el.classList.add("error");
+      out.body.textContent += (reply ? "\n" : "") + "[" + err.message + "]";
+      status.textContent = "error";
+    }
+  } finally {
+    out.el.classList.remove("streaming");
+    if (reply) history.push({ role: "assistant", content: reply });
+    else history.pop(); // nothing came back: drop the unanswered user turn so the history stays valid
+    controller = null;
+    setBusy(false);
+  }
+});
+
+stopBtn.addEventListener("click", () => controller && controller.abort());
+</script>
+</body>
+</html>
