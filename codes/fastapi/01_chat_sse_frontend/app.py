@@ -1,9 +1,10 @@
 """Stage-1 FastAPI lab: routes + Pydantic + Depends + async SSE + static frontend.
 
-A tiny chat service. The "LLM" is a deterministic mock that emits tokens with
-`asyncio.sleep`, so the lab runs anywhere with no API key. The same
-`ChatBackend` seam also has an OpenAI-compatible implementation (httpx stream),
-selected with `CHAT_BACKEND=openai`.
+The LLM path is the same LangGraph stack as `codes/langgraph/`: a one-node
+`StateGraph(MessagesState)` streamed with `astream(..., stream_mode="messages")`.
+Default offline model is LangChain's `FakeListChatModel` (no API key). With
+`DEEPSEEK_API_KEY` (or `CHAT_MODEL=deepseek`) it switches to
+`init_chat_model("deepseek:…")` like the LangGraph notebooks.
 
 Run:
 
@@ -12,7 +13,7 @@ Run:
 
 Endpoints:
   GET  /                       the static chat page (static/index.html)
-  GET  /api/health             liveness + which backend is wired
+  GET  /api/health             liveness + which model is wired
   GET  /api/stats              stream counters (started / completed / cancelled)
   POST /api/chat               one-shot JSON reply
   POST /api/chat/stream        Server-Sent Events: `token` ... `done` (or `error`)
@@ -23,25 +24,52 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import json
 import os
-import re
 from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import Annotated, Literal, Protocol
+from typing import Annotated, Any, Literal
 
-import httpx
 from fastapi import Depends, FastAPI
 from fastapi.responses import FileResponse
 from fastapi.sse import EventSourceResponse, ServerSentEvent
 from fastapi.staticfiles import StaticFiles
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.language_models.fake_chat_models import FakeListChatModel
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
+from langgraph.graph import END, START, MessagesState, StateGraph
 from pydantic import BaseModel, Field
 
 HERE = Path(__file__).resolve().parent
 DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8000
+
+# Same canned reply FakeListChatModel cycles through (deterministic, offline).
+FAKE_REPLY = (
+    "You said hello to FastAPI + LangGraph. "
+    "This is a deterministic FakeListChatModel reply. "
+    "Tokens arrive one by one over Server-Sent Events."
+)
+
+
+def _load_env_file(path: Path) -> None:
+    """Write KEY=VALUE lines into os.environ (existing keys win)."""
+    if not path.is_file():
+        return
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key, value = key.strip(), value.strip().strip("\"'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+# Match codes/langgraph: optional local.env next to that track.
+_load_env_file(HERE.parents[1] / "langgraph" / "local.env")
+_load_env_file(HERE / "local.env")
 
 
 # ---------------------------------------------------------------- schemas ---
@@ -64,87 +92,89 @@ class ChatResponse(BaseModel):
 # --------------------------------------------------------------- settings ---
 @dataclass(frozen=True)
 class Settings:
-    backend: Literal["mock", "openai"] = "mock"
-    token_delay: float = 0.03  # seconds between mock tokens
-    openai_base_url: str = "https://api.openai.com/v1"
-    openai_api_key: str = ""
-    openai_model: str = "gpt-4o-mini"
+    model_mode: Literal["fake", "deepseek"] = "fake"
+    token_delay: float = 0.02  # seconds between FakeListChatModel chars
+    deepseek_model: str = "deepseek-v4-flash"
 
 
 @lru_cache
 def get_settings() -> Settings:
     """Read env once. Tests swap it with `app.dependency_overrides`."""
+    explicit = os.getenv("CHAT_MODEL", "").strip().lower()
+    if explicit in ("fake", "deepseek"):
+        mode: Literal["fake", "deepseek"] = explicit  # type: ignore[assignment]
+    else:
+        mode = "deepseek" if os.getenv("DEEPSEEK_API_KEY") else "fake"
     return Settings(
-        backend="openai" if os.getenv("CHAT_BACKEND") == "openai" else "mock",
-        token_delay=float(os.getenv("MOCK_TOKEN_DELAY", "0.03")),
-        openai_base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
-        openai_api_key=os.getenv("OPENAI_API_KEY", ""),
-        openai_model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+        model_mode=mode,
+        token_delay=float(os.getenv("FAKE_TOKEN_DELAY", os.getenv("MOCK_TOKEN_DELAY", "0.02"))),
+        deepseek_model=os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash"),
     )
 
 
-# --------------------------------------------------------------- backends ---
-class ChatBackend(Protocol):
-    def stream(self, messages: list[Message]) -> AsyncIterator[str]: ...
+# ---------------------------------------------------------- LangGraph LLM ---
+def build_model(settings: Settings) -> BaseChatModel:
+    """Offline: FakeListChatModel. Live: init_chat_model + DEEPSEEK_*."""
+    if settings.model_mode == "deepseek":
+        from langchain.chat_models import init_chat_model
+
+        return init_chat_model(f"deepseek:{settings.deepseek_model}")
+    return FakeListChatModel(responses=[FAKE_REPLY], sleep=settings.token_delay)
 
 
-def mock_reply(messages: list[Message]) -> str:
-    """Deterministic: same history in, same text out."""
-    last_user = next((m.content for m in reversed(messages) if m.role == "user"), "")
-    turns = sum(1 for m in messages if m.role == "user")
-    return (
-        f"You said: {last_user!r}. "
-        f"This is turn {turns} of a mock chat served by FastAPI. "
-        "Tokens arrive one by one over Server-Sent Events."
-    )
+def build_chat_graph(model: BaseChatModel):
+    """One-node MessagesState graph — same shape as codes/langgraph/01_state_graph."""
+
+    def agent(state: MessagesState) -> dict:
+        return {"messages": [model.invoke(state["messages"])]}
+
+    graph = StateGraph(MessagesState)
+    graph.add_node("agent", agent)
+    graph.add_edge(START, "agent")
+    graph.add_edge("agent", END)
+    return graph.compile()
 
 
-class MockBackend:
-    def __init__(self, delay: float) -> None:
-        self.delay = delay
-
-    async def stream(self, messages: list[Message]) -> AsyncIterator[str]:
-        # "word + trailing whitespace" ~ a token; joining them restores the text.
-        for token in re.findall(r"\S+\s*", mock_reply(messages)):
-            await asyncio.sleep(self.delay)  # cancellation point
-            yield token
+def get_graph(settings: Annotated[Settings, Depends(get_settings)]):
+    """Dependency: handlers ask for a compiled graph, never build one inline."""
+    return build_chat_graph(build_model(settings))
 
 
-class OpenAICompatBackend:
-    """Any OpenAI-compatible `/chat/completions` endpoint (OpenAI, vLLM, Ollama...)."""
-
-    def __init__(self, settings: Settings, transport: httpx.AsyncBaseTransport | None = None) -> None:
-        self.s = settings
-        self.transport = transport  # lets tests inject httpx.MockTransport
-
-    async def stream(self, messages: list[Message]) -> AsyncIterator[str]:
-        body = {
-            "model": self.s.openai_model,
-            "stream": True,
-            "messages": [m.model_dump() for m in messages],
-        }
-        headers = {"Authorization": f"Bearer {self.s.openai_api_key}"}
-        async with httpx.AsyncClient(transport=self.transport, timeout=60.0) as http:
-            async with http.stream(
-                "POST", f"{self.s.openai_base_url}/chat/completions", json=body, headers=headers
-            ) as resp:
-                resp.raise_for_status()
-                async for line in resp.aiter_lines():
-                    if not line.startswith("data: "):
-                        continue
-                    payload = line.removeprefix("data: ")
-                    if payload == "[DONE]":
-                        return
-                    delta = json.loads(payload)["choices"][0]["delta"].get("content")
-                    if delta:
-                        yield delta
+_ROLE_TO_LC: dict[str, type[BaseMessage]] = {
+    "system": SystemMessage,
+    "user": HumanMessage,
+    "assistant": AIMessage,
+}
 
 
-def get_backend(settings: Annotated[Settings, Depends(get_settings)]) -> ChatBackend:
-    """Dependency: route handlers ask for a backend, never build one."""
-    if settings.backend == "openai":
-        return OpenAICompatBackend(settings)
-    return MockBackend(settings.token_delay)
+def to_lc_messages(messages: list[Message]) -> list[BaseMessage]:
+    return [_ROLE_TO_LC[m.role](content=m.content) for m in messages]
+
+
+def _chunk_text(content: Any) -> str:
+    """Normalize AIMessageChunk.content (str, or rare multimodal list) to text."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts: list[str] = []
+        for block in content:
+            if isinstance(block, str):
+                parts.append(block)
+            elif isinstance(block, dict) and block.get("type") == "text":
+                parts.append(str(block.get("text", "")))
+        return "".join(parts)
+    return str(content) if content is not None else ""
+
+
+async def stream_tokens(graph, messages: list[Message]) -> AsyncIterator[str]:
+    """Token stream via LangGraph `astream(..., stream_mode="messages")`."""
+    async for chunk, _meta in graph.astream(
+        {"messages": to_lc_messages(messages)},
+        stream_mode="messages",
+    ):
+        text = _chunk_text(getattr(chunk, "content", ""))
+        if text:
+            yield text
 
 
 # ------------------------------------------------------------------ stats ---
@@ -165,16 +195,16 @@ def get_stats() -> Stats:
 
 
 # -------------------------------------------------------------------- app ---
-app = FastAPI(title="AEFS FastAPI chat lab", version="0.1.0")
+app = FastAPI(title="AEFS FastAPI chat lab", version="0.2.0")
 
-Backend = Annotated[ChatBackend, Depends(get_backend)]
+GraphDep = Annotated[Any, Depends(get_graph)]
 StatsDep = Annotated[Stats, Depends(get_stats)]
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 
 
 @app.get("/api/health")
 async def health(settings: SettingsDep) -> dict[str, str]:
-    return {"status": "ok", "backend": settings.backend}
+    return {"status": "ok", "model": settings.model_mode}
 
 
 @app.get("/api/stats")
@@ -183,19 +213,19 @@ async def stats(s: StatsDep) -> Stats:
 
 
 @app.post("/api/chat")
-async def chat(req: ChatRequest, backend: Backend) -> ChatResponse:
-    parts = [t async for t in backend.stream(req.messages)]
+async def chat(req: ChatRequest, graph: GraphDep) -> ChatResponse:
+    parts = [t async for t in stream_tokens(graph, req.messages)]
     return ChatResponse(reply="".join(parts), tokens=len(parts))
 
 
 @app.post("/api/chat/stream", response_class=EventSourceResponse)
-async def chat_stream(req: ChatRequest, backend: Backend, s: StatsDep) -> AsyncIterator[ServerSentEvent]:
+async def chat_stream(req: ChatRequest, graph: GraphDep, s: StatsDep) -> AsyncIterator[ServerSentEvent]:
     """`yield` + `EventSourceResponse` → FastAPI frames each item as an SSE event."""
     s.started += 1
     s.active += 1
     n = 0
     try:
-        async for token in backend.stream(req.messages):
+        async for token in stream_tokens(graph, req.messages):
             n += 1
             yield ServerSentEvent(event="token", data={"text": token})
         yield ServerSentEvent(event="done", data={"tokens": n})

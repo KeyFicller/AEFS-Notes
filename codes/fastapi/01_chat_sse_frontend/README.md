@@ -2,12 +2,13 @@
 
 Stage 1 of the `codes/fastapi/` track: a small **FastAPI** service that streams a
 chat reply token by token, plus a **single static HTML page** (no build step)
-that calls it. It pairs with the repo's async/agent tracks: the generator you
-`yield` from is the same `async for` / `CancelledError` machinery as
-`codes/concurrency/`, and the streaming UI is what an agent front end looks like.
+that calls it. The LLM path reuses the repo's **LangGraph** stack
+(`StateGraph` / `MessagesState` / `astream(..., stream_mode="messages")`), the
+same shape as `codes/langgraph/01_state_graph` + `05_streaming`.
 
-The "LLM" is a **deterministic mock** (words + `asyncio.sleep`), so it runs with
-no API key and gives the same text every time.
+Default offline model is LangChain's **`FakeListChatModel`** (deterministic, no
+API key). With `DEEPSEEK_API_KEY` (or `CHAT_MODEL=deepseek`) it switches to
+`init_chat_model("deepseek:…")` like the LangGraph notebooks.
 
 ## Run
 
@@ -28,7 +29,8 @@ python client.py --spawn
 | Piece | Where | Lesson |
 | --- | --- | --- |
 | Route + Pydantic body | `ChatRequest` / `ChatResponse` | invalid bodies become `422` with a `loc` path; no hand-written `if` |
-| `Depends` | `get_settings` → `get_backend` | handlers ask for a backend; tests swap it via `app.dependency_overrides` |
+| `Depends` | `get_settings` → `get_graph` | handlers ask for a compiled graph; tests swap it via `app.dependency_overrides` |
+| LangGraph LLM | `build_chat_graph` + `stream_tokens` | one-node `MessagesState` graph; tokens from `astream(..., stream_mode="messages")` |
 | `async def` endpoint | `/api/chat`, `/api/chat/stream` | `await` points are where cancellation lands |
 | SSE | `EventSourceResponse` + `yield ServerSentEvent(...)` | `event: token` / `event: done` frames; errors after the headers go in-band as `event: error` |
 | Disconnect | `except asyncio.CancelledError` in the stream generator | Stop button → `AbortController.abort()` → server generator cancelled (`/api/stats`) |
@@ -36,21 +38,23 @@ python client.py --spawn
 
 ## Swap in a real LLM
 
-`ChatBackend` is a one-method protocol (`stream(messages) -> AsyncIterator[str]`).
-`OpenAICompatBackend` implements it over any OpenAI-compatible
-`/chat/completions` endpoint (OpenAI, vLLM, Ollama, ...):
+Default is offline `FakeListChatModel`. For a live DeepSeek model (same wiring as
+`codes/langgraph/`):
 
 ```bash
-CHAT_BACKEND=openai OPENAI_API_KEY=sk-... OPENAI_MODEL=gpt-4o-mini python app.py
-# local server: OPENAI_BASE_URL=http://localhost:11434/v1
+# put the key in codes/langgraph/local.env (already loaded) or export it
+export DEEPSEEK_API_KEY=sk-...
+# optional: CHAT_MODEL=deepseek DEEPSEEK_MODEL=deepseek-v4-flash
+python app.py
 ```
 
-Honest status: this class is verified **offline only** (exercise 8 in `qa.ipynb`
-feeds it a fake SSE reply through `httpx.MockTransport`). It was not run against
-a live provider here.
+Or force the fake path even when a key is present: `CHAT_MODEL=fake python app.py`.
 
 ## Design choices
 
+- **LangGraph, not hand-rolled backends.** Token streaming is
+  `graph.astream(..., stream_mode="messages")` — the same API the LangGraph
+  track teaches. FastAPI only owns routes, Depends, SSE, and the static page.
 - **SSE, not WebSocket.** Token streaming is one-way server → client, SSE is plain
   HTTP (works with `curl`, proxies, `fetch`), and a closed connection is the
   cancel signal. WebSocket earns its place when the client must send *while* the
@@ -58,7 +62,7 @@ a live provider here.
 - **`POST` + `fetch`, not `EventSource`.** The browser's `EventSource` only does
   `GET`, so it cannot carry the chat history. The page parses the frames itself.
 - **Stateless server.** The browser re-sends the whole `messages` list each turn.
-  No sessions, no database.
+  No sessions, no database (LangGraph checkpointers are a later topic).
 - **`fastapi.sse` is new.** `EventSourceResponse` / `ServerSentEvent` need
   `fastapi>=0.135` (pinned in the shared requirements). Before that you wrote
   `StreamingResponse` plus a `f"event: ...\ndata: ...\n\n"` helper. Exercise 3 in
@@ -66,7 +70,7 @@ a live provider here.
 
 ## Layout
 
-- `app.py` — schemas, `Settings`, backends, `Depends`, routes, `main()`
+- `app.py` — schemas, `Settings`, LangGraph graph factory, `Depends`, routes, `main()`
 - `static/index.html` — the chat page (HTML + CSS + JS in one file)
 - `client.py` — smoke test: health, page served, OpenAPI, 422, one-shot vs SSE
   parity, incremental delivery, disconnect cancellation
@@ -76,8 +80,8 @@ a live provider here.
 ## Skipped on purpose
 
 WebSocket, auth / API keys on the route, rate limiting, CORS (page and API share an
-origin), server-side sessions or persistence, Markdown rendering in the page,
-retries / `Last-Event-ID` resume, background tasks, `lifespan` resources,
+origin), server-side sessions / LangGraph checkpointers, Markdown rendering in the
+page, retries / `Last-Event-ID` resume, background tasks, `lifespan` resources,
 deployment (uvicorn workers, reverse proxy buffering), and tests under pytest.
 Calling a blocking function from `async def` (the classic FastAPI foot-gun) is
 described in `codes/summary/fastapi.html` but not exercised here.

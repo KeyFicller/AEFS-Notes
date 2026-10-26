@@ -56,9 +56,10 @@ def check(name: str, ok: bool, detail: str = "") -> None:
 
 
 def run(base: str) -> None:
-    with httpx.Client(base_url=base, timeout=10.0) as http:
+    with httpx.Client(base_url=base, timeout=30.0) as http:
         h = http.get("/api/health").json()
-        check("health", h["status"] == "ok", f"backend={h['backend']}")
+        check("health", h["status"] == "ok" and h.get("model") in ("fake", "deepseek"),
+              f"model={h.get('model')}")
 
         page = http.get("/")
         check("GET / serves the static page", page.status_code == 200 and "text/html" in page.headers["content-type"]

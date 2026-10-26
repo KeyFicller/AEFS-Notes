@@ -453,8 +453,8 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <div class="am-panel-body"><div class="am-md">
 <p><strong>FastAPI</strong> = Starlette (ASGI) + Pydantic: routes are typed functions, bodies are validated models, and the OpenAPI spec / <code>/docs</code> page falls out of the types. Practice track: <code>codes/fastapi/</code>.</p>
 <ul>
-<li><strong>Stage 1</strong> (<code>01_chat_sse_frontend/</code>) — a chat API that <strong>streams a mock LLM reply over SSE</strong>, plus a one-file static page (<code>fetch</code> + <code>ReadableStream</code>, no build step).</li>
-<li>Mock backend on purpose: deterministic, no API key. <code>OpenAICompatBackend</code> is the swap-in for a real model (verified offline only).</li>
+<li><strong>Stage 1</strong> (<code>01_chat_sse_frontend/</code>) — a chat API that <strong>streams an LLM reply over SSE</strong> via the repo&#39;s LangGraph stack, plus a one-file static page (<code>fetch</code> + <code>ReadableStream</code>, no build step).</li>
+<li>Default offline model: LangChain <code>FakeListChatModel</code> (deterministic, no API key). Live path: <code>init_chat_model(&quot;deepseek:…&quot;)</code> + <code>DEEPSEEK_*</code>, same as <code>codes/langgraph/</code>.</li>
 </ul>
 <p>Same shape as the agent tracks: MCP / A2A are protocols <em>between</em> programs; FastAPI is how you put your own agent behind HTTP for a browser.</p>
 </div></div>
@@ -484,12 +484,12 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <thead><tr><th>Piece</th><th>Notes</th></tr></thead>
 <tbody>
 <tr><td><code>Annotated[Settings, Depends(get_settings)]</code></td><td>Handler declares what it needs; FastAPI calls the provider per request</td></tr>
-<tr><td><code>get_backend(settings=Depends(get_settings))</code></td><td>Dependencies can depend on dependencies (a tree, resolved once per request)</td></tr>
+<tr><td><code>get_graph(settings=Depends(get_settings))</code></td><td>Dependencies can depend on dependencies (a tree, resolved once per request)</td></tr>
 <tr><td><code>@lru_cache</code> on a provider</td><td>Read env once; still overridable</td></tr>
-<tr><td><code>app.dependency_overrides[get_backend] = lambda: Fake()</code></td><td>Swap a provider in tests; <code>.clear()</code> afterwards</td></tr>
+<tr><td><code>app.dependency_overrides[get_graph] = lambda: other_graph</code></td><td>Swap a provider in tests; <code>.clear()</code> afterwards</td></tr>
 <tr><td><code>httpx.ASGITransport(app=app)</code></td><td>Call the app in-process, no server (buffers the body — fine for result checks, not for timing a stream)</td></tr>
 </tbody></table></div>
-<p><code>ChatBackend</code> is a one-method <code>Protocol</code>: <code>stream(messages) -&gt; AsyncIterator[str]</code>. Mock and OpenAI-compatible classes both fit it.</p>
+<p>The LLM is a one-node LangGraph <code>StateGraph(MessagesState)</code>. Tokens come from <code>astream(..., stream_mode=&quot;messages&quot;)</code> — same API as <code>codes/langgraph/05_streaming</code>. FastAPI does not own a hand-rolled backend class.</p>
 </div></div>
 </section>
 
@@ -502,7 +502,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <tr><td><code>@app.post(..., response_class=EventSourceResponse)</code></td><td>With a <code>yield</code> handler, each yielded item becomes one SSE event (<code>fastapi&gt;=0.135</code>)</td></tr>
 <tr><td><code>yield ServerSentEvent(event="token", data={...})</code></td><td><code>data</code> is JSON-encoded; <code>event</code> maps to browser <code>addEventListener</code> names</td></tr>
 <tr><td>Wire format</td><td><code>event: token</code> ⏎ <code>data: {"text": "You "}</code> ⏎ blank line</td></tr>
-<tr><td><code>await asyncio.sleep(...)</code> in the backend</td><td>The await point is where a disconnect cancels the generator</td></tr>
+<tr><td><code>await</code> inside the model / graph stream</td><td>The await point is where a disconnect cancels the generator (<code>FakeListChatModel(sleep=…)</code>)</td></tr>
 <tr><td><code>except asyncio.CancelledError: …; raise</code></td><td>Count it, then re-raise. Never swallow cancellation</td></tr>
 <tr><td><code>except Exception → yield ServerSentEvent(event="error")</code></td><td>After the first byte the status is already 200: report in-band</td></tr>
 </tbody></table></div>
@@ -554,16 +554,16 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <header class="am-panel-head"><span class="am-panel-id">G</span><h2>Lab shape</h2></header>
 <div class="am-panel-body"><div class="am-md">
 <ul>
-<li><code>01_chat_sse_frontend/app.py</code> — schemas, <code>Settings</code>, <code>MockBackend</code> / <code>OpenAICompatBackend</code>, <code>Depends</code>, routes</li>
+<li><code>01_chat_sse_frontend/app.py</code> — schemas, <code>Settings</code>, LangGraph graph factory (<code>FakeListChatModel</code> / <code>init_chat_model</code>), <code>Depends</code>, routes</li>
 <li><code>static/index.html</code> — chat page; <code>client.py</code> — HTTP smoke test (health, page, 422, SSE parity, incremental delivery, disconnect → cancelled)</li>
 <li><code>qa.ipynb</code> — 9 executed exercises; <code>README.md</code> — what was skipped</li>
-<li>deps: <code>fastapi&gt;=0.135</code> / <code>uvicorn</code> / <code>httpx</code> in the shared <code>codes/requirements.txt</code> (no second requirements tree)</li>
+<li>deps: <code>fastapi&gt;=0.135</code> / <code>uvicorn</code> / <code>httpx</code> / <code>langchain</code> / <code>langgraph</code> / <code>langchain-deepseek</code> in the shared <code>codes/requirements.txt</code> (no second requirements tree)</li>
 </ul>
 <pre><code>cd codes/fastapi/01_chat_sse_frontend
 python app.py            # open http://127.0.0.1:8000
 python client.py --spawn # smoke test
 </code></pre>
-<p>Skipped on purpose: WebSocket, auth, rate limiting, CORS, sessions / persistence, <code>Last-Event-ID</code> resume, deployment. A live LLM provider was not called. See the stage README.</p>
+<p>Skipped on purpose: WebSocket, auth, rate limiting, CORS, sessions / LangGraph checkpointers, <code>Last-Event-ID</code> resume, deployment. Default lab path is offline <code>FakeListChatModel</code>; live DeepSeek needs <code>DEEPSEEK_API_KEY</code>. See the stage README.</p>
 </div></div>
 </section>
 
@@ -581,8 +581,8 @@ source: codes/fastapi/
 ## Overview
 FastAPI = Starlette (ASGI) + Pydantic: typed route functions, validated bodies, OpenAPI + `/docs` for free. Practice track: `codes/fastapi/`.
 
-- Stage 1 (`01_chat_sse_frontend/`) — chat API that **streams a mock LLM reply over SSE** + a one-file static page (`fetch` + `ReadableStream`, no build step).
-- Mock backend on purpose: deterministic, no API key. `OpenAICompatBackend` is the real-LLM swap-in (verified offline only).
+- Stage 1 (`01_chat_sse_frontend/`) — chat API that **streams an LLM reply over SSE** via LangGraph + a one-file static page (`fetch` + `ReadableStream`, no build step).
+- Default offline: LangChain `FakeListChatModel`. Live: `init_chat_model("deepseek:…")` + `DEEPSEEK_*` (same as `codes/langgraph/`).
 
 MCP / A2A are protocols between programs; FastAPI is how you put your own agent behind HTTP for a browser.
 
@@ -602,12 +602,12 @@ The server is stateless: the browser sends the full `messages` history each turn
 | Piece | Notes |
 | --- | --- |
 | `Annotated[Settings, Depends(get_settings)]` | Handler declares needs; FastAPI calls the provider per request |
-| `get_backend(settings=Depends(get_settings))` | Dependencies can depend on dependencies |
+| `get_graph(settings=Depends(get_settings))` | Dependencies can depend on dependencies |
 | `@lru_cache` on a provider | Read env once; still overridable |
-| `app.dependency_overrides[get_backend] = lambda: Fake()` | Swap in tests; `.clear()` after |
+| `app.dependency_overrides[get_graph] = lambda: other_graph` | Swap in tests; `.clear()` after |
 | `httpx.ASGITransport(app=app)` | In-process calls, no server (buffers body) |
 
-`ChatBackend` is a one-method `Protocol`: `stream(messages) -&gt; AsyncIterator[str]`.
+LLM = one-node LangGraph `StateGraph(MessagesState)`; tokens from `astream(..., stream_mode="messages")`.
 
 ## Async &amp; SSE
 | Piece | Notes |
@@ -615,7 +615,7 @@ The server is stateless: the browser sends the full `messages` history each turn
 | `@app.post(..., response_class=EventSourceResponse)` | With a `yield` handler, each item becomes one SSE event (`fastapi&gt;=0.135`) |
 | `yield ServerSentEvent(event="token", data={...})` | `data` JSON-encoded; `event` = browser listener name |
 | Wire format | `event: token` / `data: {"text": "You "}` / blank line |
-| `await asyncio.sleep(...)` in backend | Await point = where disconnect cancels the generator |
+| `await` inside model / graph stream | Await point = where disconnect cancels (`FakeListChatModel(sleep=…)`) |
 | `except asyncio.CancelledError: ...; raise` | Count it, re-raise; never swallow |
 | `except Exception` → `event="error"` | After first byte status is already 200: report in-band |
 
@@ -649,10 +649,10 @@ No bundler, no framework: one `static/index.html` served by FastAPI, same origin
 | `ImportError: fastapi.sse` | FastAPI &lt; 0.135 | `pip install -U 'fastapi&gt;=0.135'` |
 
 ## Lab shape
-- `01_chat_sse_frontend/app.py` — schemas, `Settings`, `MockBackend` / `OpenAICompatBackend`, `Depends`, routes
+- `01_chat_sse_frontend/app.py` — schemas, `Settings`, LangGraph graph factory, `Depends`, routes
 - `static/index.html` chat page; `client.py` HTTP smoke test
 - `qa.ipynb` — 9 executed exercises; `README.md` — what was skipped
-- deps: `fastapi&gt;=0.135` / `uvicorn` / `httpx` in the shared `codes/requirements.txt`
+- deps: `fastapi&gt;=0.135` / `uvicorn` / `httpx` / `langchain` / `langgraph` / `langchain-deepseek` in shared `codes/requirements.txt`
 
 ```
 cd codes/fastapi/01_chat_sse_frontend
