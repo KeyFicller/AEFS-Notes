@@ -520,16 +520,19 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <section class="am-panel" id="panel-E">
 <header class="am-panel-head"><span class="am-panel-id">E</span><h2>Static frontend</h2></header>
 <div class="am-panel-body"><div class="am-md">
+<p>Zero HTML/CSS/JS assumed. Teach <code>static/index.html</code> on stage in this order (<code>qa.ipynb</code> §9–16):</p>
 <div class="am-table-wrap"><table>
-<thead><tr><th>Piece</th><th>Notes</th></tr></thead>
+<thead><tr><th>Step</th><th>Piece</th><th>Notes</th></tr></thead>
 <tbody>
-<tr><td><code>fetch("/api/chat/stream", {method:"POST", body, signal})</code></td><td>POST carries the history; <code>EventSource</code> is GET-only so it cannot</td></tr>
-<tr><td><code>resp.body.pipeThrough(new TextDecoderStream()).getReader()</code></td><td>Read chunks as they arrive</td></tr>
-<tr><td>Split on <code>"\n\n"</code>, then <code>event: </code> / <code>data: </code> lines</td><td>The whole SSE parser, ~25 lines. Skip empty-data (<code>: keepalive</code>) frames</td></tr>
-<tr><td><code>AbortController.abort()</code></td><td>Stop button; closes the connection, server sees <code>CancelledError</code></td></tr>
-<tr><td><code>textContent</code> (not <code>innerHTML</code>)</td><td>Model output is untrusted text</td></tr>
+<tr><td>1</td><td><code>&lt;main&gt;</code> / <code>#log</code> / form / Send / Stop</td><td>HTML structure. Send is <code>type=&quot;submit&quot;</code>; Stop is <code>type=&quot;button&quot;</code> so it does not submit</td></tr>
+<tr><td>2</td><td>flex column · bubbles · <code>streaming::after</code></td><td>CSS layout (conceptual): <code>main</code> stacks title → log → form; <code>#log { flex:1 }</code> scrolls; blinking ▌ is pure CSS</td></tr>
+<tr><td>3</td><td><code>const history = []</code></td><td>Server is stateless — browser owns the conversation and re-POSTs it every turn</td></tr>
+<tr><td>4</td><td><code>fetch("/api/chat/stream", {method:"POST", body, signal})</code></td><td>POST carries the history; <code>EventSource</code> is GET-only so it cannot</td></tr>
+<tr><td>5</td><td><code>sseFrames</code> + <code>TextDecoderStream</code></td><td>Hand-rolled SSE parser (~25 lines): split on blank line, read <code>event:</code> / <code>data:</code>; same frames exercise 3 prints</td></tr>
+<tr><td>6</td><td><code>AbortController.abort()</code></td><td>Stop button closes the connection; server sees <code>CancelledError</code> (exercise 7)</td></tr>
+<tr><td>7</td><td><code>textContent</code> (not <code>innerHTML</code>)</td><td>Model output is untrusted text</td></tr>
 </tbody></table></div>
-<p>No bundler, no framework: one <code>static/index.html</code> served by FastAPI itself, so page and API share an origin (no CORS).</p>
+<p>No bundler, no framework: one <code>static/index.html</code> served by FastAPI itself, so page and API share an origin (no CORS). The file carries concise Chinese teaching comments beside the key JS blocks; runtime behaviour is unchanged.</p>
 </div></div>
 </section>
 
@@ -556,7 +559,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <ul>
 <li><code>01_chat_sse_frontend/app.py</code> — schemas, <code>Settings</code>, LangGraph graph factory (<code>FakeListChatModel</code> / <code>init_chat_model</code>), <code>Depends</code>, routes</li>
 <li><code>static/index.html</code> — chat page; <code>client.py</code> — HTTP smoke test (health, page, 422, SSE parity, incremental delivery, disconnect → cancelled)</li>
-<li><code>qa.ipynb</code> — 9 executed exercises; <code>README.md</code> — what was skipped</li>
+<li><code>qa.ipynb</code> — exercises 1–8 (server) + 9–16 (frontend walkthrough), executed; <code>README.md</code> — what was skipped</li>
 <li>deps: <code>fastapi&gt;=0.135</code> / <code>uvicorn</code> / <code>httpx</code> / <code>langchain</code> / <code>langgraph</code> / <code>langchain-deepseek</code> in the shared <code>codes/requirements.txt</code> (no second requirements tree)</li>
 </ul>
 <pre><code>cd codes/fastapi/01_chat_sse_frontend
@@ -627,15 +630,19 @@ LLM = one-node LangGraph `StateGraph(MessagesState)`; tokens from `astream(..., 
 | Fits | token streaming, progress | voice, collaborative editing |
 
 ## Frontend
-| Piece | Notes |
-| --- | --- |
-| `fetch("/api/chat/stream", {method:"POST", body, signal})` | POST carries history; `EventSource` is GET-only |
-| `resp.body.pipeThrough(new TextDecoderStream()).getReader()` | Read chunks as they arrive |
-| Split on blank line, then `event:` / `data:` lines | ~25-line SSE parser; skip empty-data keepalive frames |
-| `AbortController.abort()` | Stop button; server sees `CancelledError` |
-| `textContent` not `innerHTML` | Model output is untrusted text |
+Zero HTML/CSS/JS assumed. Teach `static/index.html` on stage in this order (`qa.ipynb` §9–16):
 
-No bundler, no framework: one `static/index.html` served by FastAPI, same origin (no CORS).
+| Step | Piece | Notes |
+| --- | --- | --- |
+| 1 | `<main>` / `#log` / form / Send / Stop | HTML structure. Send=`submit`, Stop=`button` (does not submit) |
+| 2 | flex column · bubbles · `streaming::after` | CSS layout (conceptual); blinking ▌ is pure CSS |
+| 3 | `const history = []` | Stateless server — browser re-POSTs the whole conversation |
+| 4 | `fetch("/api/chat/stream", {method:"POST", body, signal})` | POST carries history; `EventSource` is GET-only |
+| 5 | `sseFrames` + `TextDecoderStream` | Hand-rolled SSE parser; same frames exercise 3 prints |
+| 6 | `AbortController.abort()` | Stop closes connection; server `CancelledError` (exercise 7) |
+| 7 | `textContent` not `innerHTML` | Model output is untrusted text |
+
+No bundler, no framework: one `static/index.html` served by FastAPI, same origin (no CORS). Chinese teaching comments sit beside the key JS blocks; runtime unchanged.
 
 ## Common errors
 | Symptom | Cause | Fix |
@@ -651,7 +658,7 @@ No bundler, no framework: one `static/index.html` served by FastAPI, same origin
 ## Lab shape
 - `01_chat_sse_frontend/app.py` — schemas, `Settings`, LangGraph graph factory, `Depends`, routes
 - `static/index.html` chat page; `client.py` HTTP smoke test
-- `qa.ipynb` — 9 executed exercises; `README.md` — what was skipped
+- `qa.ipynb` — exercises 1–8 (server) + 9–16 (frontend walkthrough), executed; `README.md` — what was skipped
 - deps: `fastapi&gt;=0.135` / `uvicorn` / `httpx` / `langchain` / `langgraph` / `langchain-deepseek` in shared `codes/requirements.txt`
 
 ```

@@ -43,7 +43,9 @@
   <div id="status"></div>
 </main>
 <script>
-// The server is stateless, so the whole history lives here and is re-sent each turn.
+// ── 教学旁注（不改变任何运行行为）──────────────────────────────────────────
+// 服务器是无状态的：整段对话历史存在浏览器里，每轮 POST 整包重发。
+// Server is stateless — the whole chat history lives here and is re-sent each turn.
 const history = [];
 const log = document.getElementById("log");
 const form = document.getElementById("form");
@@ -61,6 +63,8 @@ function bubble(role, text) {
   who.textContent = role;
   const body = document.createElement("span");
   body.className = "body";
+  // 用 textContent，不用 innerHTML：模型输出是不可信文本，避免注入 HTML。
+  // Prefer textContent over innerHTML — model output is untrusted text.
   body.textContent = text;
   el.append(who, body);
   log.append(el);
@@ -68,8 +72,11 @@ function bubble(role, text) {
   return { el, body };
 }
 
-// Parse an SSE byte stream by hand. EventSource is GET-only, and we need to POST a body.
+// 手写 SSE 帧解析。浏览器自带的 EventSource 只能 GET，带不上聊天历史 body；
+// 所以这里用 fetch POST，再自己按 "\n\n" 切帧、读 event:/data: 行。
+// Hand-rolled SSE parser: EventSource is GET-only and cannot carry a POST body.
 async function* sseFrames(response) {
+  // ReadableStream + TextDecoderStream：字节流边到边解成字符串。
   const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
   let buf = "";
   for (;;) {
@@ -108,9 +115,13 @@ form.addEventListener("submit", async (ev) => {
   out.el.classList.add("streaming");
   status.textContent = "streaming…";
   setBusy(true);
+  // AbortController：点 Stop → abort() → 关掉这条 HTTP 连接 → 服务端 CancelledError。
+  // AbortController: Stop → abort() → close the HTTP connection → server CancelledError.
   controller = new AbortController();
   let reply = "", tokens = 0;
   try {
+    // fetch POST（不是 EventSource）：要把整个 history 当 JSON body 发出去。
+    // fetch POST (not EventSource): the whole history must travel as a JSON body.
     const resp = await fetch("/api/chat/stream", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

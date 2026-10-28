@@ -34,7 +34,29 @@ python client.py --spawn
 | `async def` endpoint | `/api/chat`, `/api/chat/stream` | `await` points are where cancellation lands |
 | SSE | `EventSourceResponse` + `yield ServerSentEvent(...)` | `event: token` / `event: done` frames; errors after the headers go in-band as `event: error` |
 | Disconnect | `except asyncio.CancelledError` in the stream generator | Stop button → `AbortController.abort()` → server generator cancelled (`/api/stats`) |
-| Frontend | `static/index.html` | `fetch` POST + `ReadableStream` + a ~25-line SSE parser |
+| Frontend | `static/index.html` + `qa.ipynb` §9–16 | HTML structure → CSS layout → browser `history` → `fetch` POST → hand-rolled SSE parser → `AbortController` → `textContent` |
+
+## Frontend walkthrough (zero HTML/CSS/JS assumed)
+
+`qa.ipynb` exercises **9–16** are written so you can teach the page on stage to a
+complete beginner. Order on purpose:
+
+1. **HTML structure** — `<main>`, `#log`, form, Send (`type="submit"`), Stop (`type="button"`).
+2. **CSS layout (conceptual)** — flex column fills the viewport; `.user` / `.assistant`
+   offsets; `.streaming::after` draws the blinking ▌ without putting it in the text.
+3. **`history` in the browser** — server is stateless; every turn re-POSTs the whole
+   `messages` list.
+4. **`fetch` POST, not `EventSource`** — `EventSource` is GET-only and cannot carry
+   the chat body.
+5. **Hand-rolled SSE parser** — `ReadableStream` + `TextDecoderStream`, split on
+   blank lines, read `event:` / `data:` (same frames exercise 3 prints from Python).
+6. **Stop → `AbortController`** — `abort()` closes the HTTP connection; server sees
+   `CancelledError` (same as exercise 7).
+7. **`textContent`, never `innerHTML`** — model output is untrusted text.
+
+`static/index.html` itself carries concise **Chinese teaching comments** next to
+those JS blocks (history / sseFrames / fetch / AbortController / textContent).
+Runtime behaviour, element IDs, and styling are unchanged.
 
 ## Swap in a real LLM
 
@@ -71,10 +93,10 @@ Or force the fake path even when a key is present: `CHAT_MODEL=fake python app.p
 ## Layout
 
 - `app.py` — schemas, `Settings`, LangGraph graph factory, `Depends`, routes, `main()`
-- `static/index.html` — the chat page (HTML + CSS + JS in one file)
+- `static/index.html` — the chat page (HTML + CSS + JS in one file; Chinese teaching comments)
 - `client.py` — smoke test: health, page served, OpenAPI, 422, one-shot vs SSE
   parity, incremental delivery, disconnect cancellation
-- `qa.ipynb` — 9 short exercises, executed, outputs committed
+- `qa.ipynb` — exercises 1–8 (server) + 9–16 (frontend walkthrough), executed, outputs committed
 - deps live in the shared `codes/requirements.txt` (no second requirements tree)
 
 ## Skipped on purpose
