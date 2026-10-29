@@ -19,6 +19,8 @@
 | `collections` | `Counter`、`defaultdict`、`deque` |
 | `itertools` | 排列、分组、链式迭代 |
 | `functools` | `partial`、`lru_cache` |
+| `contextlib` | 写 `with`：进入、退出、可选资源和批量嵌套 |
+| `contextvars` | 当前这段执行里的变量；任务复制一份，线程默认不继承 |
 | `dataclasses` | 用字段声明数据类 |
 | `enum` | 一组有名字的常量 |
 | `typing` | 类型标注 |
