@@ -130,6 +130,18 @@ agent = create_deep_agent(model=model, subagents=[researcher])
 
 选择原则：流程能画成固定的图，就用 LangGraph；步骤数事先未知、需要几十上百轮自主探索，用 deepagents。两者不冲突——deep agent 本身就是图，也可以作为节点嵌进更大的图。
 
+### 生产里用得多吗？
+
+多数生产系统**仍从 LangGraph（或等价的显式状态机）出发**：流程要审计、要限权、要和现有服务编排对齐时，显式图更可控。`deepagents` 更新、案例也还在长，适合当作「长程自治任务的预装 harness」，而不是默认业务编排层。
+
+实操上常见组合是：
+
+- **主干用 LangGraph**：订单、审批、固定 ETL、人机回路——节点和边写死。
+- **叶子用 deep agent**：调研、扫仓库改代码、长文写作——步数未知的那一段丢给 `create_deep_agent`，需要时再把整个 deep agent 当成大图里的一个节点。
+
+所以不是「生产弃 LangGraph 改 Deep Agents」，而是 **LangGraph 管骨架，Deep Agents 管开放式长程子任务**；后者本身也跑在 LangGraph 上。
+
+
 ## 8. 常见坑
 
 1. **照抄老教程找不到 `write_todos`**：0.7 起要显式 `middleware=[TodoListMiddleware()]`。

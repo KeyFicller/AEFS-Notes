@@ -697,6 +697,7 @@ html[data-theme="paper"] .am-md table { font-family: var(--font-sans); }
 <td><span class="am-status am-status--warn"><span class="am-status-icon" aria-hidden="true">!</span>最粗</span></td>
 </tr>
 </tbody></table></div>
+<p>生产里多数仍从 <strong>LangGraph</strong> 起骨架（要审计、限权、固定编排）；<code>deepagents</code> 适合开放式长程叶子任务（调研、改仓库、长文）。常见组合：图管主干，deep agent 当节点。后者本身也跑在 LangGraph 上。</p>
 </div></div>
 </section>
 <section class="am-panel" id="panel-G">
@@ -808,6 +809,8 @@ task -&gt; 子代理: 全新上下文
 | 子代理 | warn 子图手写 | warn 包成工具 | ok `task` |
 | 上下文压缩 | no | warn 自己加 | ok 默认开 |
 | 控制粒度 | ok 最细 | ok 中 | warn 最粗 |
+
+生产：多数从 LangGraph 起骨架；deepagents 做开放式长程叶子。常见组合是图管主干、deep agent 当节点（它本身也是 LangGraph 图）。
 
 ## 常见坑
 | 现象 | 原因 |
