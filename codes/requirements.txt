@@ -3,3 +3,4 @@ fastmcp>=4.1
 fasta2a>=2.1
 uvicorn>=0.30
 httpx>=0.27
+deepagents>=0.7,<0.8

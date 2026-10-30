@@ -6,7 +6,7 @@
 
 ![备忘卡](https://img.shields.io/badge/%E5%A4%87%E5%BF%98%E5%8D%A1-501%20%2F%20509-2ea44f?style=flat-square)
 ![phase](https://img.shields.io/badge/phase-20-1d5fbf?style=flat-square)
-![API 速查](https://img.shields.io/badge/API%20%E9%80%9F%E6%9F%A5-33-8250df?style=flat-square)
+![API 速查](https://img.shields.io/badge/API%20%E9%80%9F%E6%9F%A5-34-8250df?style=flat-square)
 ![capstone](https://img.shields.io/badge/capstone-5-d29922?style=flat-square)
 
 
