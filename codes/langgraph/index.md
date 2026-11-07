@@ -14,6 +14,6 @@
 | 2 | `02_conditional_edges` | 路由函数、`END`、手写 ReAct 图（agent ↔ tools 循环） |
 | 3 | `03_checkpointer_threads` | `MemorySaver`、`thread_id`、`get_state`、`get_state_history` |
 | 4 | `04_interrupts_hitl` | `interrupt_before` / `after`、`Command(resume=...)`、`update_state` |
-| 5 | `05_streaming` | `stream(mode="updates"/"values"/"messages")`、`astream` |
+| 5 | `05_streaming` | `stream(mode="updates"/"values"/"messages")`、`astream`、流式下的并行工具调用 |
 | 6 | `06_prebuilt_react` | `ToolNode`、预置 ReAct agent、手写图 vs 预置 |
 | 7 | `07_persistence_send_subgraph` | `SqliteSaver` / Postgres 落盘、`Send` fanout、子图、durable execution |
