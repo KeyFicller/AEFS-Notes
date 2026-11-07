@@ -4,7 +4,7 @@
 
 本模块接在 `codes/langchain/10_middleware` 和 `codes/langgraph/` 之后：`deepagents` 不是新框架，而是把 `create_agent` + 一组官方中间件预先装好的 **agent harness**，产物仍是一张 LangGraph `CompiledStateGraph`。
 
-版本：对照本机 `deepagents 0.7.32` / `langchain 1.4.7` / `langgraph 1.2.18` 核对。0.7 有破坏性变更（todo 改为 opt-in、base prompt 清空、`delete` 工具），老教程里的写法要先对一下。
+版本：对照本机 `deepagents 0.7.34` / `langchain 1.4.9` / `langgraph 1.2.12` 核对。0.7 有破坏性变更（todo 改为 opt-in、base prompt 清空、`delete` 工具），老教程里的写法要先对一下。
 
 模型：练习用真实 API（`init_chat_model("deepseek:...")`，密钥读 `DEEPSEEK_API_KEY`）；`check.py` 用脚本化假模型，离线可跑。
 

@@ -1,6 +1,6 @@
 # Deep Agents 第 1 阶段：harness 的四根支柱
 
-> 对照 `deepagents 0.7.32` / `langchain 1.4.7` / `langgraph 1.2.18` 核对。离线自检：`python check.py`。
+> 对照 `deepagents 0.7.34` / `langchain 1.4.9` / `langgraph 1.2.12` 核对。离线自检：`python check.py`。
 
 ## 1. 为什么需要 "deep" agent
 
@@ -37,9 +37,10 @@ out["files"]["/report.md"]["content"]
 | --- | --- | --- |
 | 1 | `FilesystemMiddleware` | `ls` `read_file` `write_file` `edit_file` `delete` `glob` `grep`（backend 支持执行时再加 `execute`） |
 | 2 | `SubAgentMiddleware` | `task` 工具 + 内置 `general-purpose` 子代理 |
-| 3 | `create_summarization_middleware(...)` | 历史过长时压缩，原文卸载到文件 |
-| 4 | `PatchToolCallsMiddleware` | 修补「有 tool_call 无 ToolMessage」的悬空调用（中断恢复后常见） |
-| 尾部 | `SkillsMiddleware` / `MemoryMiddleware` / `HumanInTheLoopMiddleware` | 仅当传了 `skills=` / `memory=` / `interrupt_on=` 才挂 |
+| 3 | `_ParentNotifierMiddleware` | 被 `start_async_task` 起的异步子代理跑完后回唤父代理；普通运行里全程空转 |
+| 4 | `create_summarization_middleware(...)` | 历史过长时压缩，原文卸载到文件 |
+| 5 | `PatchToolCallsMiddleware` | 修补「有 tool_call 无 ToolMessage」的悬空调用（中断恢复后常见） |
+| 尾部 | `SkillsMiddleware` / `MemoryMiddleware` / `HumanInTheLoopMiddleware` | 仅当传了 `skills=` / `memory=` / `interrupt_on=`（或 `permissions` 里有 `mode="interrupt"`）才挂；另有两个常驻的 `UnsupportedContentMiddleware` / `ModelRefusalMiddleware` 在最内层兜底 |
 
 你传的 `middleware=[...]` 插在核心栈之后、尾部之前。另外图默认 `recursion_limit=9999`——长程代理跑几百步是常态。
 
