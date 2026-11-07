@@ -4,7 +4,7 @@
 
 出题 / 审阅 / 出卡习惯对齐 `python-base-qa`：一次只做一个阶段；出题不写答案；出卡才生成该阶段的 `card.png`。
 
-模型：统一用真实 API（`init_chat_model`，如 `deepseek:deepseek-v4-flash`），密钥读 `DEEPSEEK_API_KEY`（可放 `codes/langgraph/local.env`）。
+模型：统一用真实 API（`init_chat_model`，如 `deepseek:deepseek-v4-flash`），密钥读 `DEEPSEEK_API_KEY`（可放仓库根目录 `local.env`）。
 
 本模块是 LangGraph 专线，与 `codes/langchain/` 分开：LangChain 线到 `08_agents` 用手写循环收束，这里把同一个 Agent 改写成显式图 + checkpoint。
 

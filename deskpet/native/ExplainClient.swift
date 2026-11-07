@@ -18,7 +18,7 @@ enum ExplainError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .missingAPIKey:
-            return "未设置 DEEPSEEK_API_KEY（环境变量或 deskpet/local.env），无法解释。"
+            return "未设置 DEEPSEEK_API_KEY（环境变量或仓库根目录 local.env），无法解释。"
         case .badURL:
             return "解释接口地址无效。"
         case .httpStatus(let code, let body):
@@ -62,7 +62,7 @@ struct ExplainConfig {
 enum LocalEnv {
     static func load(root: URL = deskpetRoot()) -> [String: String] {
         var values: [String: String] = [:]
-        let file = root.appendingPathComponent("local.env")
+        let file = root.deletingLastPathComponent().appendingPathComponent("local.env")
         guard let raw = try? String(contentsOf: file, encoding: .utf8) else { return values }
         for line in raw.split(whereSeparator: \.isNewline) {
             let trimmed = line.trimmingCharacters(in: .whitespaces)

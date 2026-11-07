@@ -1763,7 +1763,7 @@ final class SettingsController: NSObject {
         content.addSubview(bubbleWidthField)
         content.addSubview(bubbleHeightField)
         content.addSubview(fontSizeField)
-        let hint = NSTextField(labelWithString: "拖到屏幕边缘会贴边探头；API Key 仍在 local.env")
+        let hint = NSTextField(labelWithString: "拖到屏幕边缘会贴边探头；API Key 仍在仓库根目录 local.env")
         hint.textColor = .secondaryLabelColor
         hint.frame = NSRect(x: 20, y: 84, width: 340, height: 18)
         content.addSubview(hint)

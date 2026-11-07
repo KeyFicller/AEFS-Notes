@@ -427,7 +427,7 @@ def main() -> None:
     # ChatDeepSeek 在构造时就校验密钥，所以这一步必须在建模型之前。
     load_local_env(Path(__file__).resolve().parent)
     if not os.environ.get("DEEPSEEK_API_KEY"):
-        sys.exit("缺少 DEEPSEEK_API_KEY。可写在环境变量或 deskpet/local.env。")
+        sys.exit("缺少 DEEPSEEK_API_KEY。可写在环境变量或仓库根目录 local.env。")
 
     chunks = scan_chunks(root)
     if not chunks:

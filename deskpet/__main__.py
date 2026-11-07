@@ -16,12 +16,12 @@ ROOT = Path(__file__).resolve().parent
 NATIVE = ROOT / "native"
 BINARY = ROOT / "DeskPet"
 PUBLIC_URL = ROOT / "inbox" / "public-url.txt"
-LOCAL_ENV = ROOT / "local.env"
+LOCAL_ENV = ROOT.parent / "local.env"
 NGROK_API = "http://127.0.0.1:4040/api/tunnels"
 
 
 def load_local_env() -> None:
-    """Load deskpet/local.env into os.environ if keys are not already set."""
+    """Load repo-root local.env into os.environ if keys are not already set."""
     if not LOCAL_ENV.is_file():
         return
     for raw in LOCAL_ENV.read_text(encoding="utf-8").splitlines():

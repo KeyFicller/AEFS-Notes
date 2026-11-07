@@ -456,7 +456,7 @@ html[data-theme="shadcn"] .am-kv { border-color: var(--line); border-radius: var
 <li><strong>节点是普通函数</strong>：入参是整份 state，返回<strong>部分 state</strong>（<code>{&quot;字段&quot;: 新值}</code>）；返回 <code>None</code> 表示这一步不改任何字段。</li>
 <li><code>config</code> 就是 <code>RunnableConfig</code>：<code>{&quot;configurable&quot;: {&quot;thread_id&quot;: ...}, &quot;recursion_limit&quot;: ...}</code>。<code>thread_id</code> 住在 <code>configurable</code> 里，<code>recursion_limit</code> 在顶层。</li>
 <li>同名的 <code>a</code> 前缀（<code>ainvoke</code> / <code>astream</code> / <code>aget_state</code>）都是异步版，签名与同步版一致。</li>
-<li>本模块模型统一 <code>init_chat_model(&quot;deepseek:deepseek-v4-flash&quot;)</code>，密钥读 <code>DEEPSEEK_API_KEY</code>（放 <code>codes/langgraph/local.env</code>）。</li>
+<li>本模块模型统一 <code>init_chat_model(&quot;deepseek:deepseek-v4-flash&quot;)</code>，密钥读 <code>DEEPSEEK_API_KEY</code>（放仓库根目录 <code>local.env</code>）。</li>
 </ul>
 </div></div>
 </section>
@@ -906,7 +906,7 @@ source: codes/langgraph/cheat_api.md
 - **节点是普通函数**：入参是整份 state，返回**部分 state**（`{&quot;字段&quot;: 新值}`）；返回 `None` 表示这一步不改任何字段。
 - `config` 就是 `RunnableConfig`：`{&quot;configurable&quot;: {&quot;thread_id&quot;: ...}, &quot;recursion_limit&quot;: ...}`。`thread_id` 住在 `configurable` 里，`recursion_limit` 在顶层。
 - 同名的 `a` 前缀（`ainvoke` / `astream` / `aget_state`）都是异步版，签名与同步版一致。
-- 本模块模型统一 `init_chat_model(&quot;deepseek:deepseek-v4-flash&quot;)`，密钥读 `DEEPSEEK_API_KEY`（放 `codes/langgraph/local.env`）。
+- 本模块模型统一 `init_chat_model(&quot;deepseek:deepseek-v4-flash&quot;)`，密钥读 `DEEPSEEK_API_KEY`（放仓库根目录 `local.env`）。
 
 ## API 速查
 ### 子模块一览

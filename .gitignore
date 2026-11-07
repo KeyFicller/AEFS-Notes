@@ -8,9 +8,8 @@ deskpet/DeskPet
 deskpet/DeskPet.dSYM/
 deskpet/inbox/*.png
 deskpet/inbox/public-url.txt
-deskpet/local.env
 
-# 各模块练习用的本地密钥（langchain / langgraph 等），一律不提交。
+# 整个仓库唯一的本地配置文件（Python / DeskPet 共用），不提交。
 local.env
 
 # lesson-memo byproducts (attempt drafts + sidecars)

@@ -15,7 +15,7 @@ DeepSeek 的权重在对方机房，这里只发 HTTP。本地再用 PyTorch 跑
 - tool_read_file 等    -> 继续用 main.py 的沙箱。框架不提供目录监狱
 - SCRIPT / model_step  -> 删掉。工具结果留在 messages 里，下一轮模型能看见
 
-密钥：环境变量 DEEPSEEK_API_KEY，没有则由 common.load_local_env 读 deskpet/local.env。
+密钥：环境变量 DEEPSEEK_API_KEY，没有则由 common.load_local_env 读仓库根目录 local.env。
 模型：环境变量 DEEPSEEK_MODEL，默认 deepseek-v4-flash（支持工具调用）。
 """
 
@@ -154,7 +154,7 @@ def run(task: str, sandbox: str) -> str:
 def main() -> None:
     load_local_env(Path(__file__).resolve().parent)
     if not os.environ.get("DEEPSEEK_API_KEY"):
-        sys.exit("缺少 DEEPSEEK_API_KEY。可写在环境变量或 deskpet/local.env。")
+        sys.exit("缺少 DEEPSEEK_API_KEY。可写在环境变量或仓库根目录 local.env。")
 
     task = " ".join(sys.argv[1:]).strip() or (
         "读取工作区里的 test_file.txt，原样告诉我里面写了什么。"

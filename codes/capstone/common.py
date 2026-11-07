@@ -10,13 +10,13 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 def load_local_env(project_dir: Path | str | None = None) -> None:
     """把本地 env 文件补进环境变量。已存在的变量优先，不覆盖调用方显式传入的值。
 
-    先读 project_dir/.env（如果给了项目目录），再读仓库里的 deskpet/local.env。
+    先读 project_dir/.env（如果给了项目目录），再读仓库根目录的 local.env。
     同一变量先出现的文件生效。
     """
     paths: list[Path] = []
     if project_dir is not None:
         paths.append(Path(project_dir) / ".env")
-    paths.append(REPO_ROOT / "deskpet" / "local.env")
+    paths.append(REPO_ROOT / "local.env")
     for path in paths:
         _apply_env_file(path)
 

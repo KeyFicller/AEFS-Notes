@@ -881,7 +881,7 @@ def main() -> None:
     # ChatDeepSeek 在构造时就校验密钥，所以必须在建模型之前读进环境。
     load_local_env(Path(__file__).resolve().parent)
     if not os.environ.get("DEEPSEEK_API_KEY"):
-        sys.exit("缺少 DEEPSEEK_API_KEY。可写在环境变量或 deskpet/local.env。")
+        sys.exit("缺少 DEEPSEEK_API_KEY。可写在环境变量或仓库根目录 local.env。")
     if args.tts == "play":
         print("[boot] 外放会自激，请戴耳机；不想戴就加 --no-barge-in")
 
