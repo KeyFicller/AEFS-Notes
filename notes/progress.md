@@ -540,8 +540,8 @@
 | 2026-11-10 | book/deep-ai-agent/03-memory-and-knowledge/05-memory-types | notes/cards/book-deep-ai-agent/03-memory-and-knowledge/05-memory-types.png | done score=91 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/03-memory-and-knowledge/06-memory-consolidation | notes/cards/book-deep-ai-agent/03-memory-and-knowledge/06-memory-consolidation.png | done score=89 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/03-memory-and-knowledge/07-rag-pipeline | notes/cards/book-deep-ai-agent/03-memory-and-knowledge/07-rag-pipeline.png | done score=90 attempt=1 |
-| 2026-11-10 | book/deep-ai-agent/03-memory-and-knowledge/08-hybrid-retrieval | notes/cards/book-deep-ai-agent/03-memory-and-knowledge/08-hybrid-retrieval.png | done score=89 attempt=2 |
-| 2026-11-10 | book/deep-ai-agent/03-memory-and-knowledge/09-structured-index | notes/cards/book-deep-ai-agent/03-memory-and-knowledge/09-structured-index.png | exhaust score=84 attempt=2 |
+| 2026-11-10 | book/deep-ai-agent/03-memory-and-knowledge/08-hybrid-retrieval | notes/cards/book-deep-ai-agent/03-memory-and-knowledge/08-hybrid-retrieval.png | done score=94 attempt=3 |
+| 2026-11-10 | book/deep-ai-agent/03-memory-and-knowledge/09-structured-index | notes/cards/book-deep-ai-agent/03-memory-and-knowledge/09-structured-index.png | done score=90 attempt=4 |
 | 2026-11-10 | book/deep-ai-agent/03-memory-and-knowledge/10-knowledge-as-pr | notes/cards/book-deep-ai-agent/03-memory-and-knowledge/10-knowledge-as-pr.png | done score=91 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/03-memory-and-knowledge/11-agentic-rag | notes/cards/book-deep-ai-agent/03-memory-and-knowledge/11-agentic-rag.png | done score=89 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/04-tools/01-five-tool-types | notes/cards/book-deep-ai-agent/04-tools/01-five-tool-types.png | done score=89 attempt=2 |
@@ -568,7 +568,7 @@
 | 2026-11-10 | book/deep-ai-agent/06-interaction/01-two-axes | notes/cards/book-deep-ai-agent/06-interaction/01-two-axes.png | done score=87 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/06-interaction/02-event-driven | notes/cards/book-deep-ai-agent/06-interaction/02-event-driven.png | exhaust score=83 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/06-interaction/03-event-strategies | notes/cards/book-deep-ai-agent/06-interaction/03-event-strategies.png | done score=89 attempt=2 |
-| 2026-11-10 | book/deep-ai-agent/06-interaction/04-async-tool-semantics | notes/cards/book-deep-ai-agent/06-interaction/04-async-tool-semantics.png | exhaust score=80 attempt=2 |
+| 2026-11-10 | book/deep-ai-agent/06-interaction/04-async-tool-semantics | notes/cards/book-deep-ai-agent/06-interaction/04-async-tool-semantics.png | exhaust score=79 attempt=4 |
 | 2026-11-10 | book/deep-ai-agent/06-interaction/05-voice-paradigms | notes/cards/book-deep-ai-agent/06-interaction/05-voice-paradigms.png | done score=87 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/06-interaction/06-fast-slow-thinking | notes/cards/book-deep-ai-agent/06-interaction/06-fast-slow-thinking.png | done score=89 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/06-interaction/07-computer-use-loop | notes/cards/book-deep-ai-agent/06-interaction/07-computer-use-loop.png | exhaust score=84 attempt=2 |
@@ -579,7 +579,7 @@
 | 2026-11-10 | book/deep-ai-agent/07-evaluation/02-pass-at-k | notes/cards/book-deep-ai-agent/07-evaluation/02-pass-at-k.png | done score=85 attempt=2 |
 | 2026-11-10 | book/deep-ai-agent/07-evaluation/03-eval-env-five | notes/cards/book-deep-ai-agent/07-evaluation/03-eval-env-five.png | done score=91 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/07-evaluation/04-verifier | notes/cards/book-deep-ai-agent/07-evaluation/04-verifier.png | done score=87 attempt=1 |
-| 2026-11-10 | book/deep-ai-agent/07-evaluation/05-difficulty-leakage | notes/cards/book-deep-ai-agent/07-evaluation/05-difficulty-leakage.png | done score=89 attempt=1 |
+| 2026-11-10 | book/deep-ai-agent/07-evaluation/05-difficulty-leakage | notes/cards/book-deep-ai-agent/07-evaluation/05-difficulty-leakage.png | done score=96 attempt=3 |
 | 2026-11-10 | book/deep-ai-agent/07-evaluation/06-llm-judge | notes/cards/book-deep-ai-agent/07-evaluation/06-llm-judge.png | done score=90 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/07-evaluation/07-failure-attribution | notes/cards/book-deep-ai-agent/07-evaluation/07-failure-attribution.png | done score=90 attempt=2 |
 | 2026-11-10 | book/deep-ai-agent/07-evaluation/08-regression-tasks | notes/cards/book-deep-ai-agent/07-evaluation/08-regression-tasks.png | done score=91 attempt=1 |
@@ -605,11 +605,11 @@
 | 2026-11-10 | book/deep-ai-agent/09-continual-evolution/07-dual-loop | notes/cards/book-deep-ai-agent/09-continual-evolution/07-dual-loop.png | done score=87 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/09-continual-evolution/08-safety-boundaries | notes/cards/book-deep-ai-agent/09-continual-evolution/08-safety-boundaries.png | done score=90 attempt=2 |
 | 2026-11-10 | book/deep-ai-agent/09-continual-evolution/09-sleep-learning | notes/cards/book-deep-ai-agent/09-continual-evolution/09-sleep-learning.png | done score=91 attempt=1 |
-| 2026-11-10 | book/deep-ai-agent/10-multi-agent/01-two-dimensions | notes/cards/book-deep-ai-agent/10-multi-agent/01-two-dimensions.png | done score=91 attempt=1 |
+| 2026-11-10 | book/deep-ai-agent/10-multi-agent/01-two-dimensions | notes/cards/book-deep-ai-agent/10-multi-agent/01-two-dimensions.png | done score=96 attempt=3 |
 | 2026-11-10 | book/deep-ai-agent/10-multi-agent/02-new-information | notes/cards/book-deep-ai-agent/10-multi-agent/02-new-information.png | done score=87 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/10-multi-agent/03-communication-ipc | notes/cards/book-deep-ai-agent/10-multi-agent/03-communication-ipc.png | exhaust score=84 attempt=2 |
 | 2026-11-10 | book/deep-ai-agent/10-multi-agent/04-peer-collaboration | notes/cards/book-deep-ai-agent/10-multi-agent/04-peer-collaboration.png | done score=90 attempt=1 |
-| 2026-11-10 | book/deep-ai-agent/10-multi-agent/05-manager-pattern | notes/cards/book-deep-ai-agent/10-multi-agent/05-manager-pattern.png | done score=89 attempt=2 |
+| 2026-11-10 | book/deep-ai-agent/10-multi-agent/05-manager-pattern | notes/cards/book-deep-ai-agent/10-multi-agent/05-manager-pattern.png | done score=95 attempt=3 |
 | 2026-11-10 | book/deep-ai-agent/10-multi-agent/06-decentralized-a2a | notes/cards/book-deep-ai-agent/10-multi-agent/06-decentralized-a2a.png | done score=88 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/10-multi-agent/07-failure-modes-1 | notes/cards/book-deep-ai-agent/10-multi-agent/07-failure-modes-1.png | done score=89 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/10-multi-agent/08-failure-modes-2 | notes/cards/book-deep-ai-agent/10-multi-agent/08-failure-modes-2.png | done score=90 attempt=1 |
