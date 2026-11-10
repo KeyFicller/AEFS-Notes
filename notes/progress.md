@@ -568,7 +568,7 @@
 | 2026-11-10 | book/deep-ai-agent/06-interaction/01-two-axes | notes/cards/book-deep-ai-agent/06-interaction/01-two-axes.png | done score=87 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/06-interaction/02-event-driven | notes/cards/book-deep-ai-agent/06-interaction/02-event-driven.png | exhaust score=83 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/06-interaction/03-event-strategies | notes/cards/book-deep-ai-agent/06-interaction/03-event-strategies.png | done score=89 attempt=2 |
-| 2026-11-10 | book/deep-ai-agent/06-interaction/04-async-tool-semantics | notes/cards/book-deep-ai-agent/06-interaction/04-async-tool-semantics.png | exhaust score=79 attempt=4 |
+| 2026-11-10 | book/deep-ai-agent/06-interaction/04-async-tool-semantics | notes/cards/book-deep-ai-agent/06-interaction/04-async-tool-semantics.png | done score=95 attempt=5 |
 | 2026-11-10 | book/deep-ai-agent/06-interaction/05-voice-paradigms | notes/cards/book-deep-ai-agent/06-interaction/05-voice-paradigms.png | done score=87 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/06-interaction/06-fast-slow-thinking | notes/cards/book-deep-ai-agent/06-interaction/06-fast-slow-thinking.png | done score=89 attempt=1 |
 | 2026-11-10 | book/deep-ai-agent/06-interaction/07-computer-use-loop | notes/cards/book-deep-ai-agent/06-interaction/07-computer-use-loop.png | exhaust score=84 attempt=2 |
