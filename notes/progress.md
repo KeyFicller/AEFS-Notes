@@ -654,7 +654,7 @@
 | 2026-11-11 | book/hitchhikers-guide-agentic-ai/23-a2a/02-task-lifecycle | notes/cards/book-hitchhikers-guide-agentic-ai/23-a2a/02-task-lifecycle.png | done attempt=1 |
 | 2026-11-11 | book/hitchhikers-guide-agentic-ai/23-a2a/03-contract-net | notes/cards/book-hitchhikers-guide-agentic-ai/23-a2a/03-contract-net.png | done attempt=1 |
 | 2026-11-11 | book/hitchhikers-guide-agentic-ai/23-a2a/04-a2a-vs-mcp | notes/cards/book-hitchhikers-guide-agentic-ai/23-a2a/04-a2a-vs-mcp.png | done attempt=1 |
-| 2026-11-11 | book/hitchhikers-guide-agentic-ai/24-multi-agent/01-ctde | notes/cards/book-hitchhikers-guide-agentic-ai/24-multi-agent/01-ctde.png | done attempt=1 |
+| 2026-11-11 | book/hitchhikers-guide-agentic-ai/24-multi-agent/01-ctde | notes/cards/book-hitchhikers-guide-agentic-ai/24-multi-agent/01-ctde.png | done attempt=2 |
 | 2026-11-11 | book/hitchhikers-guide-agentic-ai/24-multi-agent/02-self-play | notes/cards/book-hitchhikers-guide-agentic-ai/24-multi-agent/02-self-play.png | done attempt=1 |
 | 2026-11-11 | book/hitchhikers-guide-agentic-ai/24-multi-agent/03-stigmergy | notes/cards/book-hitchhikers-guide-agentic-ai/24-multi-agent/03-stigmergy.png | done attempt=1 |
 | 2026-11-11 | book/hitchhikers-guide-agentic-ai/24-multi-agent/04-counterfactual-credit | notes/cards/book-hitchhikers-guide-agentic-ai/24-multi-agent/04-counterfactual-credit.png | done attempt=1 |
