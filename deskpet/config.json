@@ -3,6 +3,8 @@
   "card_max_width" : 600,
   "cards_dir" : [
     "..\/notes\/cards",
+    "..\/notes\/cards\/book-deep-ai-agent",
+    "..\/notes\/cards\/book-hitchhikers-guide-agentic-ai",
     "..\/codes\/python_stdlibs",
     "..\/codes\/pytorch"
   ],
@@ -18,5 +20,5 @@
   "inbox_port" : 8765,
   "inbox_tunnel" : true,
   "study_mode" : "annotate",
-  "zoom" : 0.6038797669491526
+  "zoom" : 0.5006289724576272
 }
